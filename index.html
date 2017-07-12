@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF8">
+    <title>Search Explorer</title>
+    <link href="basic.css" rel="stylesheet" type="text/css">
+    <script src="angular.min.js"></script>
+    <script src="search.js"></script>
+  </head>
+  <body ng-csp ng-app="schemaorg">
+    <form ng-submit="doSearch()" ng-controller="SearchController">
+      <input type="text" ng-model="keyword" name="text" />
+      <input type="submit" id="submit" value="Search" />
+      <div>
+        <h1>Search Result:</h1>
+        <div><span>Total search result: {{result_size}}</span></div>
+        <div class="search-result-container">
+          <ul class="search-result-list">
+            <li class="search-result-item" ng-repeat="item in result" >{{item.title}}</li>
+          </ul>
+        </div>
+      </div>
+    </form>
+  </body>
+</html>
