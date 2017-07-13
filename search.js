@@ -74,7 +74,7 @@ function storeResults(results, index, array) {
   var resultItems = results.value;
   resultItems.forEach(finding => {
     storeBasicData(finding);
-    addAnySchemaOrgData(finding, 'recipe');
+    storeAnySchemaOrgData(finding, 'recipe');
   });
 }
 
@@ -88,34 +88,36 @@ function storeBasicData(obj) {
   });
 }
 
-function addAnySchemaOrgData(item, topic) {
-  if (item.hasOwnProperty('pagemap')) {
-    var pagemap = item.pagemap;
-    if (pagemap.hasOwnProperty(topic)) {
-      var data = pagemap[topic];
-      var bestData = findBestData(data);
-      db.items.put({
-        title: item.title,
-        url: item.link,
-        description: data.description,
-        schemaorg: bestData
-      }).catch(err => {
-        // console.error(err);
-      });
-    }
+function storeAnySchemaOrgData(obj, topic) {
+  if (!obj.hasOwnProperty('pagemap')) {
+    return;
   }
+  var pagemap = obj.pagemap;
+  if (!pagemap.hasOwnProperty(topic)) {
+    return;
+  }
+  var topicArray = pagemap[topic];
+  var bestData = findBestData(topicArray);
+  db.items.put({
+    title: obj.title,
+    url: obj.link,
+    description: bestData.description,
+    schemaorg: bestData
+  }).catch(err => {
+    // console.error(err);
+  });
 }
 
-function findBestData(data) {
-  var bestData = {};
+function findBestData(arr) {
+  var toReturn = {};
   var bestInfoSize = -1;
-  for (var i = 0; i < data.length; i++) {
-    var dataItem = data[i];
-    var infoSize = Object.keys(dataItem).length;
+  for (var i = 0; i < arr.length; i++) {
+    var topicObject = arr[i];
+    var infoSize = Object.keys(topicObject).length;
     if (infoSize > bestInfoSize) {
-      bestData = dataItem;
+      toReturn = topicObject;
       bestInfoSize = infoSize;
     }
   }
-  return bestData;
+  return toReturn;
 }
