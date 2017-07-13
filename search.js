@@ -43,6 +43,9 @@ app.factory('CustomSearch', function($q, $http) {
 });
 
 app.controller('SearchController', function($scope, CustomSearch) {
+  var sc = this;
+  sc.searchResults = [];
+
   $scope.doSearch = function() {
     var searchPromises = [];
     var repeat = 2;
@@ -64,7 +67,8 @@ app.controller('SearchController', function($scope, CustomSearch) {
         });
       });
       db.items.where('keyword').equalsIgnoreCase($scope.keyword).toArray(data => {
-        console.log(data);
+        sc.searchResults = data;
+        $scope.$apply();
       });
     });
   }
