@@ -53,8 +53,10 @@ app.controller('SearchController', function($scope, CustomSearch) {
       var promise = CustomSearch.exec($scope.keyword, i);
       searchPromises.push(promise);
     }
-    Promise.all(searchPromises).then(results => {
-      results.forEach(function(resultItems, index, array) {
+    Promise.all(searchPromises.map(settle)).then(results => {
+      var resolvedResults = results.filter(x => x.status === "resolved");
+      resolvedResults.forEach(function(resultObject, index, array) {
+        var resultItems = resultObject.value;
         resultItems.forEach(function(item, index, array) {
           db.items.add({
             keyword: $scope.keyword,
@@ -73,3 +75,10 @@ app.controller('SearchController', function($scope, CustomSearch) {
     });
   }
 });
+
+// Solution for handling request failure gracefully in Promise.all
+// Source: https://stackoverflow.com/questions/31424561/wait-until-all-es6-promises-complete-even-rejected-promises
+function settle(promise) {
+  return promise.then(function(v){ return {value:v, status: "resolved" }},
+                      function(e){ return {value:e, status: "rejected" }});
+}
