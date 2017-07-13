@@ -10,16 +10,16 @@
   <script src="search.js"></script>
 </head>
 
-<body ng-csp ng-app="schemaorg">
-  <form ng-submit="doSearch()" ng-controller="SearchController">
-    <input type="text" ng-model="keyword" name="text" />
-    <input type="submit" id="submit" value="Search" />
+<body ng-app="schemaorg">
+  <form class="search-container" ng-controller="SearchController as sc">
+    <input id="search" type="text" ng-model="keyword" name="text" />
+    <input type="submit" id="submit" value="Search" ng-click="doSearch()" />
     <div>
       <h1>Search Result:</h1>
-      <div><span>Total search result: {{result_size}}</span></div>
+      <div><span>Total search result: {{sc.searchResults.length}}</span></div>
       <div class="search-result-container">
         <ul class="search-result-list">
-          <li class="search-result-item" ng-repeat="item in result">
+          <li class="search-result-item" ng-repeat="item in sc.searchResults">
             <a href="{{item.url}}" target="_blank">{{item.title}}</a> - {{item.description}}</li>
         </ul>
       </div>
