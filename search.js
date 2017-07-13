@@ -72,15 +72,19 @@ function settle(promise) {
 
 function storeResults(results, index, array) {
   var resultItems = results.value;
-  resultItems.forEach(function(item, index, array) {
-    db.items.add({
-      title: item.title,
-      url: item.link,
-      description: item.snippet
-    }).catch(err => {
-      // console.error(err);
-    });
-    addAnySchemaOrgData(item, 'recipe');
+  resultItems.forEach(finding => {
+    storeBasicData(finding);
+    addAnySchemaOrgData(finding, 'recipe');
+  });
+}
+
+function storeBasicData(obj) {
+  db.items.add({
+    title: obj.title,
+    url: obj.link,
+    description: obj.snippet
+  }).catch(err => {
+    // console.error(err);
   });
 }
 
