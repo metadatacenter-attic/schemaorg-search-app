@@ -19,8 +19,15 @@
       <div><span>Total search result: {{sc.searchResults.length}}</span></div>
       <div class="search-result-container">
         <ul class="search-result-list">
-          <li class="search-result-item" ng-repeat="item in sc.searchResults">
-            <a href="{{item.url}}" target="_blank">{{item.title}}</a> - {{item.description}}</li>
+          <li class="search-result-item" ng-repeat="item in sc.searchResults" ng-if="item.schemaorg">
+            <span><a href="{{item.schemaorg.url}}" target="_blank">{{item.schemaorg.name}}</a> - {{item.schemaorg.description}}<br/>{{item.schemaorg}}</span>
+          </li>
+        </ul>
+        --
+        <ul class="search-result-list">
+          <li class="search-result-item" ng-repeat="item in sc.searchResults" ng-if="!item.schemaorg">
+            <span><a href="{{item.url}}" target="_blank">{{item.title}}</a> - {{item.description}}</span>
+          </li>
         </ul>
       </div>
     </div>

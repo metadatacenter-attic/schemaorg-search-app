@@ -75,10 +75,43 @@ function storeResults(results, index, array) {
   resultItems.forEach(function(item, index, array) {
     db.items.add({
       title: item.title,
-      description: item.snippet,
-      url: item.link
+      url: item.link,
+      description: item.snippet
     }).catch(err => {
       // console.error(err);
     });
+    addAnySchemaOrgData(item, 'recipe');
   });
+}
+
+function addAnySchemaOrgData(item, topic) {
+  if (item.hasOwnProperty('pagemap')) {
+    var pagemap = item.pagemap;
+    if (pagemap.hasOwnProperty(topic)) {
+      var data = pagemap[topic];
+      var bestData = findBestData(data);
+      db.items.put({
+        title: item.title,
+        url: item.link,
+        description: data.description,
+        schemaorg: bestData
+      }).catch(err => {
+        // console.error(err);
+      });
+    }
+  }
+}
+
+function findBestData(data) {
+  var bestData = {};
+  var bestInfoSize = -1;
+  for (var i = 0; i < data.length; i++) {
+    var dataItem = data[i];
+    var infoSize = Object.keys(dataItem).length;
+    if (infoSize > bestInfoSize) {
+      bestData = dataItem;
+      bestInfoSize = infoSize;
+    }
+  }
+  return bestData;
 }
