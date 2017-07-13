@@ -46,10 +46,9 @@ app.controller('SearchController', function($scope, CustomSearch) {
   var sc = this;
   sc.searchResults = [];
 
-  $scope.doSearch = function() {
+  $scope.doSearch = function(pages) {
     var searchPromises = [];
-    var repeat = 2;
-    for (i = 1; i <= repeat; i++) {
+    for (i = 1; i <= pages; i++) {
       var promise = CustomSearch.exec($scope.keyword, i);
       searchPromises.push(promise);
     }

@@ -13,7 +13,7 @@
 <body ng-app="schemaorg">
   <form class="search-container" ng-controller="SearchController as sc">
     <input id="search" type="text" ng-model="keyword" name="text" />
-    <input type="submit" id="submit" value="Search" ng-click="doSearch()" />
+    <input type="submit" id="submit" value="Search" ng-click="doSearch(3)" />
     <div>
       <h1>Search Result:</h1>
       <div><span>Total search result: {{sc.searchResults.length}}</span></div>
