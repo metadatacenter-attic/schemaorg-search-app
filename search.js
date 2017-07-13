@@ -54,19 +54,7 @@ app.controller('SearchController', function($scope, CustomSearch) {
     }
     Promise.all(searchPromises.map(settle)).then(results => {
       db.items.clear();
-      var resolvedResults = results.filter(x => x.status === "resolved");
-      resolvedResults.forEach(function(resultObject, index, array) {
-        var resultItems = resultObject.value;
-        resultItems.forEach(function(item, index, array) {
-          db.items.add({
-            title: item.title,
-            description: item.snippet,
-            url: item.link
-          }).catch(err => {
-            // console.error(err);
-          });
-        });
-      });
+      results.filter(x => x.status === "resolved").forEach(storeResults);
       db.items.toArray(data => {
         sc.searchResults = data;
         $scope.$apply();
@@ -80,4 +68,17 @@ app.controller('SearchController', function($scope, CustomSearch) {
 function settle(promise) {
   return promise.then(function(v){ return {value:v, status: "resolved" }},
                       function(e){ return {value:e, status: "rejected" }});
+}
+
+function storeResults(results, index, array) {
+  var resultItems = results.value;
+  resultItems.forEach(function(item, index, array) {
+    db.items.add({
+      title: item.title,
+      description: item.snippet,
+      url: item.link
+    }).catch(err => {
+      // console.error(err);
+    });
+  });
 }
