@@ -18,8 +18,9 @@ var app = angular.module('schemaorg', [], function($provide) {
   });
 });
 
-app.factory('CustomSearch', function($http) {
+app.factory('CustomSearch', function($q, $http) {
   var exec = function(keyword, page) {
+    var defer = $q.defer();
     var offset = 10;
     var url = 'https://www.googleapis.com/customsearch/v1' +
       '?key=AIzaSyC0tYdp3uFxDdgJO4t5hZNznH7qsBFHFRw' +
@@ -27,13 +28,14 @@ app.factory('CustomSearch', function($http) {
       '&q=' + keyword +
       '&start=' + (((page - 1) * offset) + 1) +
       '&num=10';
-    return $http.get(url).then(
+    $http.get(url).then(
       function(response) {
-        return response.data.items;
+        defer.resolve(response.data.items);
       },
       function(err) {
-        // TODO: Handle error
+        defer.reject(err);
       });
+    return defer.promise;
   };
   return {
     exec: exec
@@ -42,28 +44,28 @@ app.factory('CustomSearch', function($http) {
 
 app.controller('SearchController', function($scope, CustomSearch) {
   $scope.doSearch = function() {
-    $scope.result = []
-    repeat = 2
+    var searchPromises = [];
+    var repeat = 2;
     for (i = 1; i <= repeat; i++) {
-      CustomSearch.exec($scope.keyword, i).then(
-        function(result) {
-          result.forEach(function(element, index, array) {
-            db.items.add({
-              keyword: $scope.keyword,
-              title: element.title,
-              description: element.snippet,
-              url: element.link
-            }).
-            catch((err) => {
-              // NO-OP: Ignore error flags
-            });
-          });
-          db.items.where('keyword').equalsIgnoreCase($scope.keyword).toArray(result => {
-            // console.log(result);
-            $scope.result = $scope.result.concat(result);
-            $scope.result_size = result.length;
+      var promise = CustomSearch.exec($scope.keyword, i);
+      searchPromises.push(promise);
+    }
+    Promise.all(searchPromises).then(results => {
+      results.forEach(function(resultItems, index, array) {
+        resultItems.forEach(function(item, index, array) {
+          db.items.add({
+            keyword: $scope.keyword,
+            title: item.title,
+            description: item.snippet,
+            url: item.link
+          }).catch(err => {
+            // console.error(err);
           });
         });
-    }
+      });
+      db.items.where('keyword').equalsIgnoreCase($scope.keyword).toArray(data => {
+        console.log(data);
+      });
+    });
   }
 });
