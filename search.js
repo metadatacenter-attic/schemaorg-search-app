@@ -1,7 +1,7 @@
 var db = new Dexie("clippingDB");
 db.delete();
 db.version(1).stores({
-  items: '[keyword+title+url],keyword'
+  items: '[title+url]'
 });
 db.open();
 
@@ -53,12 +53,12 @@ app.controller('SearchController', function($scope, CustomSearch) {
       searchPromises.push(promise);
     }
     Promise.all(searchPromises.map(settle)).then(results => {
+      db.items.clear();
       var resolvedResults = results.filter(x => x.status === "resolved");
       resolvedResults.forEach(function(resultObject, index, array) {
         var resultItems = resultObject.value;
         resultItems.forEach(function(item, index, array) {
           db.items.add({
-            keyword: $scope.keyword,
             title: item.title,
             description: item.snippet,
             url: item.link
@@ -67,7 +67,7 @@ app.controller('SearchController', function($scope, CustomSearch) {
           });
         });
       });
-      db.items.where('keyword').equalsIgnoreCase($scope.keyword).toArray(data => {
+      db.items.toArray(data => {
         sc.searchResults = data;
         $scope.$apply();
       });
