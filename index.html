@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF8">
   <title>Search Explorer</title>
-  <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css"
+    media="screen,projection">
   <link type="text/css" rel="stylesheet" href="materialize/extras/material-icons.css">
   <link type="text/css" rel="stylesheet" href="basic.css">
   <script type="text/javascript" src="jquery-2.1.1.min.js"></script>
@@ -17,9 +18,11 @@
 <body class="grey lighten-5" ng-app="schemaorg">
   <form class="search-container" ng-controller="SearchController as sc">
     <div class="input-field" style="margin-top:0;">
-      <input class="valign center search-bar" style="font-size:200%;padding-top:10px;padding-bottom:10px;" placeholder="Type a concept here..." type="search" ng-model="keyword" required>
+      <input class="valign center search-bar"
+      style="font-size:200%;padding-top:10px;padding-bottom:10px;"
+      placeholder="Type a concept here..." type="search" ng-model="keyword" required>
       <i class="material-icons" style="padding-top:18px;">close</i>
-      <input type="submit" id="submit" value="Search" ng-click="doSearch(3)" />
+      <input type="submit" id="submit" value="Search" ng-click="doSearch(3)">
     </div>
     <div class="row container">
       <div class="col s2">
@@ -30,11 +33,14 @@
           <div class="col s4" ng-repeat="item in sc.searchResults" ng-if="item.schemaorg">
             <div class="card grey lighten-4 small">
               <div class="card-content">
-                <span class="card-title activator grey-text text-darken-4"><a href="{{item.schemaorg.url}}" target="_blank">{{item.schemaorg.name}}</a><i class="material-icons right">more_vert</i></span>
+                <span class="card-title activator grey-text text-darken-4">
+                  <a href="{{item.schemaorg.url}}" target="_blank">{{item.schemaorg.name}}</a>
+                  <i class="material-icons right">more_vert</i></span>
                 <p>{{item.description}}</p>
               </div>
               <div class="card-reveal">
-                <span class="card-title grey-text text-darken-4">Schema.org Markup<i class="material-icons right">close</i></span>
+                <span class="card-title grey-text text-darken-4">Schema.org Markup
+                  <i class="material-icons right">close</i></span>
                 <pre>{{item.schemaorg | json}}</pre>
               </div>
             </div>
@@ -43,8 +49,8 @@
         <div>
           <ul class="search-result-list">
             <li class="search-result-item" ng-repeat="item in sc.searchResults" ng-if="!item.schemaorg">
-              <span><a href="{{item.url}}" target="_blank">{{item.title}}</a><span><br/>
-              <span class="green-text lighten-3">{{item.url}}</span><br/>
+              <span><a href="{{item.url}}" target="_blank">{{item.title}}</a><span><br>
+              <span class="green-text lighten-3">{{item.url}}</span><br>
               <span>{{item.description}}</span>
             </li>
           </ul>
