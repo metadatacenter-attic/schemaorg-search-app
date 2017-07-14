@@ -16,8 +16,11 @@
 
 <body class="grey lighten-5" ng-app="schemaorg">
   <form class="search-container" ng-controller="SearchController as sc">
-    <input id="search" type="text" ng-model="keyword" name="text" />
-    <input type="submit" id="submit" value="Search" ng-click="doSearch(3)" />
+    <div class="input-field" style="margin-top:0;">
+      <input class="valign center search-bar" style="font-size:200%;padding-top:10px;padding-bottom:10px;" placeholder="Type a concept here..." type="search" ng-model="keyword" required>
+      <i class="material-icons" style="padding-top:18px;">close</i>
+      <input type="submit" id="submit" value="Search" ng-click="doSearch(3)" />
+    </div>
     <div class="row container">
       <div class="col s2">
         Facets
