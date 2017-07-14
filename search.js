@@ -49,6 +49,9 @@ app.controller('SearchController', function($scope, schemaorg, CustomSearch) {
   sc.searchFacets = [];
 
   $scope.doSearch = function(pages) {
+    if ($scope.keyword == null) {
+      return;
+    }
     var keyword_split = $scope.keyword.split('#');
     var keyword = keyword_split[0];
     var topics = keyword_split.filter(str => { return str != keyword });
