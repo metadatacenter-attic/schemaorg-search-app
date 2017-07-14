@@ -6,7 +6,7 @@ db.version(1).stores({
 });
 db.open();
 
-var app = angular.module('schemaorg', ['angular.filter'], function($provide) {
+var app = angular.module('schemaorg', ['angular.filter', 'schemaorg-constants'], function($provide) {
   // Fixes'history.pushState is not available in packaged apps' error message
   // Source: https://github.com/angular/angular.js/issues/11932
   $provide.decorator('$window', function($delegate) {
@@ -43,7 +43,7 @@ app.factory('CustomSearch', function($q, $http) {
   };
 });
 
-app.controller('SearchController', function($scope, CustomSearch) {
+app.controller('SearchController', function($scope, schemaorg, CustomSearch) {
   var sc = this;
   sc.searchResults = [];
   sc.searchFacets = [];
@@ -56,7 +56,10 @@ app.controller('SearchController', function($scope, CustomSearch) {
     }
     Promise.all(searchPromises.map(settle)).then(results => {
       db.items.clear();
-      results.filter(x => x.status === "resolved").forEach(storeResults);
+      db.facets.clear();
+      results.filter(x => x.status === "resolved").forEach(results => {
+        storeResults(results, schemaorg)
+      });
       db.items.toArray(data => {
         sc.searchResults = data;
         $scope.$apply();
@@ -76,11 +79,11 @@ function settle(promise) {
                       function(e){ return {value:e, status: "rejected" }});
 }
 
-function storeResults(results, index, array) {
+function storeResults(results, schemaorg) {
   var resultItems = results.value;
   resultItems.forEach(finding => {
     storeBasicData(finding);
-    storeAnySchemaOrgData(finding, 'recipe');
+    storeAnySchemaOrgData(finding, 'recipe', schemaorg['recipe']);
   });
 }
 
@@ -94,25 +97,34 @@ function storeBasicData(obj) {
   });
 }
 
-function storeAnySchemaOrgData(obj, topic) {
+function storeAnySchemaOrgData(obj, topic, attributes) {
   var data = getSchemaOrgData(obj, topic);
   if (data != null) {
-    db.items.put({
-      title: obj.title,
-      url: obj.link,
-      description: obj.snippet,
-      schemaorg: data
+    updateTableWithSchemaOrgData(obj, data);
+    storeFacetsFromSchemaOrgData(data, attributes);
+  }
+}
+
+function updateTableWithSchemaOrgData(obj, data) {
+  db.items.put({
+    title: obj.title,
+    url: obj.link,
+    description: obj.snippet,
+    schemaorg: data
+  }).catch(err => {
+    // console.error(err);
+  });
+}
+
+function storeFacetsFromSchemaOrgData(data, attributes) {
+  for (var i = 0; i < attributes.length; i++) {
+    var attr = attributes[i];
+    db.facets.add({
+      group: attr,
+      value: data[attr]
     }).catch(err => {
       // console.error(err);
     });
-    for (key in data) {
-      db.facets.add({
-        group: key,
-        value: data[key]
-      }).catch(err => {
-        // console.error(err);
-      });
-    }
   }
 }
 
