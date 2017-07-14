@@ -49,16 +49,20 @@ app.controller('SearchController', function($scope, schemaorg, CustomSearch) {
   sc.searchFacets = [];
 
   $scope.doSearch = function(pages) {
+    var keyword_split = $scope.keyword.split('#');
+    var keyword = keyword_split[0];
+    var topics = keyword_split.filter(str => { return str != keyword });
+
     var searchPromises = [];
     for (i = 1; i <= pages; i++) {
-      var promise = CustomSearch.exec($scope.keyword, i);
+      var promise = CustomSearch.exec(keyword, i);
       searchPromises.push(promise);
     }
     Promise.all(searchPromises.map(settle)).then(results => {
       db.items.clear();
       db.facets.clear();
       results.filter(x => x.status === "resolved").forEach(results => {
-        storeResults(results, schemaorg)
+        storeResults(results, topics, schemaorg)
       });
       db.items.toArray(data => {
         sc.searchResults = data;
@@ -79,11 +83,15 @@ function settle(promise) {
                       function(e){ return {value:e, status: "rejected" }});
 }
 
-function storeResults(results, schemaorg) {
+function storeResults(results, topics, schemaorg) {
   var resultItems = results.value;
   resultItems.forEach(finding => {
     storeBasicData(finding);
-    storeAnySchemaOrgData(finding, 'recipe', schemaorg['recipe']);
+    for (var i = 0; i < topics.length; i++) {
+      var topic = topics[i];
+      var topic_attributes = schemaorg[topic];
+      storeAnySchemaOrgData(finding, topic, topic_attributes);
+    }
   });
 }
 
