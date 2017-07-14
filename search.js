@@ -101,7 +101,7 @@ function storeAnySchemaOrgData(obj, topic) {
   db.items.put({
     title: obj.title,
     url: obj.link,
-    description: bestData.description,
+    description: obj.snippet,
     schemaorg: bestData
   }).catch(err => {
     // console.error(err);
