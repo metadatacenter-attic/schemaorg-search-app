@@ -5,7 +5,10 @@
   <meta charset="UTF8">
   <title>Search Explorer</title>
   <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="materialize/extras/material-icons.css">
   <link type="text/css" rel="stylesheet" href="basic.css">
+  <script type="text/javascript" src="jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="materialize/js/materialize.min.js"></script>
   <script type="text/javascript" src="dexie.min.js"></script>
   <script type="text/javascript" src="angular.min.js"></script>
   <script type="text/javascript" src="search.js"></script>
@@ -21,9 +24,13 @@
         <div class="row">
           <div class="col s4" ng-repeat="item in sc.searchResults" ng-if="item.schemaorg">
             <div class="card grey lighten-4">
-              <div class="card-content black-text">
-                <span class="card-title"><a href="{{item.schemaorg.url}}" target="_blank">{{item.schemaorg.name}}</a></span>
+              <div class="card-content">
+                <span class="card-title activator grey-text text-darken-4"><a href="{{item.schemaorg.url}}" target="_blank">{{item.schemaorg.name}}</a><i class="material-icons right">more_vert</i></span>
                 <p>{{item.schemaorg.description}}</p>
+              </div>
+              <div class="card-reveal">
+                <span class="card-title grey-text text-darken-4">Schema.org Markup<i class="material-icons right">close</i></span>
+                <pre>{{item.schemaorg | json}}</pre>
               </div>
             </div>
           </div>
