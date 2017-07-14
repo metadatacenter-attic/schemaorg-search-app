@@ -22,3 +22,8 @@ body {
   list-style: none;
   box-sizing: border-box;
 }
+
+input[type="submit"] {
+  position: absolute;
+  top: -1000px
+}
