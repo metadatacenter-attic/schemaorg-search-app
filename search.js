@@ -89,6 +89,20 @@ function storeBasicData(obj) {
 }
 
 function storeAnySchemaOrgData(obj, topic) {
+  var data = getSchemaOrgData(obj, topic);
+  if (data !== null) {
+    db.items.put({
+      title: obj.title,
+      url: obj.link,
+      description: obj.snippet,
+      schemaorg: data
+    }).catch(err => {
+      // console.error(err);
+    });
+  }
+}
+
+function getSchemaOrgData(obj, topic) {
   if (!obj.hasOwnProperty('pagemap')) {
     return;
   }
@@ -97,15 +111,7 @@ function storeAnySchemaOrgData(obj, topic) {
     return;
   }
   var topicArray = pagemap[topic];
-  var bestData = findBestData(topicArray);
-  db.items.put({
-    title: obj.title,
-    url: obj.link,
-    description: obj.snippet,
-    schemaorg: bestData
-  }).catch(err => {
-    // console.error(err);
-  });
+  return findBestData(topicArray);
 }
 
 function findBestData(arr) {
