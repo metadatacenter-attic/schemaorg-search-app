@@ -4,31 +4,37 @@
 <head>
   <meta charset="UTF8">
   <title>Search Explorer</title>
-  <link href="basic.css" rel="stylesheet" type="text/css">
+  <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="basic.css">
   <script src="dexie.min.js"></script>
   <script src="angular.min.js"></script>
   <script src="search.js"></script>
 </head>
 
-<body ng-app="schemaorg">
+<body class="grey lighten-5" ng-app="schemaorg">
   <form class="search-container" ng-controller="SearchController as sc">
     <input id="search" type="text" ng-model="keyword" name="text" />
     <input type="submit" id="submit" value="Search" ng-click="doSearch(3)" />
-    <div>
-      <h1>Search Result:</h1>
+    <div class="container">
       <div><span>Total search result: {{sc.searchResults.length}}</span></div>
       <div class="search-result-container">
-        <ul class="search-result-list">
-          <li class="search-result-item" ng-repeat="item in sc.searchResults" ng-if="item.schemaorg">
-            <span><a href="{{item.schemaorg.url}}" target="_blank">{{item.schemaorg.name}}</a> - {{item.schemaorg.description}}<br/>{{item.schemaorg}}</span>
-          </li>
-        </ul>
-        --
-        <ul class="search-result-list">
-          <li class="search-result-item" ng-repeat="item in sc.searchResults" ng-if="!item.schemaorg">
-            <span><a href="{{item.url}}" target="_blank">{{item.title}}</a> - {{item.description}}</span>
-          </li>
-        </ul>
+        <div class="row">
+          <div class="col s4" ng-repeat="item in sc.searchResults" ng-if="item.schemaorg">
+            <div class="card grey lighten-4">
+              <div class="card-content black-text">
+                <span class="card-title"><a href="{{item.schemaorg.url}}" target="_blank">{{item.schemaorg.name}}</a></span>
+                <p>{{item.schemaorg.description}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <ul class="search-result-list">
+            <li class="search-result-item" ng-repeat="item in sc.searchResults" ng-if="!item.schemaorg">
+              <span><a href="{{item.url}}" target="_blank">{{item.title}}</a> - {{item.description}}</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </form>
