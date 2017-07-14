@@ -1,11 +1,12 @@
 var db = new Dexie("clippingDB");
 db.delete();
 db.version(1).stores({
-  items: '[title+url]'
+  items: '[title+url]',
+  facets: '[group+value],group'
 });
 db.open();
 
-var app = angular.module('schemaorg', [], function($provide) {
+var app = angular.module('schemaorg', ['angular.filter'], function($provide) {
   // Fixes'history.pushState is not available in packaged apps' error message
   // Source: https://github.com/angular/angular.js/issues/11932
   $provide.decorator('$window', function($delegate) {
@@ -45,6 +46,7 @@ app.factory('CustomSearch', function($q, $http) {
 app.controller('SearchController', function($scope, CustomSearch) {
   var sc = this;
   sc.searchResults = [];
+  sc.searchFacets = [];
 
   $scope.doSearch = function(pages) {
     var searchPromises = [];
@@ -57,6 +59,10 @@ app.controller('SearchController', function($scope, CustomSearch) {
       results.filter(x => x.status === "resolved").forEach(storeResults);
       db.items.toArray(data => {
         sc.searchResults = data;
+        $scope.$apply();
+      });
+      db.facets.toArray(data => {
+        sc.searchFacets = data
         $scope.$apply();
       });
     });
@@ -90,7 +96,7 @@ function storeBasicData(obj) {
 
 function storeAnySchemaOrgData(obj, topic) {
   var data = getSchemaOrgData(obj, topic);
-  if (data !== null) {
+  if (data != null) {
     db.items.put({
       title: obj.title,
       url: obj.link,
@@ -99,6 +105,14 @@ function storeAnySchemaOrgData(obj, topic) {
     }).catch(err => {
       // console.error(err);
     });
+    for (key in data) {
+      db.facets.add({
+        group: key,
+        value: data[key]
+      }).catch(err => {
+        // console.error(err);
+      });
+    }
   }
 }
 

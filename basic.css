@@ -28,3 +28,12 @@ input[type="submit"] {
   position: absolute;
   top: -1000px
 }
+
+/* Materializecss Overrides */
+h5.smaller {
+  font-size: 14pt;
+}
+
+.collection.with-header .collection-item.narrow-padding-left {
+  padding-left: 18px;
+}
