@@ -9,8 +9,8 @@
     }
   },
   "icons": {
-    "16": "calculator-16.png",
-    "128": "calculator-128.png"
+    "16": "icons/calculator-16.png",
+    "128": "icons/calculator-128.png"
   },
   "permissions": [
     "storage"
