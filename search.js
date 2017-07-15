@@ -103,8 +103,7 @@ function storeResults(results, topics, schemaorg) {
     storeBasicData(finding);
     for (var i = 0; i < topics.length; i++) {
       var topic = topics[i];
-      var topic_attributes = schemaorg[topic];
-      storeAnySchemaOrgData(finding, topic, topic_attributes);
+      storeAnySchemaOrgData(finding, topic, schemaorg);
     }
   });
 }
@@ -120,11 +119,11 @@ function storeBasicData(obj) {
   });
 }
 
-function storeAnySchemaOrgData(obj, topic, attributes) {
+function storeAnySchemaOrgData(obj, topic, schemaorg) {
   var data = getSchemaOrgData(obj, topic);
   if (data != null) {
     updateTableWithSchemaOrgData(obj, data);
-    storeFacetsFromSchemaOrgData(data, attributes);
+    storeFacetsFromSchemaOrgData(data[topic], schemaorg[topic]);
   }
 }
 
@@ -136,13 +135,12 @@ function updateTableWithSchemaOrgData(obj, data) {
   });
 }
 
-function storeFacetsFromSchemaOrgData(data, attributes) {
-  var topicAttributes = data[Object.keys(data)[0]];
-  for (var i = 0; i < attributes.length; i++) {
-    var attr = attributes[i];
+function storeFacetsFromSchemaOrgData(schemaOrgData, selectedAttributes) {
+  for (var i = 0; i < selectedAttributes.length; i++) {
+    var attr = selectedAttributes[i];
     db.facets.add({
       group: attr,
-      value: topicAttributes[attr]
+      value: schemaOrgData[attr]
     }).catch(err => {
       // console.error(err);
     });
