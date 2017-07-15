@@ -43,7 +43,7 @@
             <div class="card small">
               <div class="card-content">
                 <span class="card-title activator grey-text text-darken-4 smaller">
-                  <a href="{{item.url}}" target="_blank">{{item.title | regex}}</a>
+                  <a href="{{item.url}}" target="_blank">{{item.title | removeSeparator}}</a>
                 </span>
                 <p>{{item.description}}</p>
               </div>
