@@ -137,11 +137,12 @@ function updateTableWithSchemaOrgData(obj, data) {
 }
 
 function storeFacetsFromSchemaOrgData(data, attributes) {
+  var topicAttributes = data[Object.keys(data)[0]];
   for (var i = 0; i < attributes.length; i++) {
     var attr = attributes[i];
     db.facets.add({
       group: attr,
-      value: data[attr]
+      value: topicAttributes[attr]
     }).catch(err => {
       // console.error(err);
     });
@@ -157,7 +158,10 @@ function getSchemaOrgData(obj, topic) {
     return;
   }
   var topicArray = pagemap[topic];
-  return findBestData(topicArray);
+  var topicAttributes = findBestData(topicArray);
+  var topicObject = {};
+  topicObject[topic] = topicAttributes;
+  return topicObject;
 }
 
 function findBestData(arr) {
