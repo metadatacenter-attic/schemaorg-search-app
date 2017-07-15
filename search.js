@@ -6,7 +6,7 @@ db.version(1).stores({
 });
 db.open();
 
-var app = angular.module('schemaorg', ['angular.filter', 'schemaorg-constants'], function($provide) {
+var app = angular.module('schemaorg', ['angular.filter', 'search-facets'], function($provide) {
   // Fixes'history.pushState is not available in packaged apps' error message
   // Source: https://github.com/angular/angular.js/issues/11932
   $provide.decorator('$window', function($delegate) {
@@ -52,7 +52,7 @@ app.factory('CustomSearch', function($q, $http) {
   };
 });
 
-app.controller('SearchController', function($scope, schemaorg, CustomSearch) {
+app.controller('SearchController', function($scope, facets, CustomSearch) {
   var sc = this;
   sc.searchResults = [];
   sc.searchFacets = [];
@@ -62,7 +62,7 @@ app.controller('SearchController', function($scope, schemaorg, CustomSearch) {
     if (userInput == null) {
       return;
     }
-    var input = processUserInput(userInput, schemaorg);
+    var input = processUserInput(userInput, facets);
     var searchPromises = [];
     for (i = 1; i <= pages; i++) {
       var promise = CustomSearch.exec(input.keyword, i);
@@ -72,7 +72,7 @@ app.controller('SearchController', function($scope, schemaorg, CustomSearch) {
       db.items.clear();
       db.facets.clear();
       results.filter(x => x.status === "resolved").forEach(results => {
-        storeResults(results, input.topics, schemaorg)
+        storeResults(results, input.topics, facets)
       });
       db.items.toArray(data => {
         sc.searchResults = data;
@@ -86,12 +86,12 @@ app.controller('SearchController', function($scope, schemaorg, CustomSearch) {
   }
 });
 
-function processUserInput(input, schemaorg) {
+function processUserInput(input, facets) {
   var keyword_split = input.split('#');
   var keyword = keyword_split[0];
   var topics = keyword_split.filter(str => { return str != keyword });
   if (topics.length == 0) {
-    topics = Object.keys(schemaorg);
+    topics = Object.keys(facets);
   }
   return {
     keyword: keyword,
@@ -106,14 +106,14 @@ function settle(promise) {
                       function(e){ return {value:e, status: "rejected" }});
 }
 
-function storeResults(results, topics, schemaorg) {
+function storeResults(results, topics, facets) {
   var resultItems = results.value;
   if (resultItems != null) {
     resultItems.forEach(finding => {
       storeBasicData(finding);
       for (var i = 0; i < topics.length; i++) {
         var topic = topics[i];
-        storeAnySchemaOrgData(finding, topic, schemaorg);
+        storeAnySchemaOrgData(finding, topic, facets);
       }
     });
   }
@@ -130,11 +130,11 @@ function storeBasicData(obj) {
   });
 }
 
-function storeAnySchemaOrgData(obj, topic, schemaorg) {
+function storeAnySchemaOrgData(obj, topic, facets) {
   var data = getSchemaOrgData(obj, topic);
   if (data != null) {
     updateTableWithSchemaOrgData(obj, data);
-    storeFacetsFromSchemaOrgData(data[topic], schemaorg[topic]);
+    storeFacetsFromSchemaOrgData(data[topic], facets[topic]);
   }
 }
 
