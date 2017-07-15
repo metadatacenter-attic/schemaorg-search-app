@@ -113,7 +113,8 @@ function storeBasicData(obj) {
   db.items.add({
     title: obj.title,
     url: obj.link,
-    description: obj.snippet
+    description: obj.snippet,
+    schemaorg: []
   }).catch(err => {
     // console.error(err);
   });
@@ -128,11 +129,8 @@ function storeAnySchemaOrgData(obj, topic, attributes) {
 }
 
 function updateTableWithSchemaOrgData(obj, data) {
-  db.items.put({
-    title: obj.title,
-    url: obj.link,
-    description: obj.snippet,
-    schemaorg: data
+  db.items.where('url').equals(obj.link).modify(item => {
+    item.schemaorg.push(data)
   }).catch(err => {
     // console.error(err);
   });
