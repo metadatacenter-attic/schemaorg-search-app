@@ -19,6 +19,14 @@ var app = angular.module('schemaorg', ['angular.filter', 'schemaorg-constants'],
   });
 });
 
+app.filter('regex', function() {
+   return function(val){
+     var RegExp = /^([^-]+)/;
+     var match = RegExp.exec(val);
+     return match[1];
+   };
+});
+
 app.factory('CustomSearch', function($q, $http) {
   var exec = function(keyword, page) {
     var defer = $q.defer();
