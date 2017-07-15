@@ -108,13 +108,15 @@ function settle(promise) {
 
 function storeResults(results, topics, schemaorg) {
   var resultItems = results.value;
-  resultItems.forEach(finding => {
-    storeBasicData(finding);
-    for (var i = 0; i < topics.length; i++) {
-      var topic = topics[i];
-      storeAnySchemaOrgData(finding, topic, schemaorg);
-    }
-  });
+  if (resultItems != null) {
+    resultItems.forEach(finding => {
+      storeBasicData(finding);
+      for (var i = 0; i < topics.length; i++) {
+        var topic = topics[i];
+        storeAnySchemaOrgData(finding, topic, schemaorg);
+      }
+    });
+  }
 }
 
 function storeBasicData(obj) {
