@@ -7,6 +7,18 @@ body {
   overflow-y: auto;
 }
 
+@media only screen and (min-width: 993px) {
+  .container {
+    width: 70%;
+  }
+}
+
+@media only screen and (min-width: 1136px) {
+  .container {
+    width: 85%;
+  }
+}
+
 .search-result-container {
   padding-top: 10px;
 }
