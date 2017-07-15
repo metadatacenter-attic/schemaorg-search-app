@@ -1,7 +1,7 @@
 var db = new Dexie("clippingDB");
 db.delete();
 db.version(1).stores({
-  items: '[title+url]',
+  items: 'url',
   facets: '[group+value],group'
 });
 db.open();
