@@ -21,7 +21,8 @@ var app = angular.module('schemaorg', ['angular.filter', 'schemaorg-constants'],
 
 app.filter('regex', function() {
    return function(val){
-     var RegExp = /^([^-]+)/;
+     console.log(val);
+     var RegExp = /^([^-^|^(^+^•]+)/;
      var match = RegExp.exec(val);
      return match[1];
    };
