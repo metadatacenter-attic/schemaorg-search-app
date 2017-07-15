@@ -49,27 +49,21 @@ app.controller('SearchController', function($scope, schemaorg, CustomSearch) {
   sc.searchFacets = [];
 
   $scope.doSearch = function(pages) {
-    if ($scope.keyword == null) {
+    var userInput = $scope.keyword;
+    if (userInput == null) {
       return;
     }
-    var keyword_split = $scope.keyword.split('#');
-    var keyword = keyword_split[0];
-    var topics = keyword_split.filter(str => { return str != keyword });
-    if (topics.length == 0) {
-      topics = Object.keys(schemaorg);
-    }
-    console.log(topics);
-
+    var input = processUserInput(userInput, schemaorg);
     var searchPromises = [];
     for (i = 1; i <= pages; i++) {
-      var promise = CustomSearch.exec(keyword, i);
+      var promise = CustomSearch.exec(input.keyword, i);
       searchPromises.push(promise);
     }
     Promise.all(searchPromises.map(settle)).then(results => {
       db.items.clear();
       db.facets.clear();
       results.filter(x => x.status === "resolved").forEach(results => {
-        storeResults(results, topics, schemaorg)
+        storeResults(results, input.topics, schemaorg)
       });
       db.items.toArray(data => {
         sc.searchResults = data;
@@ -82,6 +76,19 @@ app.controller('SearchController', function($scope, schemaorg, CustomSearch) {
     });
   }
 });
+
+function processUserInput(input, schemaorg) {
+  var keyword_split = input.split('#');
+  var keyword = keyword_split[0];
+  var topics = keyword_split.filter(str => { return str != keyword });
+  if (topics.length == 0) {
+    topics = Object.keys(schemaorg);
+  }
+  return {
+    keyword: keyword,
+    topics: topics
+  }
+}
 
 // Solution for handling request failure gracefully in Promise.all
 // Source: https://stackoverflow.com/questions/31424561/wait-until-all-es6-promises-complete-even-rejected-promises
