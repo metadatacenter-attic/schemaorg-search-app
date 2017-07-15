@@ -42,13 +42,13 @@
           <div class="col s4" ng-repeat="item in sc.searchResults" ng-if="item.schemaorg.length">
             <div class="card grey lighten-4 small">
               <div class="card-content">
-                <span class="card-title activator grey-text text-darken-4">
+                <span class="card-title activator grey-text text-darken-4 smaller">
                   <a href="{{item.schemaorg.url}}" target="_blank">{{item.title}}</a>
                   <i class="material-icons right">more_vert</i></span>
                 <p>{{item.description}}</p>
               </div>
               <div class="card-reveal">
-                <span class="card-title grey-text text-darken-4">Schema.org Markup
+                <span class="card-title grey-text text-darken-4 smaller">Schema.org Markup
                   <i class="material-icons right">close</i></span>
                 <pre>{{item.schemaorg | json}}</pre>
               </div>

@@ -34,6 +34,11 @@ h5.smaller {
   font-size: 14pt;
 }
 
+.card .card-title.smaller {
+  font-size: 12pt;
+  line-height: 22px;
+}
+
 .collection.with-header .collection-item.narrow-padding-left {
   padding-left: 18px;
 }
