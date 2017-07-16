@@ -69,8 +69,10 @@ app.controller('SearchController', function($scope, facets, units, CustomSearch)
     }
     Promise.all(searchPromises.map(settle)).then(results => {
       db.items.clear();
-      results.filter(x => x.status === "resolved").forEach(results => {
-        storeResults(results, input.topics, facets, units)
+      results.filter(x => x.status === "resolved").forEach(output => {
+        var topics = input.topics;
+        var searchResults = output.value;
+        storeResults(searchResults, topics, facets, units)
       });
       db.items.toArray(data => {
         sc.searchResults = data;
@@ -105,21 +107,21 @@ function settle(promise) {
                       function(e){ return {value:e, status: "rejected" }});
 }
 
-function storeResults(results, topics, facets, units) {
-  var resultItems = results.value;
-  if (resultItems != null) {
-    resultItems.forEach(finding => {
-      storeBasicData(finding);
-      storeSchemaOrgData(finding, topics, facets, units);
+function storeResults(searchResults, topics, facets, units) {
+  if (searchResults != null) {
+    searchResults.forEach(resultItem => {
+      var pkItem = resultItem.link;
+      storeBasicData(pkItem, resultItem);
+      storeSchemaOrgData(pkItem, resultItem, topics, facets, units);
     });
   }
 }
 
-function storeBasicData(obj) {
+function storeBasicData(pkItem, resultItem) {
   db.items.add({
-    title: obj.title,
-    url: obj.link,
-    description: obj.snippet,
+    url: pkItem,
+    title: resultItem.title,
+    description: resultItem.snippet,
     properties: [],
     schemaorg: [],
   }).catch(err => {
@@ -127,33 +129,32 @@ function storeBasicData(obj) {
   });
 }
 
-function storeSchemaOrgData(obj, topics, facets, units) {
+function storeSchemaOrgData(pkItem, resultItem, topics, facets, units) {
   for (var i = 0; i < topics.length; i++) {
     var topic = topics[i];
-    storeAnySchemaOrgData(obj, topic, facets, units);
+    var schemaOrgData = getSchemaOrgData(resultItem, topic);
+    if (schemaOrgData != null) {
+      updateTableWithSchemaOrgData(pkItem, schemaOrgData);
+      updateTableWithExtraProperties(pkItem, schemaOrgData, topic, facets, units);
+    }
   }
 }
 
-function storeAnySchemaOrgData(obj, topic, facets, units) {
-  var data = getSchemaOrgData(obj, topic);
-  if (data != null) {
-    updateTableWithSchemaOrgData(obj, data, topic, facets, units);
-  }
-}
-
-function updateTableWithSchemaOrgData(obj, data, topic, facets, units) {
-  db.items.where('url').equals(obj.link).modify(item => {
-    item.schemaorg.push(data)
+function updateTableWithSchemaOrgData(pkItem, schemaOrgData) {
+  db.items.where('url').equals(pkItem).modify(item => {
+    item.schemaorg.push(schemaOrgData)
   }).catch(err => {
     // console.error(err);
   });
-  db.items.where('url').equals(obj.link).modify(item => {
+}
+
+function updateTableWithExtraProperties(pkItem, schemaOrgData, topic, facets, units) {
+  db.items.where('url').equals(pkItem).modify(item => {
     var topicFacet = facets[topic];
-    var facetSize = topicFacet.terms.length;
-    for (var i = 0; i < facetSize; i++) {
+    for (var i = 0; i < topicFacet.terms.length; i++) {
       var term = topicFacet.terms[i];
       var label = topicFacet.labels[i];
-      var value = toNumeric(data[topic][term], units[term]);
+      var value = toNumeric(schemaOrgData[topic][term], units[term]);
       if (value != null) {
         var property = {
           domain: topic,
@@ -185,10 +186,6 @@ function getSchemaOrgData(obj, topic) {
   return topicObject;
 }
 
-function toNumeric(value, unit) {
-  return value;
-}
-
 function findBestData(arr) {
   var toReturn = {};
   var bestInfoSize = -1;
@@ -201,4 +198,8 @@ function findBestData(arr) {
     }
   }
   return toReturn;
+}
+
+function toNumeric(value, unit) {
+  return value;
 }
