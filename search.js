@@ -6,7 +6,7 @@ db.version(1).stores({
 });
 db.open();
 
-var app = angular.module('schemaorg', ['angular.filter', 'search-facets'], function($provide) {
+var app = angular.module('schemaorg', ['angular.filter', 'search-facets', 'data-units'], function($provide) {
   // Fixes'history.pushState is not available in packaged apps' error message
   // Source: https://github.com/angular/angular.js/issues/11932
   $provide.decorator('$window', function($delegate) {
@@ -52,7 +52,7 @@ app.factory('CustomSearch', function($q, $http) {
   };
 });
 
-app.controller('SearchController', function($scope, facets, CustomSearch) {
+app.controller('SearchController', function($scope, facets, units, CustomSearch) {
   var sc = this;
   sc.searchResults = [];
   sc.searchFacets = [];
@@ -72,14 +72,15 @@ app.controller('SearchController', function($scope, facets, CustomSearch) {
       db.items.clear();
       db.facets.clear();
       results.filter(x => x.status === "resolved").forEach(results => {
-        storeResults(results, input.topics, facets)
+        storeResults(results, input.topics, facets, units)
       });
       db.items.toArray(data => {
         sc.searchResults = data;
-        $scope.$apply();
-      });
-      db.facets.toArray(data => {
-        sc.searchFacets = data
+        var facetData = [];
+        for (var i = 0; i < data.length; i++) {
+          facetData = facetData.concat(data[i].properties);
+        }
+        sc.searchFacets = facetData;
         $scope.$apply();
       });
     });
@@ -106,15 +107,12 @@ function settle(promise) {
                       function(e){ return {value:e, status: "rejected" }});
 }
 
-function storeResults(results, topics, facets) {
+function storeResults(results, topics, facets, units) {
   var resultItems = results.value;
   if (resultItems != null) {
     resultItems.forEach(finding => {
       storeBasicData(finding);
-      for (var i = 0; i < topics.length; i++) {
-        var topic = topics[i];
-        storeAnySchemaOrgData(finding, topic, facets);
-      }
+      storeSchemaOrgData(finding, topics, facets, units);
     });
   }
 }
@@ -124,41 +122,54 @@ function storeBasicData(obj) {
     title: obj.title,
     url: obj.link,
     description: obj.snippet,
-    schemaorg: []
+    properties: [],
+    schemaorg: [],
   }).catch(err => {
     // console.error(err);
   });
 }
 
-function storeAnySchemaOrgData(obj, topic, facets) {
-  var data = getSchemaOrgData(obj, topic);
-  if (data != null) {
-    updateTableWithSchemaOrgData(obj, data);
-    storeFacetsFromSchemaOrgData(data[topic], facets[topic]);
+function storeSchemaOrgData(obj, topics, facets, units) {
+  for (var i = 0; i < topics.length; i++) {
+    var topic = topics[i];
+    storeAnySchemaOrgData(obj, topic, facets, units);
   }
 }
 
-function updateTableWithSchemaOrgData(obj, data) {
+function storeAnySchemaOrgData(obj, topic, facets, units) {
+  var data = getSchemaOrgData(obj, topic);
+  if (data != null) {
+    updateTableWithSchemaOrgData(obj, data, topic, facets, units);
+  }
+}
+
+function updateTableWithSchemaOrgData(obj, data, topic, facets, units) {
   db.items.where('url').equals(obj.link).modify(item => {
     item.schemaorg.push(data)
   }).catch(err => {
     // console.error(err);
   });
-}
-
-function storeFacetsFromSchemaOrgData(schemaOrgData, topicFacets) {
-  var facetSize = topicFacets.terms.length;
-  for (var i = 0; i < facetSize; i++) {
-    var topicTerm = topicFacets.terms[i];
-    var topicLabel = topicFacets.labels[i];
-    db.facets.add({
-      term: topicTerm,
-      label: topicLabel,
-      value: schemaOrgData[topicTerm]
-    }).catch(err => {
-      // console.error(err);
-    });
-  }
+  db.items.where('url').equals(obj.link).modify(item => {
+    var topicFacet = facets[topic];
+    var facetSize = topicFacet.terms.length;
+    for (var i = 0; i < facetSize; i++) {
+      var term = topicFacet.terms[i];
+      var label = topicFacet.labels[i];
+      var value = toNumeric(data[topic][term], units[term]);
+      if (value != null) {
+        var property = {
+          domain: topic,
+          name: term,
+          label: label,
+          value: value,
+          unit: units[term]
+        }
+        item.properties.push(property);
+      }
+    }
+  }).catch(err => {
+    // console.error(err);
+  });
 }
 
 function getSchemaOrgData(obj, topic) {
@@ -174,6 +185,10 @@ function getSchemaOrgData(obj, topic) {
   var topicObject = {};
   topicObject[topic] = topicAttributes;
   return topicObject;
+}
+
+function toNumeric(value, unit) {
+  return value;
 }
 
 function findBestData(arr) {
