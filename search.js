@@ -1,8 +1,7 @@
 var db = new Dexie("clippingDB");
 db.delete();
 db.version(1).stores({
-  items: 'url',
-  facets: '[term+value]'
+  items: 'url'
 });
 db.open();
 
@@ -70,7 +69,6 @@ app.controller('SearchController', function($scope, facets, units, CustomSearch)
     }
     Promise.all(searchPromises.map(settle)).then(results => {
       db.items.clear();
-      db.facets.clear();
       results.filter(x => x.status === "resolved").forEach(results => {
         storeResults(results, input.topics, facets, units)
       });
