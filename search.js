@@ -2,7 +2,7 @@ var db = new Dexie("clippingDB");
 db.delete();
 db.version(1).stores({
   items: 'url',
-  facets: '[group+value],group'
+  facets: '[term+value]'
 });
 db.open();
 
@@ -146,12 +146,15 @@ function updateTableWithSchemaOrgData(obj, data) {
   });
 }
 
-function storeFacetsFromSchemaOrgData(schemaOrgData, selectedAttributes) {
-  for (var i = 0; i < selectedAttributes.length; i++) {
-    var attr = selectedAttributes[i];
+function storeFacetsFromSchemaOrgData(schemaOrgData, topicFacets) {
+  var facetSize = topicFacets.terms.length;
+  for (var i = 0; i < facetSize; i++) {
+    var topicTerm = topicFacets.terms[i];
+    var topicLabel = topicFacets.labels[i];
     db.facets.add({
-      group: attr,
-      value: schemaOrgData[attr]
+      term: topicTerm,
+      label: topicLabel,
+      value: schemaOrgData[topicTerm]
     }).catch(err => {
       // console.error(err);
     });
