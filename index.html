@@ -33,8 +33,8 @@
             ng-repeat="(label, value) in sc.searchFacets | groupBy:'label'">
           <li class="collection-header smaller">{{label}}</li>
           <li class="collection-item narrow-padding-left" ng-repeat="facet in value">
-            <input type="checkbox" id="{{group}}{{$index}}">
-                <label class="smaller" for="{{group}}{{$index}}">{{facet.value}}</label>
+            <input type="checkbox" id="{{label}}{{$index}}">
+                <label class="smaller" for="{{label}}{{$index}}">{{facet.value}}</label>
           </li>
         </ul>
       </div>
