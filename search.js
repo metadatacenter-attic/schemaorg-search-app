@@ -76,15 +76,73 @@ app.controller('SearchController', function($scope, facets, units, CustomSearch)
       });
       db.items.toArray(data => {
         sc.searchResults = data;
+
         var facetData = [];
         for (var i = 0; i < data.length; i++) {
-          facetData = facetData.concat(data[i].properties);
+          var itemProperties = data[i].properties;
+            for (var j = 0; j < itemProperties.length; j++) {
+              var propertyObj = itemProperties[j];
+              var facet = {
+                domain: propertyObj.domain,
+                name: propertyObj.name,
+                label: propertyObj.label,
+                value: propertyObj.value,
+                selected: false
+              }
+              facetData.push(facet);
+            }
         }
-        sc.searchFacets = facetData;
+        const domainFlags = new Set();
+        const nameFlags = new Set();
+        const valueFlags = new Set();
+        const newFacetData = facetData.filter(entry => {
+          if (domainFlags.has(entry.domain) &&
+              nameFlags.has(entry.name) &&
+              valueFlags.has(entry.value)) {
+            return false;
+          }
+          domainFlags.add(entry.domain);
+          nameFlags.add(entry.name);
+          valueFlags.add(entry.value);
+          return true;
+        });
+        sc.searchFacets = newFacetData;
         $scope.$apply();
       });
     });
   }
+
+  // Watch fruits for changes
+  $scope.$watch('sc.searchFacets|filter:{selected:true}', function (nv) {
+    if (nv.length == 0) {
+      db.items.toArray(data => {
+        sc.searchResults = data;
+        $scope.$apply();
+      });
+    } else {
+      db.items.filter(data => {
+        var extraProperties = data.properties;
+        if (extraProperties.length == 0) {
+          return true;
+        } else {
+          var output = extraProperties.filter(item => {
+            var answer = false;
+            for (var i = 0; i < nv.length; i++) {
+              var facet = nv[i];
+              answer = answer || item.domain == facet.domain &&
+                  item.name == facet.name &&
+                  item.value == facet.value;
+            }
+            return answer;
+          });
+          return output.length != 0
+        }
+      }).toArray(data => {
+        sc.searchResults = data;
+        $scope.$apply();
+      });
+    }
+  }, true);
 });
 
 function processUserInput(input, facets) {
