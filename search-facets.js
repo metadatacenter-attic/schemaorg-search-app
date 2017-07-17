@@ -3,28 +3,34 @@ angular.module("search-facets", []).constant('facets',
         'terms': [ 'preptime', 'cooktime', 'totaltime', 'recipeyield',
             'recipecategory', 'aggregaterating' ],
         'labels': [ 'Prep Time', 'Cook Time', 'Total Time', 'Serving Size',
-            'Recipe Category', 'Recipe Ratings' ]
+            'Recipe Category', 'Recipe Ratings' ],
+        'dtype': [ 'numeric', 'numeric', 'numeric', 'numeric', 'text', 'numeric']
     },
     'nutritioninformation': {
         'terms': [ 'calories', 'fatcontent', 'carbohydratecontent',
             'proteincontent', 'cholesterolcontent', 'sodiumcontent' ],
         'labels': [ 'Calories', 'Fat', 'Carbohydrate', 'Protein',
-            'Cholesterol', 'Sodium' ]
+            'Cholesterol', 'Sodium' ],
+        'dtype': [ 'numeric', 'numeric', 'numeric', 'numeric', 'numeric', 'numeric' ]
     },
     'newsarticle': {
         'terms': [ 'datepublished' ],
-        'labels': [ 'Publication Date' ]
+        'labels': [ 'Publication Date' ],
+        'dtype': [ 'date' ]
     },
     'videoobject': {
         'terms': [ 'datepublished', 'duration', 'isfamilyfriendly', 'genre' ],
-        'labels': [ 'Publication Date', 'Duration', 'Family Friendly?', 'Genre' ]
+        'labels': [ 'Publication Date', 'Duration', 'Family Friendly?', 'Genre' ],
+        'dtype': [ 'date', 'numeric', 'bool', 'text' ]
     },
     'book': {
         'terms': [ 'bookformattype', 'numberofpages', 'inlanguage'],
-        'labels': [ 'Book Format', 'Number of Pages', 'Language' ]
+        'labels': [ 'Book Format', 'Number of Pages', 'Language' ],
+        'dtype': [ 'text', 'numeric', 'text' ]
     },
     'dataset': {
         'terms': [ 'license' ],
-        'labels': [ 'License' ]
+        'labels': [ 'License' ],
+        'dtype': [ 'text' ]
     }
   });
