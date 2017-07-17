@@ -65,9 +65,17 @@ label.smaller {
   background:linear-gradient(transparent 10px, white);
 }
 
+.card.small {
+  height: 210px;
+}
+
 .card .card-title.smaller {
   font-size: 12pt;
   line-height: 22px;
+}
+
+.card .card-action.narrower {
+  padding: 8px 24px;
 }
 
 .collection.with-header .collection-header.smaller {
