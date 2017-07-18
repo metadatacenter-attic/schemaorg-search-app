@@ -85,9 +85,8 @@ app.controller('SearchController', function($scope, facets, units, CustomSearch)
               var facet = {
                 domain: propertyObj.domain,
                 name: propertyObj.name,
-                label: propertyObj.label,
+                label: propertyObj.label + " " + getUnitLabel(propertyObj.unit),
                 value: propertyObj.value,
-                unit: propertyObj.unit,
                 selected: false
               }
               facetData.push(facet);
@@ -308,4 +307,12 @@ function getNumberOnly(text) {
   var RegExp = /(\d+)/;
   var match = RegExp.exec(text);
   return match[1];
+}
+
+function getUnitLabel(unit) {
+  if (unit == null) {
+    return "";
+  } else {
+    return "(" + unit + ")"
+  }
 }
