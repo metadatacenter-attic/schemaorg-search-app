@@ -21,7 +21,7 @@ angular.module("search-facets", []).constant('facets',
     'videoobject': {
         'terms': [ 'datepublished', 'duration', 'isfamilyfriendly', 'genre' ],
         'labels': [ 'Publication Date', 'Duration', 'Family Friendly?', 'Genre' ],
-        'dtype': [ 'date', 'numeric', 'boolean', 'text' ]
+        'dtype': [ 'date', 'duration', 'boolean', 'text' ]
     },
     'book': {
         'terms': [ 'bookformattype', 'numberofpages', 'inlanguage'],
