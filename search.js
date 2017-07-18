@@ -212,13 +212,14 @@ function updateTableWithExtraProperties(pkItem, schemaOrgData, topic, facets, un
     for (var i = 0; i < topicFacet.terms.length; i++) {
       var term = topicFacet.terms[i];
       var label = topicFacet.labels[i];
-      var value = toNumeric(schemaOrgData[topic][term], units[term]);
+      var dtype = topicFacet.dtype[i];
+      var value = schemaOrgData[topic][term];
       if (value != null) {
         var property = {
           domain: topic,
           name: term,
           label: label,
-          value: value,
+          value: refineValue(value, dtype, units[term]),
           unit: units[term]
         }
         item.properties.push(property);
@@ -258,6 +259,29 @@ function findBestData(arr) {
   return toReturn;
 }
 
-function toNumeric(value, unit) {
+function refineValue(value, dtype, unit) {
+  if (dtype === "numeric") {
+    return refineNumericData(value, unit);
+  }
   return value;
+}
+
+function refineNumericData(value, unit) {
+  if (unit != null) {
+    try {
+      return Qty(value).to(unit).scalar;
+    } catch (err) {
+      return autoFixNumericData(value);
+    }
+  } else {
+    return autoFixNumericData(value);
+  }
+}
+
+function autoFixNumericData(value) {
+  var RegExp = /^(\d+)/;
+  var match = RegExp.exec(value);
+  var numericValue = match[1];
+  console.log("INFO: Applying an auto-fix by converting \"" + value + "\" to: \"" + numericValue + "\"");
+  return numericValue;
 }
