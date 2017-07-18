@@ -32,5 +32,10 @@ angular.module("search-facets", []).constant('facets',
         'terms': [ 'license' ],
         'labels': [ 'License' ],
         'dtype': [ 'text' ]
+    },
+    'MedicalStudy': {
+        'terms': [],
+        'labels': [],
+        'dtype': []
     }
   });
