@@ -58,7 +58,7 @@ label.smaller {
 .fadeout-overflow:before {
   content:'';
   width:100%;
-  height:100px;
+  height:130px;
   position:absolute;
   left:0;
   background:linear-gradient(transparent 20px, white);
