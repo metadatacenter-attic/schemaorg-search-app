@@ -87,6 +87,7 @@ app.controller('SearchController', function($scope, facets, units, CustomSearch)
                 name: propertyObj.name,
                 label: propertyObj.label,
                 value: propertyObj.value,
+                unit: propertyObj.unit,
                 selected: false
               }
               facetData.push(facet);
