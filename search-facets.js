@@ -4,7 +4,7 @@ angular.module("search-facets", []).constant('facets',
             'recipecategory', 'aggregaterating' ],
         'labels': [ 'Prep Time', 'Cook Time', 'Total Time', 'Serving Size',
             'Recipe Category', 'Recipe Ratings' ],
-        'dtype': [ 'numeric', 'numeric', 'numeric', 'numeric', 'text', 'numeric']
+        'dtype': [ 'duration', 'duration', 'duration', 'numeric', 'text', 'numeric']
     },
     'nutritioninformation': {
         'terms': [ 'calories', 'fatcontent', 'carbohydratecontent',
