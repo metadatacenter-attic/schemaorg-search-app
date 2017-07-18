@@ -87,6 +87,7 @@ app.controller('SearchController', function($scope, facets, units, CustomSearch)
                 name: propertyObj.name,
                 label: propertyObj.label + " " + getUnitLabel(propertyObj.unit),
                 value: propertyObj.value,
+                type: propertyObj.range,
                 selected: false
               }
               facetData.push(facet);
@@ -217,6 +218,7 @@ function updateTableWithExtraProperties(pkItem, schemaOrgData, topic, facets, un
       if (value != null) {
         var property = {
           domain: topic,
+          range: dtype,
           name: term,
           label: label,
           value: refineValue(value, dtype, units[term]),
