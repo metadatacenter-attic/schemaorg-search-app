@@ -263,6 +263,8 @@ function findBestData(arr) {
 function refineValue(value, dtype, unit) {
   if (dtype === "numeric") {
     return refineNumericData(value, unit);
+  } else if (dtype === "duration") {
+    return refineDurationData(value, unit);
   }
   return value;
 }
@@ -279,10 +281,31 @@ function refineNumericData(value, unit) {
   }
 }
 
+function refineDurationData(value, unit) {
+  var duration = moment.duration(value);
+  if (duration._milliseconds != 0) {
+    return duration.as(unit);
+  } else {
+    return autoFixDurationData(value);
+  }
+}
+
 function autoFixNumericData(value) {
-  var RegExp = /^(\d+)/;
-  var match = RegExp.exec(value);
-  var numericValue = match[1];
-  console.log("INFO: Applying an auto-fix by converting \"" + value + "\" to: \"" + numericValue + "\"");
+  var numericValue = getNumberOnly(value)
+  console.log("INFO: Applying an auto-fix for numeric data by converting " +
+      "\"" + value + "\" to: \"" + numericValue + "\"");
   return numericValue;
+}
+
+function autoFixDurationData(value) {
+  var durationValue = getNumberOnly(value);
+  console.log("INFO: Applying an auto-fix for duration data by converting " +
+      "\"" + value + "\" to: \"" + durationValue + "\"");
+  return durationValue;
+}
+
+function getNumberOnly(text) {
+  var RegExp = /(\d+)/;
+  var match = RegExp.exec(text);
+  return match[1];
 }
