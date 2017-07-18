@@ -292,15 +292,15 @@ function refineDurationData(value, unit) {
 
 function autoFixNumericData(value) {
   var numericValue = getNumberOnly(value)
-  console.log("INFO: Applying an auto-fix for numeric data by converting " +
-      "\"" + value + "\" to: \"" + numericValue + "\"");
+  console.log("INFO: Applying an auto-fix for [numeric] data by converting " +
+      "\"" + value + "\" to \"" + numericValue + "\"");
   return numericValue;
 }
 
 function autoFixDurationData(value) {
   var durationValue = getNumberOnly(value);
-  console.log("INFO: Applying an auto-fix for duration data by converting " +
-      "\"" + value + "\" to: \"" + durationValue + "\"");
+  console.log("INFO: Applying an auto-fix for [duration] data by converting " +
+      "\"" + value + "\" to \"" + durationValue + "\"");
   return durationValue;
 }
 
