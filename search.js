@@ -5,7 +5,7 @@ db.version(1).stores({
 });
 db.open();
 
-var app = angular.module('schemaorg', ['angular.filter', 'search-facets', 'data-units'], function($provide) {
+var app = angular.module('schemaorg', ['angular.filter', 'user-profiles', 'search-facets', 'data-units'], function($provide) {
   // Fixes'history.pushState is not available in packaged apps' error message
   // Source: https://github.com/angular/angular.js/issues/11932
   $provide.decorator('$window', function($delegate) {
@@ -28,12 +28,12 @@ app.filter('removeSeparator', function() {
 });
 
 app.factory('CustomSearch', function($q, $http) {
-  var exec = function(keyword, page) {
+  var exec = function(apiKey, searchEngineId, keyword, page) {
     var defer = $q.defer();
     var offset = 10;
     var url = 'https://www.googleapis.com/customsearch/v1' +
-      '?key=AIzaSyC0tYdp3uFxDdgJO4t5hZNznH7qsBFHFRw' +
-      '&cx=000084546530648272235:2a0v4vyk8nu' +
+      '?key=' + apiKey +
+      '&cx=' + searchEngineId +
       '&q=' + keyword +
       '&start=' + (((page - 1) * offset) + 1) +
       '&num=10';
@@ -51,20 +51,25 @@ app.factory('CustomSearch', function($q, $http) {
   };
 });
 
-app.controller('SearchController', function($scope, facets, units, CustomSearch) {
+app.controller('SearchController', function($scope, profiles, facets, units, CustomSearch) {
+  var profile = profiles['schemaorg'];
   var sc = this;
   sc.searchResults = [];
   sc.searchFacets = [];
 
-  $scope.doSearch = function(pages) {
+  $scope.doSearch = function() {
     var userInput = $scope.keyword;
     if (userInput == null) {
       return;
     }
     var input = processUserInput(userInput, facets);
     var searchPromises = [];
+    var pages = profile.pageLimit;
+    var apiKey = profile.apiKey;
+    var searchEngineId = profile.searchEngineId;
+    var keyword = input.keyword;
     for (i = 1; i <= pages; i++) {
-      var promise = CustomSearch.exec(input.keyword, i);
+      var promise = CustomSearch.exec(apiKey, searchEngineId, keyword, i);
       searchPromises.push(promise);
     }
     Promise.all(searchPromises.map(settle)).then(results => {
