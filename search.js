@@ -113,23 +113,22 @@ app.controller('SearchController', function($scope, facets, units, CustomSearch)
     });
   }
 
-  // Watch fruits for changes
-  $scope.$watch('sc.searchFacets|filter:{selected:true}', function (nv) {
-    if (nv.length == 0) {
+  // Watch for selected facets
+  $scope.$watch('sc.searchFacets|filter:{selected:true}', function(selectedFacets) {
+    if (selectedFacets.length == 0) {
       db.items.toArray(data => {
         sc.searchResults = data;
         $scope.$apply();
       });
     } else {
       db.items.filter(data => {
-        var extraProperties = data.properties;
-        if (extraProperties.length == 0) {
+        if (data.schemaorg.length == 0) {
           return true;
         } else {
-          var output = extraProperties.filter(item => {
+          var output = data.properties.filter(item => {
             var answer = false;
-            for (var i = 0; i < nv.length; i++) {
-              var facet = nv[i];
+            for (var i = 0; i < selectedFacets.length; i++) {
+              var facet = selectedFacets[i];
               answer = answer || item.domain == facet.domain &&
                   item.name == facet.name &&
                   item.value == facet.value;
