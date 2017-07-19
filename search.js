@@ -187,6 +187,7 @@ function storeBasicData(pkItem, resultItem) {
     url: pkItem,
     title: resultItem.title,
     description: resultItem.snippet,
+    types: [],
     properties: [],
     schemaorg: [],
   }).catch(err => {
@@ -200,6 +201,7 @@ function storeSchemaOrgData(pkItem, resultItem, topics, facets, units) {
     var schemaOrgData = getSchemaOrgData(resultItem, topic);
     if (schemaOrgData != null) {
       updateTableWithSchemaOrgData(pkItem, schemaOrgData);
+      updateTableWithSchemaTypes(pkItem, schemaOrgData);
       updateTableWithExtraProperties(pkItem, schemaOrgData, topic, facets, units);
     }
   }
@@ -208,6 +210,17 @@ function storeSchemaOrgData(pkItem, resultItem, topics, facets, units) {
 function updateTableWithSchemaOrgData(pkItem, schemaOrgData) {
   db.items.where('url').equals(pkItem).modify(item => {
     item.schemaorg.push(schemaOrgData)
+  }).catch(err => {
+    // console.error(err);
+  });
+}
+
+function updateTableWithSchemaTypes(pkItem, schemaOrgData) {
+  db.items.where('url').equals(pkItem).modify(item => {
+    var types = Object.keys(schemaOrgData);
+    for (var i = 0; i < types.length; i++) {
+      item.types.push(types[i]);
+    }
   }).catch(err => {
     // console.error(err);
   });
