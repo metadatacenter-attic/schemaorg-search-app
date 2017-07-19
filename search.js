@@ -91,6 +91,7 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
             for (var j = 0; j < itemProperties.length; j++) {
               var propertyItem = itemProperties[j];
               var facet = {
+                category: propertyItem.category,
                 domain: propertyItem.domain,
                 name: propertyItem.name,
                 label: propertyItem.label + " " + getUnitLabel(propertyItem.unit),
@@ -122,16 +123,9 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
       });
     } else {
       // Group the selected facets to assist the boolean operation
-      var indexArray = [];
       var selectedFacetsInGroup = selectedFacets.reduce(function(arr, facet) {
-        var indexName = facet.domain+facet.name;
-        var groupIndex = indexArray.indexOf(indexName);
-        if (groupIndex === -1) {
-          indexArray.push(indexName);
-          groupIndex = indexArray.length - 1;
-        }
-        arr[groupIndex] = arr[groupIndex] || { domain: facet.domain, name: facet.name, values: [] };
-        arr[groupIndex].values.push(facet.value);
+        arr[facet.category] = arr[facet.category] || { domain: facet.domain, name: facet.name, values: [] };
+        arr[facet.category].values.push(facet.value);
         return arr;
       }, []);
 
