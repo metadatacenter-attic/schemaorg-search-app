@@ -310,9 +310,24 @@ function autoFixDurationData(value) {
 }
 
 function getNumberOnly(text) {
-  var RegExp = /(\d+)/;
+  var RegExp = /(\d+([\/\.]\d+)?)/;
   var match = RegExp.exec(text);
-  return match[1];
+  return evalNumber(match[1]);
+}
+
+function evalNumber(number) {
+  var value = number;
+  var y = number.split(' ');
+  if (y.length > 1) {
+    var z = y[1].split('/');
+    value = +y[0] + (z[0] / z[1]);
+  } else {
+    var z = y[0].split('/');
+    if (z.length > 1) {
+      value = z[0] / z[1];
+    }
+  }
+  return value;
 }
 
 function getUnitLabel(unit) {
