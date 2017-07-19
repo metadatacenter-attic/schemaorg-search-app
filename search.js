@@ -129,7 +129,7 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
         arr[facet.category] = arr[facet.category] || { domain: facet.domain, name: facet.name, values: [] };
         arr[facet.category].values.push(facet.value);
         return arr;
-      }, []);
+      }, []).filter(() => { return true; });
 
       // Filter the results base on the selected facets
       db.items.filter(data => {
