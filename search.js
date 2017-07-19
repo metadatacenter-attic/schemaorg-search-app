@@ -89,13 +89,13 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
         for (var i = 0; i < data.length; i++) {
           var itemProperties = data[i].properties;
             for (var j = 0; j < itemProperties.length; j++) {
-              var propertyObj = itemProperties[j];
+              var propertyItem = itemProperties[j];
               var facet = {
-                domain: propertyObj.domain,
-                name: propertyObj.name,
-                label: propertyObj.label + " " + getUnitLabel(propertyObj.unit),
-                value: propertyObj.value,
-                type: propertyObj.range,
+                domain: propertyItem.domain,
+                name: propertyItem.name,
+                label: propertyItem.label + " " + getUnitLabel(propertyItem.unit),
+                value: propertyItem.value,
+                type: propertyItem.range,
                 selected: false
               }
               facetData.push(facet);
