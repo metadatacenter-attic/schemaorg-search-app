@@ -98,21 +98,12 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
               facetData.push(facet);
             }
         }
-        const domainFlags = new Set();
-        const nameFlags = new Set();
-        const valueFlags = new Set();
-        const newFacetData = facetData.filter(entry => {
-          if (domainFlags.has(entry.domain) &&
-              nameFlags.has(entry.name) &&
-              valueFlags.has(entry.value)) {
-            return false;
-          }
-          domainFlags.add(entry.domain);
-          nameFlags.add(entry.name);
-          valueFlags.add(entry.value);
-          return true;
-        });
-        sc.searchFacets = newFacetData;
+        facetData = facetData.filter((facet, index, self) =>
+            self.findIndex(t =>
+                t.domain === facet.domain &&
+                t.name === facet.name &&
+                t.value === facet.value) === index);
+        sc.searchFacets = facetData;
         $scope.$apply();
       });
     });
