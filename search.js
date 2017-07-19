@@ -111,28 +111,40 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
 
   // Watch for selected facets
   $scope.$watch('sc.searchFacets|filter:{selected:true}', function(selectedFacets) {
+    // Restore the whole search results if no facets are selected
     if (selectedFacets.length == 0) {
       db.items.toArray(data => {
         sc.searchResults = data;
         $scope.$apply();
       });
     } else {
-      db.items.filter(data => {
-        if (data.schemaorg.length == 0) {
-          return true;
-        } else {
-          var output = data.properties.filter(item => {
-            var answer = false;
-            for (var i = 0; i < selectedFacets.length; i++) {
-              var facet = selectedFacets[i];
-              answer = answer || item.domain == facet.domain &&
-                  item.name == facet.name &&
-                  item.value == facet.value;
-            }
-            return answer;
-          });
-          return output.length != 0
+      // Group the selected facets to assist the boolean operation
+      var indexArray = [];
+      var selectedFacetsInGroup = selectedFacets.reduce(function(arr, facet) {
+        var indexName = facet.domain+facet.name;
+        var groupIndex = indexArray.indexOf(indexName);
+        if (groupIndex === -1) {
+          indexArray.push(indexName);
+          groupIndex = indexArray.length - 1;
         }
+        arr[groupIndex] = arr[groupIndex] || { domain: facet.domain, name: facet.name, values: [] };
+        arr[groupIndex].values.push(facet.value);
+        return arr;
+      }, []);
+
+      // Filter the results base on the selected facets
+      db.items.filter(data => {
+        var includeData = true;
+        for (var i = 0; i < selectedFacetsInGroup.length; i++) {
+          var facet = selectedFacetsInGroup[i];
+          for (var j = 0; j < data.properties.length; j++) {
+            var propertyItem = data.properties[j];
+            if (propertyItem.domain == facet.domain && propertyItem.name == facet.name) {
+              includeData = includeData && facet.values.includes(propertyItem.value);
+            }
+          }
+        }
+        return includeData;
       }).toArray(data => {
         sc.searchResults = data;
         $scope.$apply();
