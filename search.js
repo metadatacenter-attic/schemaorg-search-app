@@ -1,3 +1,4 @@
+var propertyCategories = [];
 var db = new Dexie("clippingDB");
 db.delete();
 db.version(1).stores({
@@ -58,6 +59,8 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
   sc.searchFacets = [];
 
   $scope.doSearch = function() {
+    var propertyCategories = [];
+
     var userInput = $scope.keyword;
     if (userInput == null) {
       return;
@@ -222,8 +225,15 @@ function updateTableWithExtraProperties(pkItem, schemaOrgData, topic, facets, un
       var label = topicFacet.labels[i];
       var dtype = topicFacet.dtype[i];
       var value = schemaOrgData[topic][term];
+      var propertyCategoryName = topic+term;
+      var propertyCategory = propertyCategories.indexOf(propertyCategoryName);
+      if (propertyCategory === -1) {
+        propertyCategories.push(propertyCategoryName);
+        propertyCategory = propertyCategories.length - 1;
+      }
       if (value != null) {
         var property = {
+          category: propertyCategory,
           domain: topic,
           range: dtype,
           name: term,
