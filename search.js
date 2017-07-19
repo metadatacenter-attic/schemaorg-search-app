@@ -327,7 +327,7 @@ function evalNumber(number) {
       value = z[0] / z[1];
     }
   }
-  return value;
+  return +value;
 }
 
 function getUnitLabel(unit) {
