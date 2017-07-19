@@ -99,14 +99,16 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
                 type: propertyItem.range,
                 selected: false
               }
-              facetData.push(facet);
+              var found = facetData.some(function(facet) {
+                return facet.domain === propertyItem.domain &&
+                    facet.name === propertyItem.name &&
+                    facet.value === propertyItem.value;
+              });
+              if (!found) {
+                facetData.push(facet);
+              }
             }
         }
-        facetData = facetData.filter((facet, index, self) =>
-            self.findIndex(t =>
-                t.domain === facet.domain &&
-                t.name === facet.name &&
-                t.value === facet.value) === index);
         sc.searchFacets = facetData;
         $scope.$apply();
       });
