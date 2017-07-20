@@ -133,17 +133,18 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
 
       // Filter the results base on the selected facets
       db.items.filter(data => {
-        var includeData = true;
+        var answerEachFacet = [];
         for (var i = 0; i < selectedFacetsInGroup.length; i++) {
           var facet = selectedFacetsInGroup[i];
+          answerEachFacet[i] = (data.types.length == 0) || data.types.includes(facet.domain);
           for (var j = 0; j < data.properties.length; j++) {
             var propertyItem = data.properties[j];
             if (propertyItem.domain == facet.domain && propertyItem.name == facet.name) {
-              includeData = includeData && facet.values.includes(propertyItem.value);
+              answerEachFacet[i] = answerEachFacet[i] && facet.values.includes(propertyItem.value);
             }
           }
         }
-        return includeData;
+        return answerEachFacet.reduce((a, b) => { return a && b; });
       }).toArray(data => {
         sc.searchResults = data;
         $scope.$apply();
