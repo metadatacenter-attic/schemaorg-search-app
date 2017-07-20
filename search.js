@@ -6,7 +6,7 @@ db.version(1).stores({
 });
 db.open();
 
-var app = angular.module('schemaorg', ['angular.filter', 'user-profiles', 'search-facets', 'data-units'], function($provide) {
+var app = angular.module('schemaorg', ['angular.filter', 'rzModule', 'user-profiles', 'search-facets', 'data-units'], function($provide) {
   // Fixes'history.pushState is not available in packaged apps' error message
   // Source: https://github.com/angular/angular.js/issues/11932
   $provide.decorator('$window', function($delegate) {
@@ -56,7 +56,8 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
   var profile = profiles['schemaorg'];
   var sc = this;
   sc.searchResults = [];
-  sc.searchFacets = [];
+  sc.categoricalFacet = [];
+  sc.numericalRangeFacet = [];
 
   $scope.doSearch = function() {
     var propertyCategories = [];
@@ -82,83 +83,68 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
         var searchResults = output.value;
         storeResults(searchResults, topics, facets, units)
       });
+
       db.items.toArray(data => {
         sc.searchResults = data;
 
-        var facetData = [];
+        var categoricalFacet = [];
+        var numericalRangeFacet = [];
         for (var i = 0; i < data.length; i++) {
           var itemProperties = data[i].properties;
-            for (var j = 0; j < itemProperties.length; j++) {
-              var propertyItem = itemProperties[j];
+          for (var j = 0; j < itemProperties.length; j++) {
+            var propertyItem = itemProperties[j];
+            if (propertyItem.range === "text") {
               var facet = {
                 category: propertyItem.category,
                 domain: propertyItem.domain,
                 name: propertyItem.name,
                 label: propertyItem.label + " " + getUnitLabel(propertyItem.unit),
                 value: propertyItem.value,
-                type: propertyItem.range,
                 selected: false
               }
-              var found = facetData.some(function(facet) {
+              var found = categoricalFacet.some(function(facet) {
                 return facet.domain === propertyItem.domain &&
                     facet.name === propertyItem.name &&
                     facet.value === propertyItem.value;
               });
               if (!found) {
-                facetData.push(facet);
+                categoricalFacet.push(facet);
+              }
+            } else if (propertyItem.range === "numeric" || propertyItem.range === "duration") {
+              numericalRangeFacet[propertyItem.category] = numericalRangeFacet[propertyItem.category] || {
+                  category: propertyItem.category,
+                  domain: propertyItem.domain,
+                  name: propertyItem.name,
+                  label: propertyItem.label + " " + getUnitLabel(propertyItem.unit),
+                  minValue: Number.MAX_SAFE_INTEGER,
+                  maxValue: Number.MIN_SAFE_INTEGER,
+                  options: {
+                    floor: 0,
+                    ceil: Number.MIN_SAFE_INTEGER,
+                    step: 1,
+                    hideLimitLabels: true
+                  }
+                };
+              var value = propertyItem.value;
+              if (value < numericalRangeFacet[propertyItem.category].minValue) {
+                numericalRangeFacet[propertyItem.category].minValue = value;
+              }
+              if (value > numericalRangeFacet[propertyItem.category].maxValue) {
+                numericalRangeFacet[propertyItem.category].maxValue = value;
+                numericalRangeFacet[propertyItem.category].options.ceil = value;
               }
             }
-        }
-        sc.searchFacets = facetData;
-        $scope.$apply();
-      }).then(() => {
-        // Get only numeric and duration facets
-        var sliderFacets = sc.searchFacets.reduce(function(arr, facet) {
-          if (facet.type === 'numeric' || facet.type === 'duration') {
-            arr[facet.category] = arr[facet.category] ||
-                { id: facet.category,
-                  min: Number.MAX_SAFE_INTEGER,
-                  max: Number.MIN_SAFE_INTEGER };
-            var value = facet.value;
-            if (value < arr[facet.category].min) {
-              arr[facet.category].min = value;
-            }
-            if (value > arr[facet.category].max) {
-              arr[facet.category].max = value;
-            }
           }
-          return arr;
-        }, []).filter(() => { return true; });
-
-        // Draw the sliders
-        for (var i = 0; i < sliderFacets.length; i++) {
-          var sliderFacet = sliderFacets[i];
-          var slider = document.getElementById('slider-' + sliderFacet.id);
-          noUiSlider.create(slider, {
-            start: [sliderFacet.min, sliderFacet.max],
-            tooltips: true,
-            connect: true,
-            range: {
-             'min': 0,
-             'max': sliderFacet.max
-            },
-            format: wNumb({
-              decimals: 0
-            }),
-            pips: {
-              mode: 'count',
-              values: 4,
-              density: 8,
-              stepped: true
-            }
-          });
         }
+        sc.categoricalFacet = categoricalFacet;
+        sc.numericalRangeFacet = numericalRangeFacet.filter(() => { return true; });
+        $scope.$apply();
       });
     });
   }
 
   // Watch for selected facets
-  $scope.$watch('sc.searchFacets|filter:{selected:true}', function(selectedFacets) {
+  $scope.$watch('sc.categoricalFacet|filter:{selected:true}', function(selectedFacets) {
     // Restore the whole search results if no facets are selected
     if (selectedFacets.length == 0) {
       db.items.toArray(data => {
