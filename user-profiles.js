@@ -8,5 +8,10 @@ angular.module("user-profiles", []).constant('profiles',
       "apiKey": "AIzaSyC0tYdp3uFxDdgJO4t5hZNznH7qsBFHFRw",
       "searchEngineId": "000084546530648272235:y2v1vjktvne",
       "pageLimit": 3
+    },
+    "medical": {
+      "apiKey": "AIzaSyC0tYdp3uFxDdgJO4t5hZNznH7qsBFHFRw",
+      "searchEngineId": "000084546530648272235:w_5b14a-xr8",
+      "pageLimit": 10
     }
   });
