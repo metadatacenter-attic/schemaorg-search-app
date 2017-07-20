@@ -111,6 +111,48 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
         }
         sc.searchFacets = facetData;
         $scope.$apply();
+      }).then(() => {
+        // Get only numeric and duration facets
+        var sliderFacets = sc.searchFacets.reduce(function(arr, facet) {
+          if (facet.type === 'numeric' || facet.type === 'duration') {
+            arr[facet.category] = arr[facet.category] ||
+                { id: facet.category,
+                  min: Number.MAX_SAFE_INTEGER,
+                  max: Number.MIN_SAFE_INTEGER };
+            var value = facet.value;
+            if (value < arr[facet.category].min) {
+              arr[facet.category].min = value;
+            }
+            if (value > arr[facet.category].max) {
+              arr[facet.category].max = value;
+            }
+          }
+          return arr;
+        }, []).filter(() => { return true; });
+
+        // Draw the sliders
+        for (var i = 0; i < sliderFacets.length; i++) {
+          var sliderFacet = sliderFacets[i];
+          var slider = document.getElementById('slider-' + sliderFacet.id);
+          noUiSlider.create(slider, {
+            start: [sliderFacet.min, sliderFacet.max],
+            tooltips: true,
+            connect: true,
+            range: {
+             'min': 0,
+             'max': sliderFacet.max
+            },
+            format: wNumb({
+              decimals: 0
+            }),
+            pips: {
+              mode: 'count',
+              values: 4,
+              density: 8,
+              stepped: true
+            }
+          });
+        }
       });
     });
   }

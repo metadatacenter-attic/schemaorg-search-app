@@ -6,15 +6,18 @@
   <title>Search Explorer</title>
   <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css"
     media="screen,projection">
+  <link type="text/css" rel="stylesheet" href="materialize/extras/nouislider.css">
   <link type="text/css" rel="stylesheet" href="materialize/extras/material-icons.css">
   <link type="text/css" rel="stylesheet" href="basic.css">
   <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
   <script type="text/javascript" src="materialize/js/materialize.min.js"></script>
+  <script type="text/javascript" src="materialize/extras/nouislider.min.js"></script>
   <script type="text/javascript" src="js/dexie.min.js"></script>
   <script type="text/javascript" src="js/angular.min.js"></script>
   <script type="text/javascript" src="js/angular-filter.min.js"></script>
   <script type="text/javascript" src="js/quantities.js"></script>
   <script type="text/javascript" src="js/moment.js"></script>
+  <script type="text/javascript" src="js/wNumb.js"></script>
   <script type="text/javascript" src="user-profiles.js"></script>
   <script type="text/javascript" src="search-facets.js"></script>
   <script type="text/javascript" src="data-units.js"></script>
@@ -40,6 +43,9 @@
               <input type="checkbox" id="checkbox-{{label}}{{$index}}" ng-model="facet.selected">
                   <label class="smaller" for="checkbox-{{label}}{{$index}}">{{facet.value}}</label>
             </li>
+          </div>
+          <div ng-if="value[0].type == 'numeric' || value[0].type == 'duration'" style="height:50px;margin:25px 30px 0px 30px;">
+            <div id="slider-{{label}}">
           </div>
         </ul>
       </div>
