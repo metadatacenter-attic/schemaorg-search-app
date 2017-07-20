@@ -125,7 +125,7 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
       });
     } else {
       // Group the selected facets to assist the boolean operation
-      var selectedFacetsInGroup = selectedFacets.reduce(function(arr, facet) {
+      selectedFacets = selectedFacets.reduce(function(arr, facet) {
         arr[facet.category] = arr[facet.category] || { domain: facet.domain, name: facet.name, values: [] };
         arr[facet.category].values.push(facet.value);
         return arr;
@@ -134,8 +134,8 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
       // Filter the results base on the selected facets
       db.items.filter(data => {
         var answerEachFacet = [];
-        for (var i = 0; i < selectedFacetsInGroup.length; i++) {
-          var facet = selectedFacetsInGroup[i];
+        for (var i = 0; i < selectedFacets.length; i++) {
+          var facet = selectedFacets[i];
           answerEachFacet[i] = (data.types.length == 0) || data.types.includes(facet.domain);
           for (var j = 0; j < data.properties.length; j++) {
             var propertyItem = data.properties[j];
