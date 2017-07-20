@@ -202,8 +202,8 @@ function storeSchemaOrgData(pkItem, resultItem, topics, facets, units) {
     var schemaOrgData = getSchemaOrgData(resultItem, topic);
     if (schemaOrgData != null) {
       updateTableWithSchemaOrgData(pkItem, schemaOrgData);
-      updateTableWithSchemaTypes(pkItem, schemaOrgData);
-      updateTableWithExtraProperties(pkItem, schemaOrgData, topic, facets, units);
+      updateTableWithSchemaOrgTypes(pkItem, schemaOrgData);
+      updateTableWithSchemaOrgProperties(pkItem, schemaOrgData, topic, facets, units);
     }
   }
 }
@@ -216,7 +216,7 @@ function updateTableWithSchemaOrgData(pkItem, schemaOrgData) {
   });
 }
 
-function updateTableWithSchemaTypes(pkItem, schemaOrgData) {
+function updateTableWithSchemaOrgTypes(pkItem, schemaOrgData) {
   db.items.where('url').equals(pkItem).modify(item => {
     var types = Object.keys(schemaOrgData);
     for (var i = 0; i < types.length; i++) {
@@ -227,7 +227,7 @@ function updateTableWithSchemaTypes(pkItem, schemaOrgData) {
   });
 }
 
-function updateTableWithExtraProperties(pkItem, schemaOrgData, topic, facets, units) {
+function updateTableWithSchemaOrgProperties(pkItem, schemaOrgData, topic, facets, units) {
   db.items.where('url').equals(pkItem).modify(item => {
     var topicFacet = facets[topic];
     for (var i = 0; i < topicFacet.terms.length; i++) {
