@@ -196,7 +196,6 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
   }
 
   $scope.$watch('sc.filterModel', function(filterModel) {
-    filterModel = filterModel.filter(() => { return true; });
     db.items.filter(data => {
       var answerEachFacet = [];
       for (var i = 0; i < filterModel.length; i++) {
