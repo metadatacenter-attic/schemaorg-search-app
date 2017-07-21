@@ -177,17 +177,22 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
   }
 
   $scope.onSliderChanged = function(id) {
-    var slider = sc.numericalRangeFacet.filter(facet => { return facet.category == id });
-    sc.filterModel[id] = {
-        id: id,
-        domain: slider[0].domain,
-        name: slider[0].name,
+    var resultArr = sc.numericalRangeFacet.filter(obj => { return obj.category == id });
+    var facet = resultArr[0];
+    var filterPosition = findIndex(sc.filterModel, "id", facet.category);
+    if (filterPosition == -1) {
+      sc.filterModel.push({
+        id: facet.category,
+        domain: facet.domain,
+        name: facet.name,
         values: [],
         type: "range",
-        visible: slider[0].visible
-      };
-    sc.filterModel[id].values[0] = slider[0].minValue;
-    sc.filterModel[id].values[1] = slider[0].maxValue;
+        visible: facet.visible
+      });
+      filterPosition = sc.filterModel.length - 1;
+    }
+    sc.filterModel[filterPosition].values[0] = facet.minValue;
+    sc.filterModel[filterPosition].values[1] = facet.maxValue;
   }
 
   $scope.$watch('sc.filterModel', function(filterModel) {
