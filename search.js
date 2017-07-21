@@ -196,31 +196,33 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
   }
 
   $scope.$watch('sc.filterModel', function(filterModel) {
-    db.items.filter(data => {
-      var answerEachFacet = [];
-      for (var i = 0; i < filterModel.length; i++) {
-        var filter = filterModel[i];
-        answerEachFacet[i] = (data.types.length == 0) || data.types.includes(filter.domain);
-        for (var j = 0; j < data.properties.length; j++) {
-          var propertyItem = data.properties[j];
-          if (propertyItem.domain == filter.domain && propertyItem.name == filter.name) {
-            if (filter.type === "categorical") {
-              answerEachFacet[i] = answerEachFacet[i] &&
-                  filter.values.includes(propertyItem.value);
-            } else if (filter.type === "range") {
-              answerEachFacet[i] = answerEachFacet[i] &&
-                  propertyItem.value >= filter.values[0] &&
-                  propertyItem.value <= filter.values[1];
+    db.items.toArray(data => {
+      var filterSize = filterModel.length;
+      if (filterSize > 0) {
+        data = data.filter(item => {
+          var evalOnEachFilter = [];
+          for (var i = 0; i < filterSize; i++) {
+            var filter = filterModel[i];
+            evalOnEachFilter[i] = (item.types.length == 0) || item.types.includes(filter.domain);
+            for (var j = 0; j < item.properties.length; j++) {
+              var property = item.properties[j];
+              if (property.domain == filter.domain && property.name == filter.name) {
+                if (filter.type === "categorical") {
+                  evalOnEachFilter[i] = evalOnEachFilter[i] &&
+                      filter.values.includes(property.value);
+                } else if (filter.type === "range") {
+                  evalOnEachFilter[i] = evalOnEachFilter[i] &&
+                      property.value >= filter.values[0] &&
+                      property.value <= filter.values[1];
+                }
+              }
             }
           }
-        }
+          return evalOnEachFilter.reduce((a, b) => { return a && b; });
+        });
       }
-      return answerEachFacet.reduce((a, b) => { return a && b; });
-    }).toArray(data => {
       sc.searchResults = data;
       $scope.$apply();
-    }).catch(err => {
-      console.error(err);
     });
   }, true);
 });
