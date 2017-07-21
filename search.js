@@ -151,6 +151,10 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
 
   $scope.onClose = function(facet) {
     facet.visible = false;
+    var filterPosition = findIndex(sc.filterModel, "id", facet.category);
+    if (filterPosition != -1) {
+      sc.filterModel.splice(filterPosition, 1);
+    }
   }
 
   $scope.onCheckboxChanged = function(facet) {
