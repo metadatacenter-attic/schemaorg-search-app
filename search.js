@@ -55,6 +55,7 @@ app.factory('CustomSearch', function($q, $http) {
 app.controller('SearchController', function($scope, profiles, facets, units, CustomSearch) {
   var profile = profiles['schemaorg'];
   var sc = this;
+  sc.facetModel = [];
   sc.searchResults = [];
   sc.categoricalFacet = [];
   sc.numericalRangeFacet = [];
@@ -87,7 +88,8 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
       db.items.toArray(data => {
         sc.searchResults = data;
         $scope.$apply();
-        
+
+        var facetModel = [];
         var categoricalFacet = [];
         var numericalRangeFacet = [];
         for (var i = 0; i < data.length; i++) {
@@ -102,7 +104,7 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
                 label: propertyItem.label + " " + getUnitLabel(propertyItem.unit),
                 value: propertyItem.value,
                 selected: false,
-                visible: true
+                visible: false
               }
               var found = categoricalFacet.some(function(facet) {
                 return facet.domain === propertyItem.domain &&
@@ -113,6 +115,17 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
                 categoricalFacet.push(facet);
               }
             } else if (propertyItem.range === "numeric" || propertyItem.range === "duration") {
+              // Construct the facet model
+              var facetPosition = findIndex(facetModel, "domain", propertyItem.domain);
+              if (facetPosition == -1) {
+                facetModel.push({
+                    domain: propertyItem.domain,
+                    properties: []
+                  });
+                facetPosition = facetModel.length - 1;
+              }
+              facetModel[facetPosition].properties.push(propertyItem.name);
+              // Construct the facet object
               var facetPosition = findIndex(numericalRangeFacet, "category", propertyItem.category);
               if (facetPosition == -1) {
                 numericalRangeFacet.push({
@@ -130,7 +143,7 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
                       hideLimitLabels: true,
                       onChange: $scope.onSliderChanged
                     },
-                    visible: true
+                    visible: false
                   });
                 facetPosition = numericalRangeFacet.length - 1;
               }
@@ -146,6 +159,7 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
             }
           }
         }
+        sc.facetModel = facetModel;
         sc.categoricalFacet = categoricalFacet;
         sc.numericalRangeFacet = numericalRangeFacet;
         $scope.$apply();
