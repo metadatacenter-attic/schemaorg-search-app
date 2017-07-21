@@ -119,10 +119,12 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
                   minValue: Number.MAX_SAFE_INTEGER,
                   maxValue: Number.MIN_SAFE_INTEGER,
                   options: {
+                    id: propertyItem.category,
                     floor: 0,
                     ceil: Number.MIN_SAFE_INTEGER,
                     step: 1,
-                    hideLimitLabels: true
+                    hideLimitLabels: true,
+                    onChange: $scope.onSliderChanged
                   }
                 };
               var value = propertyItem.value;
@@ -143,41 +145,65 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
     });
   }
 
-  // Watch for selected facets
-  $scope.$watch('sc.categoricalFacet|filter:{selected:true}', function(selectedFacets) {
-    // Restore the whole search results if no facets are selected
-    if (selectedFacets.length == 0) {
-      db.items.toArray(data => {
-        sc.searchResults = data;
-        $scope.$apply();
-      });
-    } else {
-      // Group the selected facets to assist the boolean operation
-      selectedFacets = selectedFacets.reduce(function(arr, facet) {
-        arr[facet.category] = arr[facet.category] || { domain: facet.domain, name: facet.name, values: [] };
-        arr[facet.category].values.push(facet.value);
-        return arr;
-      }, []).filter(() => { return true; });
+  sc.filterModel = [];
 
-      // Filter the results base on the selected facets
-      db.items.filter(data => {
-        var answerEachFacet = [];
-        for (var i = 0; i < selectedFacets.length; i++) {
-          var facet = selectedFacets[i];
-          answerEachFacet[i] = (data.types.length == 0) || data.types.includes(facet.domain);
-          for (var j = 0; j < data.properties.length; j++) {
-            var propertyItem = data.properties[j];
-            if (propertyItem.domain == facet.domain && propertyItem.name == facet.name) {
-              answerEachFacet[i] = answerEachFacet[i] && facet.values.includes(propertyItem.value);
+  $scope.onCheckboxChanged = function(id) {
+    var checkboxes = sc.categoricalFacet.filter(facet => { return facet.category == id });
+    sc.filterModel[id] = {
+        id: id,
+        domain: checkboxes[0].domain,
+        name: checkboxes[0].name,
+        values: [],
+        type: "categorical"
+      };
+    for (var i = 0; i < checkboxes.length; i++) {
+      if (checkboxes[i].selected) {
+        sc.filterModel[id].values.push(checkboxes[i].value);
+      }
+    }
+  }
+
+  $scope.onSliderChanged = function(id) {
+    var slider = sc.numericalRangeFacet.filter(facet => { return facet.category == id });
+    sc.filterModel[id] = {
+        id: id,
+        domain: slider[0].domain,
+        name: slider[0].name,
+        values: [],
+        type: "range"
+      };
+    sc.filterModel[id].values[0] = slider[0].minValue;
+    sc.filterModel[id].values[1] = slider[0].maxValue;
+  }
+
+  $scope.$watch('sc.filterModel', function(filterModel) {
+    filterModel = filterModel.filter(() => { return true; });
+    db.items.filter(data => {
+      var answerEachFacet = [];
+      for (var i = 0; i < filterModel.length; i++) {
+        var filter = filterModel[i];
+        answerEachFacet[i] = (data.types.length == 0) || data.types.includes(filter.domain);
+        for (var j = 0; j < data.properties.length; j++) {
+          var propertyItem = data.properties[j];
+          if (propertyItem.domain == filter.domain && propertyItem.name == filter.name) {
+            if (filter.type === "categorical") {
+              answerEachFacet[i] = answerEachFacet[i] &&
+                  filter.values.includes(propertyItem.value);
+            } else if (filter.type === "range") {
+              answerEachFacet[i] = answerEachFacet[i] &&
+                  propertyItem.value >= filter.values[0] &&
+                  propertyItem.value <= filter.values[1];
             }
           }
         }
-        return answerEachFacet.reduce((a, b) => { return a && b; });
-      }).toArray(data => {
-        sc.searchResults = data;
-        $scope.$apply();
-      });
-    }
+      }
+      return answerEachFacet.reduce((a, b) => { return a && b; });
+    }).toArray(data => {
+      sc.searchResults = data;
+      $scope.$apply();
+    }).catch(err => {
+      console.error(err);
+    });
   }, true);
 });
 

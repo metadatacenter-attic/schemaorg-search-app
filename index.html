@@ -38,8 +38,9 @@
             ng-repeat="(label, value) in sc.categoricalFacet | groupBy:'category'">
           <li class="collection-header smaller">{{value[0].label}}</li>
           <li class="collection-item narrow-padding-left" ng-repeat="facet in value">
-            <input type="checkbox" id="checkbox-{{label}}{{$index}}" ng-model="facet.selected">
-                <label class="smaller" for="checkbox-{{label}}{{$index}}">{{facet.value}}</label>
+            <input type="checkbox" id="checkbox-{{label}}{{$index}}"
+                ng-model="facet.selected" ng-change="onCheckboxChanged({{label}})">
+              <label class="smaller" for="checkbox-{{label}}{{$index}}">{{facet.value}}</label>
           </li>
         </ul>
         <ul class="collection with-header" ng-repeat="facet in sc.numericalRangeFacet">
