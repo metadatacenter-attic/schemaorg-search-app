@@ -45,7 +45,7 @@
             </li>
             <li class="collection-item narrow-padding-left" ng-repeat="facet in value">
               <input type="checkbox" id="checkbox-{{label}}{{$index}}"
-                  ng-model="facet.selected" ng-change="onCheckboxChanged({{label}})">
+                  ng-model="facet.selected" ng-change="onCheckboxChanged(facet)">
                 <label class="smaller" for="checkbox-{{label}}{{$index}}">{{facet.value}}</label>
             </li>
           </ul>

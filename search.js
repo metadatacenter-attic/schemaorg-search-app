@@ -153,19 +153,25 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
     facet.visible = false;
   }
 
-  $scope.onCheckboxChanged = function(id) {
-    var checkboxes = sc.categoricalFacet.filter(facet => { return facet.category == id });
-    sc.filterModel[id] = {
-        id: id,
-        domain: checkboxes[0].domain,
-        name: checkboxes[0].name,
+  $scope.onCheckboxChanged = function(facet) {
+    var filterPosition = findIndex(sc.filterModel, "id", facet.category);
+    if (filterPosition == -1) {
+      sc.filterModel.push({
+        id: facet.category,
+        domain: facet.domain,
+        name: facet.name,
         values: [],
         type: "categorical",
-        visible: checkboxes[0].visible
-      };
-    for (var i = 0; i < checkboxes.length; i++) {
-      if (checkboxes[i].selected) {
-        sc.filterModel[id].values.push(checkboxes[i].value);
+        visible: facet.visible
+      });
+      filterPosition = sc.filterModel.length - 1;
+    }
+    if (facet.selected) {
+      sc.filterModel[filterPosition].values.push(facet.value);
+    } else {
+      var valuePosition = sc.filterModel[filterPosition].values.indexOf(facet.value);
+      if (valuePosition != -1) {
+        sc.filterModel[filterPosition].values.splice(valuePosition, 1);
       }
     }
   }
@@ -413,6 +419,13 @@ function evalNumber(number) {
     }
   }
   return +value;
+}
+
+function findIndex(arr, key, value) {
+  for(var i = 0; i < arr.length; i++) {
+    if (arr[i][key] === value) return i;
+  }
+  return -1;
 }
 
 function getUnitLabel(unit) {
