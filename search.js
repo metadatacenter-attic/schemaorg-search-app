@@ -86,7 +86,8 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
 
       db.items.toArray(data => {
         sc.searchResults = data;
-
+        $scope.$apply();
+        
         var categoricalFacet = [];
         var numericalRangeFacet = [];
         for (var i = 0; i < data.length; i++) {
