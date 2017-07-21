@@ -112,36 +112,41 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
                 categoricalFacet.push(facet);
               }
             } else if (propertyItem.range === "numeric" || propertyItem.range === "duration") {
-              numericalRangeFacet[propertyItem.category] = numericalRangeFacet[propertyItem.category] || {
-                  category: propertyItem.category,
-                  domain: propertyItem.domain,
-                  name: propertyItem.name,
-                  label: propertyItem.label + " " + getUnitLabel(propertyItem.unit),
-                  minValue: Number.MAX_SAFE_INTEGER,
-                  maxValue: Number.MIN_SAFE_INTEGER,
-                  options: {
-                    id: propertyItem.category,
-                    floor: 0,
-                    ceil: Number.MIN_SAFE_INTEGER,
-                    step: 1,
-                    hideLimitLabels: true,
-                    onChange: $scope.onSliderChanged
-                  },
-                  visible: true
-                };
-              var value = propertyItem.value;
-              if (value < numericalRangeFacet[propertyItem.category].minValue) {
-                numericalRangeFacet[propertyItem.category].minValue = value;
+              var facetPosition = findIndex(numericalRangeFacet, "category", propertyItem.category);
+              if (facetPosition == -1) {
+                numericalRangeFacet.push({
+                    category: propertyItem.category,
+                    domain: propertyItem.domain,
+                    name: propertyItem.name,
+                    label: propertyItem.label + " " + getUnitLabel(propertyItem.unit),
+                    minValue: Number.MAX_SAFE_INTEGER,
+                    maxValue: Number.MIN_SAFE_INTEGER,
+                    options: {
+                      id: propertyItem.category,
+                      floor: Number.MAX_SAFE_INTEGER,
+                      ceil: Number.MIN_SAFE_INTEGER,
+                      step: 1,
+                      hideLimitLabels: true,
+                      onChange: $scope.onSliderChanged
+                    },
+                    visible: true
+                  });
+                facetPosition = numericalRangeFacet.length - 1;
               }
-              if (value > numericalRangeFacet[propertyItem.category].maxValue) {
-                numericalRangeFacet[propertyItem.category].maxValue = value;
-                numericalRangeFacet[propertyItem.category].options.ceil = value;
+              var value = propertyItem.value;
+              if (value < numericalRangeFacet[facetPosition].minValue) {
+                numericalRangeFacet[facetPosition].minValue = value;
+                numericalRangeFacet[facetPosition].options.floor = value;
+              }
+              if (value > numericalRangeFacet[facetPosition].maxValue) {
+                numericalRangeFacet[facetPosition].maxValue = value;
+                numericalRangeFacet[facetPosition].options.ceil = value;
               }
             }
           }
         }
         sc.categoricalFacet = categoricalFacet;
-        sc.numericalRangeFacet = numericalRangeFacet.filter(() => { return true; });
+        sc.numericalRangeFacet = numericalRangeFacet;
         $scope.$apply();
       });
     });
