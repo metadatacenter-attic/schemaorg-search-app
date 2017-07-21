@@ -46,6 +46,31 @@ input[type="submit"] {
   top: -1000px
 }
 
+.x {
+  display: block;
+  padding-left: auto;
+  padding-top: 8px;
+}
+.x:hover {
+  cursor: pointer;
+}
+.x:before {
+  content: "";
+  display: block;
+  width: 14px;
+  border-top: 1px solid rgba(0,0,0,0.5);
+  transform: rotate(45deg);
+  transform-origin: center;
+}
+.x:after {
+  content: "";
+  display: block;
+  width: 14px;
+  border-top: 1px solid rgba(0,0,0,0.5);
+  transform: rotate(-45deg);
+  transform-origin: center;
+}
+
 /* Materializecss Overrides */
 h5.smaller {
   font-size: 14pt;
@@ -53,6 +78,10 @@ h5.smaller {
 
 label.smaller {
   font-size: 10pt;
+}
+
+.row.narrower {
+  margin-bottom: 0px;
 }
 
 .fadeout-overflow:before {

@@ -34,23 +34,37 @@
     </div>
     <div class="row container">
       <div class="col s3">
-        <ul class="collection with-header"
-            ng-repeat="(label, value) in sc.categoricalFacet | groupBy:'category'">
-          <li class="collection-header smaller">{{value[0].label}}</li>
-          <li class="collection-item narrow-padding-left" ng-repeat="facet in value">
-            <input type="checkbox" id="checkbox-{{label}}{{$index}}"
-                ng-model="facet.selected" ng-change="onCheckboxChanged({{label}})">
-              <label class="smaller" for="checkbox-{{label}}{{$index}}">{{facet.value}}</label>
-          </li>
-        </ul>
-        <ul class="collection with-header" ng-repeat="facet in sc.numericalRangeFacet">
-          <li class="collection-header smaller">{{facet.label}}</li>
-          <li class="collection-item narrow-padding-left">
-            <rzslider rz-slider-model="facet.minValue"
-                rz-slider-high="facet.maxValue"
-                rz-slider-options="facet.options"></rzslider>
-          </li>
-        </ul>
+        <div ng-repeat="(label, value) in sc.categoricalFacet | groupBy:'category'"
+            ng-if="value[0].visible">
+          <ul class="collection with-header">
+            <li class="collection-header">
+              <div class="row narrower">
+                <div class="col s10">{{value[0].label}}</div>
+                <div class="col s2"><span class="x" ng-click="onClose(value[0])"></span></div>
+              </div>
+            </li>
+            <li class="collection-item narrow-padding-left" ng-repeat="facet in value">
+              <input type="checkbox" id="checkbox-{{label}}{{$index}}"
+                  ng-model="facet.selected" ng-change="onCheckboxChanged({{label}})">
+                <label class="smaller" for="checkbox-{{label}}{{$index}}">{{facet.value}}</label>
+            </li>
+          </ul>
+        </div>
+        <div ng-repeat="facet in sc.numericalRangeFacet" ng-if="facet.visible">
+          <ul class="collection with-header">
+            <li class="collection-header">
+              <div class="row narrower">
+                <div class="col s10">{{facet.label}}</div>
+                <div class="col s2"><span class="x" ng-click="onClose(facet)"></span></div>
+              </div>
+            </li>
+            <li class="collection-item narrow-padding-left">
+              <rzslider rz-slider-model="facet.minValue"
+                  rz-slider-high="facet.maxValue"
+                  rz-slider-options="facet.options"></rzslider>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="search-result-container col s9">
         <div class="row">

@@ -100,7 +100,8 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
                 name: propertyItem.name,
                 label: propertyItem.label + " " + getUnitLabel(propertyItem.unit),
                 value: propertyItem.value,
-                selected: false
+                selected: false,
+                visible: true
               }
               var found = categoricalFacet.some(function(facet) {
                 return facet.domain === propertyItem.domain &&
@@ -125,7 +126,8 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
                     step: 1,
                     hideLimitLabels: true,
                     onChange: $scope.onSliderChanged
-                  }
+                  },
+                  visible: true
                 };
               var value = propertyItem.value;
               if (value < numericalRangeFacet[propertyItem.category].minValue) {
@@ -147,6 +149,10 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
 
   sc.filterModel = [];
 
+  $scope.onClose = function(facet) {
+    facet.visible = false;
+  }
+
   $scope.onCheckboxChanged = function(id) {
     var checkboxes = sc.categoricalFacet.filter(facet => { return facet.category == id });
     sc.filterModel[id] = {
@@ -154,7 +160,8 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
         domain: checkboxes[0].domain,
         name: checkboxes[0].name,
         values: [],
-        type: "categorical"
+        type: "categorical",
+        visible: checkboxes[0].visible
       };
     for (var i = 0; i < checkboxes.length; i++) {
       if (checkboxes[i].selected) {
@@ -170,7 +177,8 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
         domain: slider[0].domain,
         name: slider[0].name,
         values: [],
-        type: "range"
+        type: "range",
+        visible: slider[0].visible
       };
     sc.filterModel[id].values[0] = slider[0].minValue;
     sc.filterModel[id].values[1] = slider[0].maxValue;
