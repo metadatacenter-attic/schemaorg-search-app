@@ -47,8 +47,8 @@
                 <md-menu>
                   <md-button ng-click="$mdMenu.open()">{{facet.domain}}</md-button>
                   <md-menu-content>
-                    <md-menu-item ng-repeat="property in facet.properties track by $index">
-                      <md-button ng-click="">{{property}}</md-button>
+                    <md-menu-item ng-repeat="property in facet.properties">
+                      <md-button ng-click="">{{property.name}}</md-button>
                     </md-menu-item>
                   </md-menu-content>
                 </md-menu>

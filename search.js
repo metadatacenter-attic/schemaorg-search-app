@@ -124,7 +124,13 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
                   });
                 facetPosition = facetModel.length - 1;
               }
-              facetModel[facetPosition].properties.push(propertyItem.name);
+              var propertyPosition = findIndex(facetModel[facetPosition].properties, "id", propertyItem.category);
+              if (propertyPosition == -1) {
+                facetModel[facetPosition].properties.push({
+                    id: propertyItem.category,
+                    name: propertyItem.name
+                  });
+              }
               // Construct the facet object
               var facetPosition = findIndex(numericalRangeFacet, "category", propertyItem.category);
               if (facetPosition == -1) {
