@@ -6,6 +6,8 @@
   <title>Search Explorer</title>
   <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css"
     media="screen,projection">
+  <link type="text/css" rel="stylesheet" href="angular-material.min.css"
+    media="screen,projection">
   <link type="text/css" rel="stylesheet" href="materialize/extras/material-icons.css">
   <link type="text/css" rel="stylesheet" href="rzslider/rzslider.min.css">
   <link type="text/css" rel="stylesheet" href="basic.css">
@@ -13,7 +15,10 @@
   <script type="text/javascript" src="materialize/js/materialize.min.js"></script>
   <script type="text/javascript" src="js/dexie.min.js"></script>
   <script type="text/javascript" src="js/angular.min.js"></script>
+  <script type="text/javascript" src="js/angular-aria.min.js"></script>
+  <script type="text/javascript" src="js/angular-animate.min.js"></script>
   <script type="text/javascript" src="js/angular-filter.min.js"></script>
+  <script type="text/javascript" src="js/angular-material.min.js"></script>
   <script type="text/javascript" src="js/quantities.js"></script>
   <script type="text/javascript" src="js/moment.js"></script>
   <script type="text/javascript" src="rzslider/rzslider.min.js"></script>
@@ -33,7 +38,24 @@
       <input type="submit" id="submit" value="Search" ng-click="doSearch()">
     </div>
     <div class="row container">
-      <div class="col s3">
+      <div class="search-facet-container col s3">
+        <div class="facet-menu">
+          <md-menu>
+            <a class='dropdown-button btn' href='#' ng-click="$mdMenu.open()">Add Facet</a>
+            <md-menu-content>
+              <md-menu-item ng-repeat="facet in sc.facetModel">
+                <md-menu>
+                  <md-button ng-click="$mdMenu.open()">{{facet.domain}}</md-button>
+                  <md-menu-content>
+                    <md-menu-item ng-repeat="property in facet.properties track by $index">
+                      <md-button ng-click="">{{property}}</md-button>
+                    </md-menu-item>
+                  </md-menu-content>
+                </md-menu>
+              </md-menu-item>
+            </md-menu-content>
+          </md-menu>
+        </div>
         <div ng-repeat="(label, value) in sc.categoricalFacet | groupBy:'category'"
             ng-if="value[0].visible">
           <ul class="collection with-header">
