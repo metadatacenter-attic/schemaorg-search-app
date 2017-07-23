@@ -97,6 +97,7 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
           for (var j = 0; j < itemProperties.length; j++) {
             var propertyItem = itemProperties[j];
             if (propertyItem.range === "text") {
+              // Construct the facet object
               var facetPosition = findIndex(categoricalFacet, "domain", propertyItem.domain);
               if (facetPosition == -1) {
                 categoricalFacet.push({
@@ -114,6 +115,23 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
                 categoricalFacet[facetPosition].options.push({
                     value: propertyItem.value,
                     selected: false
+                  });
+              }
+              // Construct the facet model
+              var facetModelPosition = findIndex(facetModel, "domain", propertyItem.domain);
+              if (facetModelPosition == -1) {
+                facetModel.push({
+                    domain: propertyItem.domain,
+                    properties: []
+                  });
+                facetModelPosition = facetModel.length - 1;
+              }
+              var propertyPosition = findIndex(facetModel[facetModelPosition].properties, "id", propertyItem.category);
+              if (propertyPosition == -1) {
+                facetModel[facetModelPosition].properties.push({
+                    id: propertyItem.category,
+                    name: propertyItem.name,
+                    facet: categoricalFacet[facetPosition]
                   });
               }
             } else if (propertyItem.range === "numeric" || propertyItem.range === "duration") {
