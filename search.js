@@ -117,22 +117,6 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
                   });
               }
             } else if (propertyItem.range === "numeric" || propertyItem.range === "duration") {
-              // Construct the facet model
-              var facetPosition = findIndex(facetModel, "domain", propertyItem.domain);
-              if (facetPosition == -1) {
-                facetModel.push({
-                    domain: propertyItem.domain,
-                    properties: []
-                  });
-                facetPosition = facetModel.length - 1;
-              }
-              var propertyPosition = findIndex(facetModel[facetPosition].properties, "id", propertyItem.category);
-              if (propertyPosition == -1) {
-                facetModel[facetPosition].properties.push({
-                    id: propertyItem.category,
-                    name: propertyItem.name
-                  });
-              }
               // Construct the facet object
               var facetPosition = findIndex(numericalRangeFacet, "category", propertyItem.category);
               if (facetPosition == -1) {
@@ -163,6 +147,22 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
               if (value > numericalRangeFacet[facetPosition].maxValue) {
                 numericalRangeFacet[facetPosition].maxValue = value;
                 numericalRangeFacet[facetPosition].options.ceil = value;
+              }
+              // Construct the facet model
+              var facetPosition = findIndex(facetModel, "domain", propertyItem.domain);
+              if (facetPosition == -1) {
+                facetModel.push({
+                    domain: propertyItem.domain,
+                    properties: []
+                  });
+                facetPosition = facetModel.length - 1;
+              }
+              var propertyPosition = findIndex(facetModel[facetPosition].properties, "id", propertyItem.category);
+              if (propertyPosition == -1) {
+                facetModel[facetPosition].properties.push({
+                    id: propertyItem.category,
+                    name: propertyItem.name
+                  });
               }
             }
           }
