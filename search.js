@@ -57,7 +57,7 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
   var sc = this;
   sc.facetModel = [];
   sc.searchResults = [];
-  sc.categoricalFacet = [];
+  sc.categorialFacet = [];
   sc.numericalRangeFacet = [];
 
   $scope.doSearch = function() {
@@ -90,10 +90,10 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
         $scope.$apply();
 
         const searchFacet = {
-          categorical: [],
+          categorial: [],
           numerical: []
         }
-        const categoricalFacet = searchFacet.categorical;
+        const categorialFacet = searchFacet.categorial;
         const numericalRangeFacet = searchFacet.numerical;
         for (var i = 0; i < data.length; i++) {
           var itemProperties = data[i].properties;
@@ -101,22 +101,22 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
             var propertyItem = itemProperties[j]; // XXX: Rename to itemProperty
             if (propertyItem.range === "text") {
               // Construct the facet object
-              var facetPosition = findIndex(categoricalFacet, "id", propertyItem.id);
+              var facetPosition = findIndex(categorialFacet, "id", propertyItem.id);
               if (facetPosition == -1) {
-                categoricalFacet.push({
+                categorialFacet.push({
                     id: propertyItem.id,
                     name: propertyItem.name,
                     label: propertyItem.label,
                     topic: propertyItem.domain.name,
-                    type: "categorical",
+                    type: "categorial",
                     visible: false,
                     choices: []
                   });
-                facetPosition = categoricalFacet.length - 1;
+                facetPosition = categorialFacet.length - 1;
               }
-              var choicePosition = findIndex(categoricalFacet[facetPosition].choices, "value", propertyItem.value);
+              var choicePosition = findIndex(categorialFacet[facetPosition].choices, "value", propertyItem.value);
               if (choicePosition == -1) {
-                categoricalFacet[facetPosition].choices.push({
+                categorialFacet[facetPosition].choices.push({
                     value: propertyItem.value,
                     selected: false
                   });
@@ -180,7 +180,7 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
         }
 
         sc.facetModel = facetModel;
-        sc.categoricalFacet = categoricalFacet;
+        sc.categorialFacet = categorialFacet;
         sc.numericalRangeFacet = numericalRangeFacet;
         $scope.$apply();
       });
@@ -255,7 +255,7 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
             for (var j = 0; j < item.properties.length; j++) {
               var property = item.properties[j];
               if (property.domain === filter.topic && property.name === filter.name) {
-                if (filter.type === "categorical") {
+                if (filter.type === "categorial") {
                   evalOnEachFilter[i] = evalOnEachFilter[i] &&
                       filter.values.includes(property.value);
                 } else if (filter.type === "range") {
