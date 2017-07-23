@@ -2,11 +2,11 @@ var propertyCategories = [];
 var db = new Dexie("clippingDB");
 db.delete();
 db.version(1).stores({
-  items: 'url'
+  items: 'url' // XXX: Rename to item
 });
 db.open();
 
-var app = angular.module('schemaorg', ['ui.materialize', 'angular.filter', 'rzModule', 'user-profiles', 'search-facets', 'data-units'], function($provide) {
+var app = angular.module('schemaorg', ['ui.materialize', 'angular.filter', 'rzModule', 'user-profiles', 'schemaorg-markup'], function($provide) {
   // Fixes'history.pushState is not available in packaged apps' error message
   // Source: https://github.com/angular/angular.js/issues/11932
   $provide.decorator('$window', function($delegate) {
@@ -52,7 +52,7 @@ app.factory('CustomSearch', function($q, $http) {
   };
 });
 
-app.controller('SearchController', function($scope, profiles, facets, units, CustomSearch) {
+app.controller('SearchController', function($scope, profiles, schemaorgMarkup, CustomSearch) {
   var profile = profiles['schemaorg'];
   var sc = this;
   sc.facetModel = [];
@@ -67,7 +67,7 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
     if (userInput == null) {
       return;
     }
-    var input = processUserInput(userInput, facets);
+    var input = processUserInput(userInput, schemaorgMarkup);
     var searchPromises = [];
     var pages = profile.pageLimit;
     var apiKey = profile.apiKey;
@@ -82,77 +82,67 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
       results.filter(x => x.status === "resolved").forEach(output => {
         var topics = input.topics;
         var searchResults = output.value;
-        storeResults(searchResults, topics, facets, units)
+        storeResults(searchResults, topics, schemaorgMarkup)
       });
 
-      db.items.toArray(data => {
+      db.items.toArray(data => { // XXX: Rename to items
         sc.searchResults = data;
         $scope.$apply();
 
-        var facetModel = [];
-        var categoricalFacet = [];
-        var numericalRangeFacet = [];
+        const searchFacet = {
+          categorical: [],
+          numerical: []
+        }
+        const categoricalFacet = searchFacet.categorical;
+        const numericalRangeFacet = searchFacet.numerical;
         for (var i = 0; i < data.length; i++) {
           var itemProperties = data[i].properties;
           for (var j = 0; j < itemProperties.length; j++) {
-            var propertyItem = itemProperties[j];
+            var propertyItem = itemProperties[j]; // XXX: Rename to itemProperty
             if (propertyItem.range === "text") {
               // Construct the facet object
-              var facetPosition = findIndex(categoricalFacet, "domain", propertyItem.domain);
+              var facetPosition = findIndex(categoricalFacet, "id", propertyItem.id);
               if (facetPosition == -1) {
                 categoricalFacet.push({
-                    category: propertyItem.category,
-                    domain: propertyItem.domain,
+                    id: propertyItem.id,
                     name: propertyItem.name,
-                    label: propertyItem.label + " " + getUnitLabel(propertyItem.unit),
+                    label: propertyItem.label,
+                    topic: propertyItem.domain.name,
+                    type: "categorical",
                     visible: false,
-                    options: []
+                    choices: []
                   });
                 facetPosition = categoricalFacet.length - 1;
               }
-              var optionPosition = findIndex(categoricalFacet[facetPosition].options, "value", propertyItem.value);
-              if (optionPosition == -1) {
-                categoricalFacet[facetPosition].options.push({
+              var choicePosition = findIndex(categoricalFacet[facetPosition].choices, "value", propertyItem.value);
+              if (choicePosition == -1) {
+                categoricalFacet[facetPosition].choices.push({
                     value: propertyItem.value,
                     selected: false
                   });
               }
-              // Construct the facet model
-              var facetModelPosition = findIndex(facetModel, "domain", propertyItem.domain);
-              if (facetModelPosition == -1) {
-                facetModel.push({
-                    domain: propertyItem.domain,
-                    properties: []
-                  });
-                facetModelPosition = facetModel.length - 1;
-              }
-              var propertyPosition = findIndex(facetModel[facetModelPosition].properties, "name", propertyItem.name);
-              if (propertyPosition == -1) {
-                facetModel[facetModelPosition].properties.push({
-                    name: propertyItem.name,
-                    facet: categoricalFacet[facetPosition]
-                  });
-              }
             } else if (propertyItem.range === "numeric" || propertyItem.range === "duration") {
               // Construct the facet object
-              var facetPosition = findIndex(numericalRangeFacet, "category", propertyItem.category);
+              var facetPosition = findIndex(numericalRangeFacet, "id", propertyItem.id);
               if (facetPosition == -1) {
                 numericalRangeFacet.push({
-                    category: propertyItem.category,
-                    domain: propertyItem.domain,
+                    id: propertyItem.id,
                     name: propertyItem.name,
-                    label: propertyItem.label + " " + getUnitLabel(propertyItem.unit),
+                    label: propertyItem.label,
+                    topic: propertyItem.domain.name,
+                    type: "range",
+                    visible: false,
+                    unit: propertyItem.unit,
                     minValue: Number.MAX_SAFE_INTEGER,
                     maxValue: Number.MIN_SAFE_INTEGER,
                     options: {
-                      id: propertyItem.category,
+                      id: propertyItem.id,
                       floor: Number.MAX_SAFE_INTEGER,
                       ceil: Number.MIN_SAFE_INTEGER,
                       step: 1,
                       hideLimitLabels: true,
                       onChange: $scope.onSliderChanged
-                    },
-                    visible: false
+                    }
                   });
                 facetPosition = numericalRangeFacet.length - 1;
               }
@@ -165,25 +155,30 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
                 numericalRangeFacet[facetPosition].maxValue = value;
                 numericalRangeFacet[facetPosition].options.ceil = value;
               }
-              // Construct the facet model
-              var facetModelPosition = findIndex(facetModel, "domain", propertyItem.domain);
-              if (facetModelPosition == -1) {
-                facetModel.push({
-                    domain: propertyItem.domain,
-                    properties: []
-                  });
-                facetModelPosition = facetModel.length - 1;
-              }
-              var propertyPosition = findIndex(facetModel[facetModelPosition].properties, "name", propertyItem.name);
-              if (propertyPosition == -1) {
-                facetModel[facetModelPosition].properties.push({
-                    name: propertyItem.name,
-                    facet: numericalRangeFacet[facetPosition]
-                  });
-              }
             }
           }
         }
+
+        // Construct the facet model
+        var facetModel = [];
+        var allFacets = [].concat.apply([], Object.values(searchFacet));
+        for (var i = 0; i < allFacets.length; i++) {
+          var facet = allFacets[i];
+          var facetModelPosition = findIndex(facetModel, "id", facet.topic);
+          if (facetModelPosition == -1) {
+            facetModel.push({
+                id: facet.topic,
+                topic: {
+                  name: schemaorgMarkup[facet.topic].name,
+                  label: schemaorgMarkup[facet.topic].label
+                },
+                facets: []
+              });
+            facetModelPosition = facetModel.length - 1;
+          }
+          facetModel[facetModelPosition].facets.push(facet);
+        }
+
         sc.facetModel = facetModel;
         sc.categoricalFacet = categoricalFacet;
         sc.numericalRangeFacet = numericalRangeFacet;
@@ -200,47 +195,47 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
 
   $scope.onClose = function(facet) {
     facet.visible = false;
-    var filterPosition = findIndex(sc.filterModel, "id", facet.category);
+    var filterPosition = findIndex(sc.filterModel, "id", facet.id);
     if (filterPosition != -1) {
       sc.filterModel.splice(filterPosition, 1);
     }
   }
 
   $scope.onCheckboxChanged = function(facet) {
-    var filterPosition = findIndex(sc.filterModel, "id", facet.category);
+    var filterPosition = findIndex(sc.filterModel, "id", facet.id);
     if (filterPosition == -1) {
       sc.filterModel.push({
-        id: facet.category,
-        domain: facet.domain,
+        id: facet.id,
         name: facet.name,
-        values: [],
-        type: "categorical",
-        visible: facet.visible
+        topic: facet.topic,
+        type: facet.type,
+        visible: facet.visible,
+        values: []
       });
       filterPosition = sc.filterModel.length - 1;
     }
-    for (var i = 0; i < facet.options.length; i++) {
-      var valuePosition = sc.filterModel[filterPosition].values.indexOf(facet.options[i].value);
-      if (facet.options[i].selected && valuePosition == -1) {
-        sc.filterModel[filterPosition].values.push(facet.options[i].value);
-      } else if (!facet.options[i].selected && valuePosition != -1) {
+    for (var i = 0; i < facet.choices.length; i++) {
+      var valuePosition = sc.filterModel[filterPosition].values.indexOf(facet.choices[i].value);
+      if (facet.choices[i].selected && valuePosition == -1) {
+        sc.filterModel[filterPosition].values.push(facet.choices[i].value);
+      } else if (!facet.choices[i].selected && valuePosition != -1) {
         sc.filterModel[filterPosition].values.splice(valuePosition, 1);
       }
     }
   }
 
   $scope.onSliderChanged = function(id) {
-    var resultArr = sc.numericalRangeFacet.filter(obj => { return obj.category == id });
+    var resultArr = sc.numericalRangeFacet.filter(obj => { return obj.id == id });
     var facet = resultArr[0];
-    var filterPosition = findIndex(sc.filterModel, "id", facet.category);
+    var filterPosition = findIndex(sc.filterModel, "id", facet.id);
     if (filterPosition == -1) {
       sc.filterModel.push({
-        id: facet.category,
-        domain: facet.domain,
+        id: facet.id,
         name: facet.name,
-        values: [],
-        type: "range",
-        visible: facet.visible
+        type: facet.type,
+        topic: facet.topic,
+        visible: facet.visible,
+        values: []
       });
       filterPosition = sc.filterModel.length - 1;
     }
@@ -249,17 +244,17 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
   }
 
   $scope.$watch('sc.filterModel', function(filterModel) {
-    db.items.toArray(data => {
+    db.items.toArray(data => { // XXX: Rename to items
       var filterSize = filterModel.length;
       if (filterSize > 0) {
         data = data.filter(item => {
           var evalOnEachFilter = [];
           for (var i = 0; i < filterSize; i++) {
             var filter = filterModel[i];
-            evalOnEachFilter[i] = (item.types.length == 0) || item.types.includes(filter.domain);
+            evalOnEachFilter[i] = (item.types.length == 0) || item.types.includes(filter.topic);
             for (var j = 0; j < item.properties.length; j++) {
               var property = item.properties[j];
-              if (property.domain == filter.domain && property.name == filter.name) {
+              if (property.domain === filter.topic && property.name === filter.name) {
                 if (filter.type === "categorical") {
                   evalOnEachFilter[i] = evalOnEachFilter[i] &&
                       filter.values.includes(property.value);
@@ -280,12 +275,12 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
   }, true);
 });
 
-function processUserInput(input, facets) {
+function processUserInput(input, schemaorgMarkup) {
   var keyword_split = input.split('#');
   var keyword = keyword_split[0];
   var topics = keyword_split.filter(str => { return str != keyword });
   if (topics.length == 0) {
-    topics = Object.keys(facets);
+    topics = Object.keys(schemaorgMarkup);
   }
   return {
     keyword: keyword,
@@ -300,12 +295,12 @@ function settle(promise) {
                       function(e){ return {value:e, status: "rejected" }});
 }
 
-function storeResults(searchResults, topics, facets, units) {
+function storeResults(searchResults, topics, schemaorgMarkup) {
   if (searchResults != null) {
     searchResults.forEach(resultItem => {
       var pkItem = resultItem.link;
       storeBasicData(pkItem, resultItem);
-      storeSchemaOrgData(pkItem, resultItem, topics, facets, units);
+      storeSchemaOrgData(pkItem, resultItem, topics, schemaorgMarkup);
     });
   }
 }
@@ -323,14 +318,14 @@ function storeBasicData(pkItem, resultItem) {
   });
 }
 
-function storeSchemaOrgData(pkItem, resultItem, topics, facets, units) {
+function storeSchemaOrgData(pkItem, resultItem, topics, schemaorgMarkup) {
   for (var i = 0; i < topics.length; i++) {
     var topic = topics[i];
     var schemaOrgData = getSchemaOrgData(resultItem, topic);
     if (schemaOrgData != null) {
       updateTableWithSchemaOrgData(pkItem, schemaOrgData);
       updateTableWithSchemaOrgTypes(pkItem, schemaOrgData);
-      updateTableWithSchemaOrgProperties(pkItem, schemaOrgData, topic, facets, units);
+      updateTableWithSchemaOrgProperties(pkItem, schemaOrgData, schemaorgMarkup[topic]);
     }
   }
 }
@@ -354,36 +349,48 @@ function updateTableWithSchemaOrgTypes(pkItem, schemaOrgData) {
   });
 }
 
-function updateTableWithSchemaOrgProperties(pkItem, schemaOrgData, topic, facets, units) {
+function updateTableWithSchemaOrgProperties(pkItem, schemaOrgData, selectedTopic) {
   db.items.where('url').equals(pkItem).modify(item => {
-    var topicFacet = facets[topic];
-    for (var i = 0; i < topicFacet.terms.length; i++) {
-      var term = topicFacet.terms[i];
-      var label = topicFacet.labels[i];
-      var dtype = topicFacet.dtype[i];
-      var value = schemaOrgData[topic][term];
-      var propertyCategoryName = topic+term;
-      var propertyCategory = propertyCategories.indexOf(propertyCategoryName);
-      if (propertyCategory === -1) {
-        propertyCategories.push(propertyCategoryName);
-        propertyCategory = propertyCategories.length - 1;
-      }
-      if (value != null) {
+    var topicName = selectedTopic.name;
+    var topicLabel = selectedTopic.label;
+    for (var i = 0; i < selectedTopic.properties.length; i++) {
+      var propertyObject = selectedTopic.properties[i];
+      var propertyName = propertyObject.name;
+      var propertyLabel = propertyObject.label;
+      var propertyType = propertyObject.type;
+      var propertyUnit = propertyObject.unit;
+      var propertyValue = schemaOrgData[topicName][propertyName];
+      if (propertyValue != null) {
         var property = {
-          category: propertyCategory,
-          domain: topic,
-          range: dtype,
-          name: term,
-          label: label,
-          value: refineValue(value, dtype, units[term]),
-          unit: units[term]
+          id: getPropertyId(topicName, propertyName),
+          domain: {
+            name: topicName,
+            label: topicLabel
+          },
+          range: propertyType,
+          name: propertyName,
+          label: propertyLabel,
+          value: refineValue(propertyValue, propertyType, propertyUnit)
+        }
+        if (propertyUnit != null) {
+          property.unit = propertyUnit;
         }
         item.properties.push(property);
       }
     }
   }).catch(err => {
-    // console.error(err);
+    console.error(err);
   });
+}
+
+function getPropertyId(topicName, propertyName) {
+  const propertyCategoryName = topicName + propertyName;
+  var propertyId = propertyCategories.indexOf(propertyCategoryName);
+  if (propertyId == -1) {
+    propertyCategories.push(propertyCategoryName);
+    propertyId = propertyCategories.length - 1;
+  }
+  return propertyId;
 }
 
 function getSchemaOrgData(obj, topic) {
@@ -485,12 +492,4 @@ function findIndex(arr, key, value) {
     if (arr[i][key] === value) return i;
   }
   return -1;
-}
-
-function getUnitLabel(unit) {
-  if (unit == null) {
-    return "";
-  } else {
-    return "(" + unit + ")"
-  }
 }

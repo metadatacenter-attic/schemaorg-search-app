@@ -19,8 +19,7 @@
   <script type="text/javascript" src="js/moment.js"></script>
   <script type="text/javascript" src="rzslider/rzslider.min.js"></script>
   <script type="text/javascript" src="user-profiles.js"></script>
-  <script type="text/javascript" src="search-facets.js"></script>
-  <script type="text/javascript" src="data-units.js"></script>
+  <script type="text/javascript" src="schemaorg-markup.js"></script>
   <script type="text/javascript" src="search.js"></script>
 </head>
 
@@ -37,11 +36,11 @@
       <div style="float:left;">TOPICS: </div>
       <div class="topic-type" ng-repeat="model in sc.facetModel">
         <a class="btn dropdown-button" href="#"
-            ng-attr-data-activates="dropdown-{{model.domain}}" dropdown>
-            {{model.domain}}<i class="material-icons right">arrow_drop_down</i></a>
-        <ul id="dropdown-{{model.domain}}" class="dropdown-content">
-          <li ng-repeat="property in model.properties"><a href="#"
-              ng-click="onOpen(property.facet)">{{property.name}}</a></li>
+            ng-attr-data-activates="dropdown-{{model.id}}" dropdown>
+            {{model.topic.label}}<i class="material-icons right">arrow_drop_down</i></a>
+        <ul id="dropdown-{{model.id}}" class="dropdown-content">
+          <li ng-repeat="facet in model.facets"><a href="#"
+              ng-click="onOpen(facet)">{{facet.label}}</a></li>
         </ul>
       </div>
     </div>
@@ -55,10 +54,10 @@
                 <div class="col s2"><span class="x" ng-click="onClose(facet)"></span></div>
               </div>
             </li>
-            <li class="collection-item narrow-padding-left" ng-repeat="option in facet.options">
+            <li class="collection-item narrow-padding-left" ng-repeat="choice in facet.choices">
               <input type="checkbox" id="checkbox-{{facet.name}}-{{$index}}"
-                  ng-model="option.selected" ng-change="onCheckboxChanged(facet)">
-                <label class="smaller" for="checkbox-{{facet.name}}-{{$index}}">{{option.value}}</label>
+                  ng-model="choice.selected" ng-change="onCheckboxChanged(facet)">
+                <label class="smaller" for="checkbox-{{facet.name}}-{{$index}}">{{choice.value}}</label>
             </li>
           </ul>
         </div>
@@ -66,7 +65,7 @@
           <ul class="collection with-header">
             <li class="collection-header">
               <div class="row narrower">
-                <div class="col s10">{{facet.label}}</div>
+                <div class="col s10">{{facet.label}}<label ng-if="facet.unit">&nbsp;({{facet.unit}})</label></div>
                 <div class="col s2"><span class="x" ng-click="onClose(facet)"></span></div>
               </div>
             </li>
