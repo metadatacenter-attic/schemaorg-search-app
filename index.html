@@ -56,19 +56,18 @@
             </md-menu-content>
           </md-menu>
         </div>
-        <div ng-repeat="(label, value) in sc.categoricalFacet | groupBy:'category'"
-            ng-if="value[0].visible">
+        <div ng-repeat="facet in sc.categoricalFacet" ng-if="facet.visible">
           <ul class="collection with-header">
             <li class="collection-header">
               <div class="row narrower">
-                <div class="col s10">{{value[0].label}}</div>
-                <div class="col s2"><span class="x" ng-click="onClose(value[0])"></span></div>
+                <div class="col s10">{{facet.label}}</div>
+                <div class="col s2"><span class="x" ng-click="onClose(facet)"></span></div>
               </div>
             </li>
-            <li class="collection-item narrow-padding-left" ng-repeat="facet in value">
-              <input type="checkbox" id="checkbox-{{label}}{{$index}}"
-                  ng-model="facet.selected" ng-change="onCheckboxChanged(facet)">
-                <label class="smaller" for="checkbox-{{label}}{{$index}}">{{facet.value}}</label>
+            <li class="collection-item narrow-padding-left" ng-repeat="option in facet.options">
+              <input type="checkbox" id="checkbox-{{facet.name}}-{{$index}}"
+                  ng-model="option.selected" ng-change="onCheckboxChanged(facet)">
+                <label class="smaller" for="checkbox-{{facet.name}}-{{$index}}">{{option.value}}</label>
             </li>
           </ul>
         </div>

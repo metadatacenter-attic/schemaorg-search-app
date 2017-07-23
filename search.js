@@ -97,22 +97,24 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
           for (var j = 0; j < itemProperties.length; j++) {
             var propertyItem = itemProperties[j];
             if (propertyItem.range === "text") {
-              var facet = {
-                category: propertyItem.category,
-                domain: propertyItem.domain,
-                name: propertyItem.name,
-                label: propertyItem.label + " " + getUnitLabel(propertyItem.unit),
-                value: propertyItem.value,
-                selected: false,
-                visible: false
+              var facetPosition = findIndex(categoricalFacet, "domain", propertyItem.domain);
+              if (facetPosition == -1) {
+                categoricalFacet.push({
+                    category: propertyItem.category,
+                    domain: propertyItem.domain,
+                    name: propertyItem.name,
+                    label: propertyItem.label + " " + getUnitLabel(propertyItem.unit),
+                    visible: false,
+                    options: []
+                  });
+                facetPosition = categoricalFacet.length - 1;
               }
-              var found = categoricalFacet.some(function(facet) {
-                return facet.domain === propertyItem.domain &&
-                    facet.name === propertyItem.name &&
-                    facet.value === propertyItem.value;
-              });
-              if (!found) {
-                categoricalFacet.push(facet);
+              var optionPosition = findIndex(categoricalFacet[facetPosition].options, "value", propertyItem.value);
+              if (optionPosition == -1) {
+                categoricalFacet[facetPosition].options.push({
+                    value: propertyItem.value,
+                    selected: false
+                  });
               }
             } else if (propertyItem.range === "numeric" || propertyItem.range === "duration") {
               // Construct the facet model
@@ -196,11 +198,11 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
       });
       filterPosition = sc.filterModel.length - 1;
     }
-    if (facet.selected) {
-      sc.filterModel[filterPosition].values.push(facet.value);
-    } else {
-      var valuePosition = sc.filterModel[filterPosition].values.indexOf(facet.value);
-      if (valuePosition != -1) {
+    for (var i = 0; i < facet.options.length; i++) {
+      var valuePosition = sc.filterModel[filterPosition].values.indexOf(facet.options[i].value);
+      if (facet.options[i].selected && valuePosition == -1) {
+        sc.filterModel[filterPosition].values.push(facet.options[i].value);
+      } else if (!facet.options[i].selected && valuePosition != -1) {
         sc.filterModel[filterPosition].values.splice(valuePosition, 1);
       }
     }
