@@ -19,6 +19,7 @@
   <script type="text/javascript" src="js/angular-animate.min.js"></script>
   <script type="text/javascript" src="js/angular-filter.min.js"></script>
   <script type="text/javascript" src="js/angular-material.min.js"></script>
+  <script type="text/javascript" src="js/angular-materialize.min.js"></script>
   <script type="text/javascript" src="js/quantities.js"></script>
   <script type="text/javascript" src="js/moment.js"></script>
   <script type="text/javascript" src="rzslider/rzslider.min.js"></script>
@@ -37,25 +38,20 @@
       <i class="material-icons" style="padding-top:18px;">close</i>
       <input type="submit" id="submit" value="Search" ng-click="doSearch()">
     </div>
+    <div class="row search-breadcrumb">
+      <div style="float:left;">TYPES: </div>
+      <div ng-repeat="model in sc.facetModel" style="float:left;margin-left:8px;">
+        <a class="btn dropdown-button" href="#"
+            ng-attr-data-activates="dropdown-{{model.domain}}" dropdown>
+            {{model.domain}}<i class="material-icons right">arrow_drop_down</i></a>
+        <ul id="dropdown-{{model.domain}}" class="dropdown-content">
+          <li ng-repeat="property in model.properties"><a href="#"
+              ng-click="onOpen(property.facet)">{{property.name}}</a></li>
+        </ul>
+      </div>
+    </div>
     <div class="row container">
       <div class="search-facet-container col s3">
-        <div class="facet-menu">
-          <md-menu>
-            <a class='dropdown-button btn' href='#' ng-click="$mdMenu.open()">Add Facet</a>
-            <md-menu-content>
-              <md-menu-item ng-repeat="facet in sc.facetModel">
-                <md-menu>
-                  <md-button ng-click="$mdMenu.open()">{{facet.domain}}</md-button>
-                  <md-menu-content>
-                    <md-menu-item ng-repeat="property in facet.properties">
-                      <md-button ng-click="onOpen(property.facet)">{{property.name}}</md-button>
-                    </md-menu-item>
-                  </md-menu-content>
-                </md-menu>
-              </md-menu-item>
-            </md-menu-content>
-          </md-menu>
-        </div>
         <div ng-repeat="facet in sc.categoricalFacet" ng-if="facet.visible">
           <ul class="collection with-header">
             <li class="collection-header">

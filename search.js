@@ -6,7 +6,7 @@ db.version(1).stores({
 });
 db.open();
 
-var app = angular.module('schemaorg', ['ngMaterial', 'angular.filter', 'rzModule', 'user-profiles', 'search-facets', 'data-units'], function($provide) {
+var app = angular.module('schemaorg', ['ngMaterial', 'ui.materialize', 'angular.filter', 'rzModule', 'user-profiles', 'search-facets', 'data-units'], function($provide) {
   // Fixes'history.pushState is not available in packaged apps' error message
   // Source: https://github.com/angular/angular.js/issues/11932
   $provide.decorator('$window', function($delegate) {
