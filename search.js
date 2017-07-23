@@ -199,6 +199,20 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
     if (filterPosition != -1) {
       sc.filterModel.splice(filterPosition, 1);
     }
+    // Reset the values
+    if (facet.type === "categorial") {
+      var facetPosition = findIndex(sc.categorialFacet, "id", facet.id);
+      var facet = sc.categorialFacet[facetPosition];
+      for (var i = 0; i < facet.choices.length; i++) {
+        facet.choices[i].selected = false;
+      }
+    } else if (facet.type === "numeral") {
+      var facetPosition = findIndex(sc.numeralRangeFacet, "id", facet.id);
+      console.log(facetPosition);
+      var facet = sc.numeralRangeFacet[facetPosition];
+      facet.minValue = facet.options.floor;
+      facet.maxValue = facet.options.ceil;
+    }
   }
 
   $scope.onCheckboxChanged = function(facet) {
