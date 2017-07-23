@@ -58,7 +58,7 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
   sc.facetModel = [];
   sc.searchResults = [];
   sc.categorialFacet = [];
-  sc.numericalRangeFacet = [];
+  sc.numeralRangeFacet = [];
 
   $scope.doSearch = function() {
     var propertyCategories = [];
@@ -91,10 +91,10 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
 
         const searchFacet = {
           categorial: [],
-          numerical: []
+          numeral: []
         }
         const categorialFacet = searchFacet.categorial;
-        const numericalRangeFacet = searchFacet.numerical;
+        const numeralRangeFacet = searchFacet.numeral;
         for (var i = 0; i < data.length; i++) {
           var itemProperties = data[i].properties;
           for (var j = 0; j < itemProperties.length; j++) {
@@ -123,9 +123,9 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
               }
             } else if (propertyItem.range === "numeric" || propertyItem.range === "duration") {
               // Construct the facet object
-              var facetPosition = findIndex(numericalRangeFacet, "id", propertyItem.id);
+              var facetPosition = findIndex(numeralRangeFacet, "id", propertyItem.id);
               if (facetPosition == -1) {
-                numericalRangeFacet.push({
+                numeralRangeFacet.push({
                     id: propertyItem.id,
                     name: propertyItem.name,
                     label: propertyItem.label,
@@ -144,16 +144,16 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
                       onChange: $scope.onSliderChanged
                     }
                   });
-                facetPosition = numericalRangeFacet.length - 1;
+                facetPosition = numeralRangeFacet.length - 1;
               }
               var value = propertyItem.value;
-              if (value < numericalRangeFacet[facetPosition].minValue) {
-                numericalRangeFacet[facetPosition].minValue = value;
-                numericalRangeFacet[facetPosition].options.floor = value;
+              if (value < numeralRangeFacet[facetPosition].minValue) {
+                numeralRangeFacet[facetPosition].minValue = value;
+                numeralRangeFacet[facetPosition].options.floor = value;
               }
-              if (value > numericalRangeFacet[facetPosition].maxValue) {
-                numericalRangeFacet[facetPosition].maxValue = value;
-                numericalRangeFacet[facetPosition].options.ceil = value;
+              if (value > numeralRangeFacet[facetPosition].maxValue) {
+                numeralRangeFacet[facetPosition].maxValue = value;
+                numeralRangeFacet[facetPosition].options.ceil = value;
               }
             }
           }
@@ -181,7 +181,7 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
 
         sc.facetModel = facetModel;
         sc.categorialFacet = categorialFacet;
-        sc.numericalRangeFacet = numericalRangeFacet;
+        sc.numeralRangeFacet = numeralRangeFacet;
         $scope.$apply();
       });
     });
@@ -225,7 +225,7 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
   }
 
   $scope.onSliderChanged = function(id) {
-    var resultArr = sc.numericalRangeFacet.filter(obj => { return obj.id == id });
+    var resultArr = sc.numeralRangeFacet.filter(obj => { return obj.id == id });
     var facet = resultArr[0];
     var filterPosition = findIndex(sc.filterModel, "id", facet.id);
     if (filterPosition == -1) {
