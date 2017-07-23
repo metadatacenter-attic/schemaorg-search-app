@@ -149,17 +149,17 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
                 numericalRangeFacet[facetPosition].options.ceil = value;
               }
               // Construct the facet model
-              var facetPosition = findIndex(facetModel, "domain", propertyItem.domain);
-              if (facetPosition == -1) {
+              var facetModelPosition = findIndex(facetModel, "domain", propertyItem.domain);
+              if (facetModelPosition == -1) {
                 facetModel.push({
                     domain: propertyItem.domain,
                     properties: []
                   });
-                facetPosition = facetModel.length - 1;
+                facetModelPosition = facetModel.length - 1;
               }
-              var propertyPosition = findIndex(facetModel[facetPosition].properties, "id", propertyItem.category);
+              var propertyPosition = findIndex(facetModel[facetModelPosition].properties, "id", propertyItem.category);
               if (propertyPosition == -1) {
-                facetModel[facetPosition].properties.push({
+                facetModel[facetModelPosition].properties.push({
                     id: propertyItem.category,
                     name: propertyItem.name,
                     facet: numericalRangeFacet[facetPosition]
