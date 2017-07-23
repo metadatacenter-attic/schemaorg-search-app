@@ -19,7 +19,7 @@ angular.module("schemaorg-markup", []).constant('schemaorgMarkup',
           'active': true
         },
         { 'name': 'totaltime',
-          'label': 'Cook Time',
+          'label': 'Total Time',
           'type': 'duration',
           'unit': 'minute',
           'canonicalUrl': 'http://schema.org/totalTime',
