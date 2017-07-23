@@ -161,7 +161,8 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
               if (propertyPosition == -1) {
                 facetModel[facetPosition].properties.push({
                     id: propertyItem.category,
-                    name: propertyItem.name
+                    name: propertyItem.name,
+                    facet: numericalRangeFacet[facetPosition]
                   });
               }
             }
