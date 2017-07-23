@@ -130,7 +130,7 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
                     name: propertyItem.name,
                     label: propertyItem.label,
                     topic: propertyItem.domain.name,
-                    type: "range",
+                    type: "numeral",
                     visible: false,
                     unit: propertyItem.unit,
                     minValue: Number.MAX_SAFE_INTEGER,
@@ -258,7 +258,7 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
                 if (filter.type === "categorial") {
                   evalOnEachFilter[i] = evalOnEachFilter[i] &&
                       filter.values.includes(property.value);
-                } else if (filter.type === "range") {
+                } else if (filter.type === "numeral") {
                   evalOnEachFilter[i] = evalOnEachFilter[i] &&
                       property.value >= filter.values[0] &&
                       property.value <= filter.values[1];
