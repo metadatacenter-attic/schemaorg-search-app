@@ -194,6 +194,10 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
 
   sc.filterModel = [];
 
+  $scope.onOpen = function(facet) {
+    facet.visible = true;
+  }
+
   $scope.onClose = function(facet) {
     facet.visible = false;
     var filterPosition = findIndex(sc.filterModel, "id", facet.category);
