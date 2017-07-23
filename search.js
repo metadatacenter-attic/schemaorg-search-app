@@ -126,10 +126,9 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
                   });
                 facetModelPosition = facetModel.length - 1;
               }
-              var propertyPosition = findIndex(facetModel[facetModelPosition].properties, "id", propertyItem.category);
+              var propertyPosition = findIndex(facetModel[facetModelPosition].properties, "name", propertyItem.name);
               if (propertyPosition == -1) {
                 facetModel[facetModelPosition].properties.push({
-                    id: propertyItem.category,
                     name: propertyItem.name,
                     facet: categoricalFacet[facetPosition]
                   });
@@ -175,10 +174,9 @@ app.controller('SearchController', function($scope, profiles, facets, units, Cus
                   });
                 facetModelPosition = facetModel.length - 1;
               }
-              var propertyPosition = findIndex(facetModel[facetModelPosition].properties, "id", propertyItem.category);
+              var propertyPosition = findIndex(facetModel[facetModelPosition].properties, "name", propertyItem.name);
               if (propertyPosition == -1) {
                 facetModel[facetModelPosition].properties.push({
-                    id: propertyItem.category,
                     name: propertyItem.name,
                     facet: numericalRangeFacet[facetPosition]
                   });
