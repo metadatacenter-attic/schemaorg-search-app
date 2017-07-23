@@ -33,8 +33,8 @@
       <i class="material-icons" style="padding-top:18px;">close</i>
       <input type="submit" id="submit" value="Search" ng-click="doSearch()">
     </div>
-    <div class="row search-breadcrumb">
-      <div style="float:left;">TYPES: </div>
+    <div class="row search-breadcrumb" ng-if="sc.facetModel.length!=0">
+      <div style="float:left;">TOPICS: </div>
       <div class="topic-type" ng-repeat="model in sc.facetModel">
         <a class="btn dropdown-button" href="#"
             ng-attr-data-activates="dropdown-{{model.domain}}" dropdown>
