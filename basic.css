@@ -7,30 +7,38 @@ body {
   overflow-y: auto;
 }
 
-@media only screen and (min-width: 993px) {
-  .container {
-    width: 70%;
-  }
+.container {
+  width: 95%;
+  margin-left: 15px;
 }
 
-@media only screen and (min-width: 1136px) {
-  .container {
-    width: 85%;
-  }
+.search-breadcrumb {
+  font-size: 15px;
+  margin-left: 15px;
+  line-height: 30px; 
+}
+
+.topic-type {
+  float: left;
+  margin-left: 8px;
+}
+
+.dropdown-button {
+  font-size: 12px;
+  padding: 0 1.2em;
+  height: 32px;
+  line-height: 32px;
 }
 
 .search-facet-container {
-  margin-top: 10px;
 }
 
 .facet-menu {
   margin-top: 10px;
   margin-bottom: 10px;
-
 }
 
 .search-result-container {
-  margin-top: 10px;
 }
 
 .search-result-list-container {
