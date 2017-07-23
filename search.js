@@ -208,7 +208,6 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
       }
     } else if (facet.type === "numeral") {
       var facetPosition = findIndex(sc.numeralRangeFacet, "id", facet.id);
-      console.log(facetPosition);
       var facet = sc.numeralRangeFacet[facetPosition];
       facet.minValue = facet.options.floor;
       facet.maxValue = facet.options.ceil;
