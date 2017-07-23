@@ -268,7 +268,7 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
             evalOnEachFilter[i] = (item.types.length == 0) || item.types.includes(filter.topic);
             for (var j = 0; j < item.properties.length; j++) {
               var property = item.properties[j];
-              if (property.domain === filter.topic && property.name === filter.name) {
+              if (property.domain.name === filter.topic && property.name === filter.name) {
                 if (filter.type === "categorial") {
                   evalOnEachFilter[i] = evalOnEachFilter[i] &&
                       filter.values.includes(property.value);
