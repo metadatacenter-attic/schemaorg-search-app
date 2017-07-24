@@ -4,27 +4,30 @@
 <head>
   <meta charset="UTF8">
   <title>Search Explorer</title>
-  <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css"
+  <link type="text/css" rel="stylesheet" href="assets/css/materialize.min.css"
     media="screen,projection">
-  <link type="text/css" rel="stylesheet" href="materialize/extras/material-icons.css">
-  <link type="text/css" rel="stylesheet" href="rzslider/rzslider.min.css">
-  <link type="text/css" rel="stylesheet" href="basic.css">
-  <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
-  <script type="text/javascript" src="materialize/js/materialize.min.js"></script>
-  <script type="text/javascript" src="js/dexie.min.js"></script>
-  <script type="text/javascript" src="js/angular.min.js"></script>
-  <script type="text/javascript" src="js/angular-filter.min.js"></script>
-  <script type="text/javascript" src="js/angular-materialize.min.js"></script>
-  <script type="text/javascript" src="js/quantities.js"></script>
-  <script type="text/javascript" src="js/moment.js"></script>
-  <script type="text/javascript" src="rzslider/rzslider.min.js"></script>
-  <script type="text/javascript" src="user-profiles.js"></script>
-  <script type="text/javascript" src="schemaorg-markup.js"></script>
-  <script type="text/javascript" src="search.js"></script>
+  <link type="text/css" rel="stylesheet" href="assets/css/material-icons.css">
+  <link type="text/css" rel="stylesheet" href="assets/css/rzslider.min.css">
+  <link type="text/css" rel="stylesheet" href="assets/css/refinr.css">
+  <script type="text/javascript" src="assets/libs/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="assets/libs/materialize.min.js"></script>
+  <script type="text/javascript" src="assets/libs/dexie.min.js"></script>
+  <script type="text/javascript" src="assets/libs/angular.min.js"></script>
+  <script type="text/javascript" src="assets/libs/angular-filter.min.js"></script>
+  <script type="text/javascript" src="assets/libs/angular-materialize.min.js"></script>
+  <script type="text/javascript" src="assets/libs/moment.min.js"></script>
+  <script type="text/javascript" src="assets/libs/rzslider.min.js"></script>
+  <script type="text/javascript" src="assets/libs/quantities.js"></script>
+  <script type="text/javascript" src="app/app.js"></script>
+  <script type="text/javascript" src="app/components/search/search.controller.js"></script>
+  <script type="text/javascript" src="app/components/search/search.filters.js"></script>
+  <script type="text/javascript" src="app/components/search/cse.factory.js"></script>
+  <script type="text/javascript" src="app/components/search/vocab.constant.js"></script>
+  <script type="text/javascript" src="app/components/settings/profiles.constant.js"></script>
 </head>
 
 <body class="grey lighten-5" ng-app="schemaorg">
-  <form class="search-container" ng-controller="SearchController as sc">
+  <form class="search-container" ng-controller="searchController as sc">
     <div class="input-field" style="margin-top:0;">
       <input class="valign center search-bar"
       style="font-size:200%;padding-top:10px;padding-bottom:10px;"

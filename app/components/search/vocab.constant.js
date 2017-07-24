@@ -1,4 +1,8 @@
-angular.module("schemaorg-markup", []).constant('schemaorgMarkup',
+'use strict';
+
+angular.module('search')
+
+.constant('schemaorgVocab',
   { 'recipe': {
       'name': 'recipe',
       'label': 'Recipe',

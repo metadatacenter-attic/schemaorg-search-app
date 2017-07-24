@@ -1,4 +1,7 @@
+'use strict';
+
 var propertyCategories = [];
+
 var db = new Dexie("clippingDB");
 db.delete();
 db.version(1).stores({
@@ -6,54 +9,11 @@ db.version(1).stores({
 });
 db.open();
 
-var app = angular.module('schemaorg', ['ui.materialize', 'angular.filter', 'rzModule', 'user-profiles', 'schemaorg-markup'], function($provide) {
-  // Fixes'history.pushState is not available in packaged apps' error message
-  // Source: https://github.com/angular/angular.js/issues/11932
-  $provide.decorator('$window', function($delegate) {
-    Object.defineProperty($delegate, 'history', {
-      get: function() {
-        return null;
-      }
-    });
-    return $delegate;
-  });
-});
+angular.module('search')
 
-app.filter('removeSeparator', function() {
-  return function(input){
-    var text = input.replace(/\s-\s/g, '|');
-    var RegExp = /^([^|•:(+]+)/;
-    var match = RegExp.exec(text);
-    return match[1];
-  };
-});
-
-app.factory('CustomSearch', function($q, $http) {
-  var exec = function(apiKey, searchEngineId, keyword, page) {
-    var defer = $q.defer();
-    var offset = 10;
-    var url = 'https://www.googleapis.com/customsearch/v1' +
-      '?key=' + apiKey +
-      '&cx=' + searchEngineId +
-      '&q=' + keyword +
-      '&start=' + (((page - 1) * offset) + 1) +
-      '&num=10';
-    $http.get(url).then(
-      function(response) {
-        defer.resolve(response.data.items);
-      },
-      function(err) {
-        defer.reject(err);
-      });
-    return defer.promise;
-  };
-  return {
-    exec: exec
-  };
-});
-
-app.controller('SearchController', function($scope, profiles, schemaorgMarkup, CustomSearch) {
-  var profile = profiles['schemaorg'];
+.controller('searchController', ['$scope', 'searchCall', 'userProfiles', 'schemaorgVocab',
+function($scope, searchCall, userProfiles, schemaorgVocab) {
+  var profile = userProfiles['schemaorg'];
   var sc = this;
   sc.facetModel = [];
   sc.searchResults = [];
@@ -67,14 +27,14 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
     if (userInput == null) {
       return;
     }
-    var input = processUserInput(userInput, schemaorgMarkup);
+    var input = processUserInput(userInput, schemaorgVocab);
     var searchPromises = [];
     var pages = profile.pageLimit;
     var apiKey = profile.apiKey;
     var searchEngineId = profile.searchEngineId;
     var keyword = input.keyword;
-    for (i = 1; i <= pages; i++) {
-      var promise = CustomSearch.exec(apiKey, searchEngineId, keyword, i);
+    for (var i = 1; i <= pages; i++) {
+      var promise = searchCall.exec(apiKey, searchEngineId, keyword, i);
       searchPromises.push(promise);
     }
     Promise.all(searchPromises.map(settle)).then(results => {
@@ -82,7 +42,7 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
       results.filter(x => x.status === "resolved").forEach(output => {
         var topics = input.topics;
         var searchResults = output.value;
-        storeResults(searchResults, topics, schemaorgMarkup)
+        storeResults(searchResults, topics, schemaorgVocab)
       });
 
       db.items.toArray(data => { // XXX: Rename to items
@@ -169,8 +129,8 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
             facetModel.push({
                 id: facet.topic,
                 topic: {
-                  name: schemaorgMarkup[facet.topic].name,
-                  label: schemaorgMarkup[facet.topic].label
+                  name: schemaorgVocab[facet.topic].name,
+                  label: schemaorgVocab[facet.topic].label
                 },
                 facets: []
               });
@@ -286,14 +246,14 @@ app.controller('SearchController', function($scope, profiles, schemaorgMarkup, C
       $scope.$apply();
     });
   }, true);
-});
+}]);
 
-function processUserInput(input, schemaorgMarkup) {
+function processUserInput(input, schemaorgVocab) {
   var keyword_split = input.split('#');
   var keyword = keyword_split[0];
   var topics = keyword_split.filter(str => { return str != keyword });
   if (topics.length == 0) {
-    topics = Object.keys(schemaorgMarkup);
+    topics = Object.keys(schemaorgVocab);
   }
   return {
     keyword: keyword,
@@ -308,12 +268,12 @@ function settle(promise) {
                       function(e){ return {value:e, status: "rejected" }});
 }
 
-function storeResults(searchResults, topics, schemaorgMarkup) {
+function storeResults(searchResults, topics, schemaorgVocab) {
   if (searchResults != null) {
     searchResults.forEach(resultItem => {
       var pkItem = resultItem.link;
       storeBasicData(pkItem, resultItem);
-      storeSchemaOrgData(pkItem, resultItem, topics, schemaorgMarkup);
+      storeSchemaOrgData(pkItem, resultItem, topics, schemaorgVocab);
     });
   }
 }
@@ -331,14 +291,14 @@ function storeBasicData(pkItem, resultItem) {
   });
 }
 
-function storeSchemaOrgData(pkItem, resultItem, topics, schemaorgMarkup) {
+function storeSchemaOrgData(pkItem, resultItem, topics, schemaorgVocab) {
   for (var i = 0; i < topics.length; i++) {
     var topic = topics[i];
     var schemaOrgData = getSchemaOrgData(resultItem, topic);
     if (schemaOrgData != null) {
       updateTableWithSchemaOrgData(pkItem, schemaOrgData);
       updateTableWithSchemaOrgTypes(pkItem, schemaOrgData);
-      updateTableWithSchemaOrgProperties(pkItem, schemaOrgData, schemaorgMarkup[topic]);
+      updateTableWithSchemaOrgProperties(pkItem, schemaOrgData, schemaorgVocab[topic]);
     }
   }
 }
