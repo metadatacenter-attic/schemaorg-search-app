@@ -22,6 +22,7 @@
   <script type="text/javascript" src="app/components/search/search.controller.js"></script>
   <script type="text/javascript" src="app/components/search/search.filters.js"></script>
   <script type="text/javascript" src="app/components/search/cse.factory.js"></script>
+  <script type="text/javascript" src="app/components/search/cse-data.factory.js"></script>
   <script type="text/javascript" src="app/components/search/category-facet.factory.js"></script>
   <script type="text/javascript" src="app/components/search/range-facet.factory.js"></script>
   <script type="text/javascript" src="app/components/search/breadcrumb.factory.js"></script>
@@ -87,7 +88,7 @@
       <div class="search-result-container col s10">
         <div class="row">
           <div class="col s12 cards-container">
-            <div class="card small" ng-repeat="item in sc.searchResults" ng-if="item.schemaorg.length">
+            <div class="card small" ng-repeat="item in sc.searchResults" ng-if="item.hasStructuredData">
               <div class="card-content">
                 <span class="card-title activator grey-text text-darken-4 smaller">
                   <a href="{{item.url}}" target="_blank">{{item.title | removeSeparator}}</a>
@@ -95,9 +96,9 @@
                 <p class="fadeout-overflow">{{item.description}}</p>
               </div>
               <div class="card-reveal">
-                <span class="card-title grey-text text-darken-4 smaller">Schema.org Markup
+                <span class="card-title grey-text text-darken-4 smaller">Structured Data
                   <i class="material-icons right">close</i></span>
-                <pre>{{item.schemaorg | json}}</pre>
+                <pre>{{item.properties | json}}</pre>
               </div>
               <div class="card-action white-text blue-grey darken-1 activator narrower">VIEW MARKUP
                   <i class="material-icons right">more_vert</i>
@@ -107,7 +108,7 @@
           <div class="col s12">
             <div class="search-result-list-container">
               <ul class="search-result-list">
-                <li class="search-result-item" ng-repeat="item in sc.searchResults" ng-if="!item.schemaorg.length">
+                <li class="search-result-item" ng-repeat="item in sc.searchResults" ng-if="!item.hasStructuredData">
                   <span><a href="{{item.url}}" target="_blank">{{item.title}}</a><span><br>
                   <span class="green-text lighten-3">{{item.url}}</span><br>
                   <span>{{item.description}}</span>

@@ -1,7 +1,5 @@
 'use strict';
 
-var propertyCategories = [];
-
 var db = new Dexie("clippingDB");
 db.delete();
 db.version(1).stores({
@@ -14,6 +12,7 @@ angular.module('search')
 .controller('searchController', [
   '$scope',
   'searchCall',
+  'CseDataService',
   'CategoryFacetService',
   'RangeFacetService',
   'BreadcrumbService',
@@ -21,7 +20,7 @@ angular.module('search')
   'userProfiles',
   'schemaorgVocab',
 
-function($scope, searchCall, CategoryFacetService, RangeFacetService,
+function($scope, searchCall, CseDataService, CategoryFacetService, RangeFacetService,
     BreadcrumbService, FilterService, userProfiles, schemaorgVocab) {
   var profile = userProfiles['schemaorg'];
   var sc = this;
@@ -31,34 +30,48 @@ function($scope, searchCall, CategoryFacetService, RangeFacetService,
   $scope.breadcrumbs = BreadcrumbService.breadcrumbs;
 
   $scope.doSearch = function() {
+    var userInput = $scope.keyword;
+    if (userInput == null) {
+      return;
+    }
+
+    CseDataService.clear();
     CategoryFacetService.clear();
     RangeFacetService.clear();
     BreadcrumbService.clear();
     FilterService.clear();
 
-    var propertyCategories = [];
+    var input = processUserInput(userInput);
+    var userKeyword = input.keyword;
+    var userTopics = input.topics;
 
-    var userInput = $scope.keyword;
-    if (userInput == null) {
-      return;
-    }
-    var input = processUserInput(userInput, schemaorgVocab);
     var searchPromises = [];
-    var pages = profile.pageLimit;
-    var apiKey = profile.apiKey;
-    var searchEngineId = profile.searchEngineId;
-    var keyword = input.keyword;
-    for (var i = 1; i <= pages; i++) {
-      var promise = searchCall.exec(apiKey, searchEngineId, keyword, i);
+    for (var page = 1; page <= profile.pageLimit; page++) {
+      var promise = searchCall.exec(
+          profile.apiKey,
+          profile.searchEngineId,
+          userKeyword, page);
       searchPromises.push(promise);
     }
-    Promise.all(searchPromises.map(settle)).then(results => {
+
+    Promise.all(searchPromises.map(settle)).then(resolvedCalls => {
       db.items.clear();
-      results.filter(x => x.status === "resolved").forEach(output => {
-        var topics = input.topics;
-        var searchResults = output.value;
-        storeResults(searchResults, topics, schemaorgVocab)
-      });
+      resolvedCalls.filter(x => x.status === "resolved")
+        .forEach(resolvedCall => {
+          var rawDataCollection = resolvedCall.value;
+          for (var i = 0; i < rawDataCollection.length; i++) {
+            var rawData = rawDataCollection[i];
+            CseDataService.add(rawData, userTopics);
+          }
+        });
+      db.items.bulkAdd(CseDataService.dataModel)
+        .then(() => {
+          console.log("INFO: Succesfully save data into the local data store: ",
+              CseDataService.dataModel.length, "records");
+        })
+        .catch(err => {
+          console.error(err.message);
+        });
 
       db.items.toArray(data => { // XXX: Rename to items
         sc.searchResults = data;
@@ -124,223 +137,20 @@ function($scope, searchCall, CategoryFacetService, RangeFacetService,
       $scope.$apply();
     });
   }, true);
+
+  function processUserInput(input) {
+    var bagOfKeywords = input.split('#');
+    var keyword = bagOfKeywords[0];
+    return {
+      keyword: keyword,
+      topics: bagOfKeywords.filter(str => { return str != keyword })
+    }
+  }
+
+  // Solution for handling request failure gracefully in Promise.all
+  // Source: https://stackoverflow.com/questions/31424561/wait-until-all-es6-promises-complete-even-rejected-promises
+  function settle(promise) {
+    return promise.then(function(v){ return {value:v, status: "resolved" }},
+                        function(e){ return {value:e, status: "rejected" }});
+  }
 }]);
-
-function processUserInput(input, schemaorgVocab) {
-  var keyword_split = input.split('#');
-  var keyword = keyword_split[0];
-  var topics = keyword_split.filter(str => { return str != keyword });
-  if (topics.length == 0) {
-    topics = Object.keys(schemaorgVocab);
-  }
-  return {
-    keyword: keyword,
-    topics: topics
-  }
-}
-
-// Solution for handling request failure gracefully in Promise.all
-// Source: https://stackoverflow.com/questions/31424561/wait-until-all-es6-promises-complete-even-rejected-promises
-function settle(promise) {
-  return promise.then(function(v){ return {value:v, status: "resolved" }},
-                      function(e){ return {value:e, status: "rejected" }});
-}
-
-function storeResults(searchResults, topics, schemaorgVocab) {
-  if (searchResults != null) {
-    searchResults.forEach(resultItem => {
-      var pkItem = resultItem.link;
-      storeBasicData(pkItem, resultItem);
-      storeSchemaOrgData(pkItem, resultItem, topics, schemaorgVocab);
-    });
-  }
-}
-
-function storeBasicData(pkItem, resultItem) {
-  db.items.add({
-    url: pkItem,
-    title: resultItem.title,
-    description: resultItem.snippet,
-    types: [],
-    properties: [],
-    schemaorg: [],
-  }).catch(err => {
-    // console.error(err);
-  });
-}
-
-function storeSchemaOrgData(pkItem, resultItem, topics, schemaorgVocab) {
-  for (var i = 0; i < topics.length; i++) {
-    var topic = topics[i];
-    var schemaOrgData = getSchemaOrgData(resultItem, topic);
-    if (schemaOrgData != null) {
-      updateTableWithSchemaOrgData(pkItem, schemaOrgData);
-      updateTableWithSchemaOrgTypes(pkItem, schemaOrgData);
-      updateTableWithSchemaOrgProperties(pkItem, schemaOrgData, schemaorgVocab[topic]);
-    }
-  }
-}
-
-function updateTableWithSchemaOrgData(pkItem, schemaOrgData) {
-  db.items.where('url').equals(pkItem).modify(item => {
-    item.schemaorg.push(schemaOrgData)
-  }).catch(err => {
-    // console.error(err);
-  });
-}
-
-function updateTableWithSchemaOrgTypes(pkItem, schemaOrgData) {
-  db.items.where('url').equals(pkItem).modify(item => {
-    var types = Object.keys(schemaOrgData);
-    for (var i = 0; i < types.length; i++) {
-      item.types.push(types[i]);
-    }
-  }).catch(err => {
-    // console.error(err);
-  });
-}
-
-function updateTableWithSchemaOrgProperties(pkItem, schemaOrgData, selectedTopic) {
-  db.items.where('url').equals(pkItem).modify(item => {
-    var topicName = selectedTopic.name;
-    var topicLabel = selectedTopic.label;
-    for (var i = 0; i < selectedTopic.properties.length; i++) {
-      var propertyObject = selectedTopic.properties[i];
-      var propertyName = propertyObject.name;
-      var propertyLabel = propertyObject.label;
-      var propertyType = propertyObject.type;
-      var propertyUnit = propertyObject.unit;
-      var propertyValue = schemaOrgData[topicName][propertyName];
-      if (propertyValue != null) {
-        var property = {
-          id: getPropertyId(topicName, propertyName),
-          domain: {
-            name: topicName,
-            label: topicLabel
-          },
-          range: propertyType,
-          name: propertyName,
-          label: propertyLabel,
-          value: refineValue(propertyValue, propertyType, propertyUnit)
-        }
-        if (propertyUnit != null) {
-          property.unit = propertyUnit;
-        }
-        item.properties.push(property);
-      }
-    }
-  }).catch(err => {
-    console.error(err);
-  });
-}
-
-function getPropertyId(topicName, propertyName) {
-  const propertyCategoryName = topicName + propertyName;
-  var propertyId = propertyCategories.indexOf(propertyCategoryName);
-  if (propertyId == -1) {
-    propertyCategories.push(propertyCategoryName);
-    propertyId = propertyCategories.length - 1;
-  }
-  return propertyId;
-}
-
-function getSchemaOrgData(obj, topic) {
-  if (!obj.hasOwnProperty('pagemap')) {
-    return;
-  }
-  var pagemap = obj.pagemap;
-  if (!pagemap.hasOwnProperty(topic)) {
-    return;
-  }
-  var topicArray = pagemap[topic];
-  var topicAttributes = findBestData(topicArray);
-  var topicObject = {};
-  topicObject[topic] = topicAttributes;
-  return topicObject;
-}
-
-function findBestData(arr) {
-  var toReturn = {};
-  var bestInfoSize = -1;
-  for (var i = 0; i < arr.length; i++) {
-    var topicObject = arr[i];
-    var infoSize = Object.keys(topicObject).length;
-    if (infoSize > bestInfoSize) {
-      toReturn = topicObject;
-      bestInfoSize = infoSize;
-    }
-  }
-  return toReturn;
-}
-
-function refineValue(value, dtype, unit) {
-  if (dtype === "numeric") {
-    return refineNumericData(value, unit);
-  } else if (dtype === "duration") {
-    return refineDurationData(value, unit);
-  }
-  return value;
-}
-
-function refineNumericData(value, unit) {
-  if (unit != null) {
-    try {
-      return Qty(value).to(unit).scalar;
-    } catch (err) {
-      return autoFixNumericData(value);
-    }
-  } else {
-    return autoFixNumericData(value);
-  }
-}
-
-function refineDurationData(value, unit) {
-  var duration = moment.duration(value);
-  if (duration._milliseconds != 0) {
-    return duration.as(unit);
-  } else {
-    return autoFixDurationData(value);
-  }
-}
-
-function autoFixNumericData(value) {
-  var numericValue = getNumberOnly(value)
-  console.log("INFO: Applying an auto-fix for [numeric] data by converting " +
-      "\"" + value + "\" to \"" + numericValue + "\"");
-  return numericValue;
-}
-
-function autoFixDurationData(value) {
-  var durationValue = getNumberOnly(value);
-  console.log("INFO: Applying an auto-fix for [duration] data by converting " +
-      "\"" + value + "\" to \"" + durationValue + "\"");
-  return durationValue;
-}
-
-function getNumberOnly(text) {
-  var RegExp = /(\d+([\/\.]\d+)?)/;
-  var match = RegExp.exec(text);
-  return evalNumber(match[1]);
-}
-
-function evalNumber(number) {
-  var value = number;
-  var y = number.split(' ');
-  if (y.length > 1) {
-    var z = y[1].split('/');
-    value = +y[0] + (z[0] / z[1]);
-  } else {
-    var z = y[0].split('/');
-    if (z.length > 1) {
-      value = z[0] / z[1];
-    }
-  }
-  return +value;
-}
-
-function findIndex(arr, key, value) {
-  for(var i = 0; i < arr.length; i++) {
-    if (arr[i][key] === value) return i;
-  }
-  return -1;
-}
