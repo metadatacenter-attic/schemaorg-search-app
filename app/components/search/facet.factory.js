@@ -26,7 +26,7 @@ angular.module('search')
     facet.choices.push(choice);
   }
 
-  var add = function(property) {
+  var add = function($scope, property) {
     var facet = get(property.id);
     if (facet == null) {
       facet = createNew(property);
@@ -58,7 +58,7 @@ angular.module('search')
 .factory('NumeralFacetService', function() {
   var numeralFacets = [];
 
-  function createNew(property, onSliderChanged) {
+  function createNew($scope, property) {
     var numeralFacet = {
       id: property.id,
       name: property.name,
@@ -75,16 +75,16 @@ angular.module('search')
         ceil: Number.MIN_SAFE_INTEGER,
         step: 1,
         hideLimitLabels: true,
-        onChange: onSliderChanged
+        onChange: $scope.onSliderChanged
       }
     };
     return numeralFacet;
   }
 
-  var add = function(property) {
+  var add = function($scope, property) {
     var facet = get(property.id);
     if (facet == null) {
-      facet = createNew(property);
+      facet = createNew($scope, property);
       numeralFacets.push(facet);
     }
     var value = property.value;

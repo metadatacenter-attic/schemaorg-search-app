@@ -64,11 +64,11 @@ function($scope, searchCall, CategorialFacetService, NumeralFacetService, userPr
           for (var j = 0; j < itemProperties.length; j++) {
             var propertyItem = itemProperties[j]; // XXX: Rename to itemProperty
             if (propertyItem.range === "text") {
-              CategorialFacetService.add(propertyItem);
+              CategorialFacetService.add($scope, propertyItem);
             } else if (propertyItem.range === "numeric") {
-              NumeralFacetService.add(propertyItem);
+              NumeralFacetService.add($scope, propertyItem);
             } else if (propertyItem.range === "duration") {
-              NumeralFacetService.add(propertyItem);
+              NumeralFacetService.add($scope, propertyItem);
             }
           }
         }
