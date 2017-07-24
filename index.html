@@ -26,13 +26,13 @@
   <script type="text/javascript" src="app/components/search/category-facet.factory.js"></script>
   <script type="text/javascript" src="app/components/search/range-facet.factory.js"></script>
   <script type="text/javascript" src="app/components/search/breadcrumb.factory.js"></script>
-  <script type="text/javascript" src="app/components/search/filter.factory.js"></script>  
+  <script type="text/javascript" src="app/components/search/filter.factory.js"></script>
   <script type="text/javascript" src="app/components/search/vocab.constant.js"></script>
   <script type="text/javascript" src="app/components/settings/profiles.constant.js"></script>
 </head>
 
 <body class="grey lighten-5" ng-app="schemaorg">
-  <form class="search-container" ng-controller="searchController as sc">
+  <form class="search-container" ng-controller="searchController">
     <div class="input-field" style="margin-top:0;">
       <input class="valign center search-bar"
       style="font-size:200%;padding-top:10px;padding-bottom:10px;"
@@ -88,7 +88,7 @@
       <div class="search-result-container col s10">
         <div class="row">
           <div class="col s12 cards-container">
-            <div class="card small" ng-repeat="item in sc.searchResults" ng-if="item.hasStructuredData">
+            <div class="card small" ng-repeat="item in searchResults" ng-if="item.hasStructuredData">
               <div class="card-content">
                 <span class="card-title activator grey-text text-darken-4 smaller">
                   <a href="{{item.url}}" target="_blank">{{item.title | removeSeparator}}</a>
@@ -108,7 +108,7 @@
           <div class="col s12">
             <div class="search-result-list-container">
               <ul class="search-result-list">
-                <li class="search-result-item" ng-repeat="item in sc.searchResults" ng-if="!item.hasStructuredData">
+                <li class="search-result-item" ng-repeat="item in searchResults" ng-if="!item.hasStructuredData">
                   <span><a href="{{item.url}}" target="_blank">{{item.title}}</a><span><br>
                   <span class="green-text lighten-3">{{item.url}}</span><br>
                   <span>{{item.description}}</span>
