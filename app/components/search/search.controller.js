@@ -16,19 +16,23 @@ angular.module('search')
   'searchCall',
   'CategorialFacetService',
   'NumeralFacetService',
+  'BreadcrumbService',
   'userProfiles',
   'schemaorgVocab',
 
-function($scope, searchCall, CategorialFacetService, NumeralFacetService, userProfiles, schemaorgVocab) {
+function($scope, searchCall, CategorialFacetService, NumeralFacetService,
+    BreadcrumbService, userProfiles, schemaorgVocab) {
   var profile = userProfiles['schemaorg'];
   var sc = this;
   sc.searchResults = [];
   $scope.categorialFacets = CategorialFacetService.categorialFacets;
   $scope.numeralFacets = NumeralFacetService.numeralFacets;
+  $scope.breadcrumbs = BreadcrumbService.breadcrumbs;
 
   $scope.doSearch = function() {
     CategorialFacetService.clear();
     NumeralFacetService.clear();
+    BreadcrumbService.clear();
 
     var propertyCategories = [];
 
@@ -72,27 +76,9 @@ function($scope, searchCall, CategorialFacetService, NumeralFacetService, userPr
           }
         }
 
-        // Construct the facet model
-        var facetModel = [];
-        var allFacets = CategorialFacetService.categorialFacets
-            .concat(NumeralFacetService.numeralFacets);
-        for (var i = 0; i < allFacets.length; i++) {
-          var facet = allFacets[i];
-          var facetModelPosition = findIndex(facetModel, "id", facet.topic);
-          if (facetModelPosition == -1) {
-            facetModel.push({
-                id: facet.topic,
-                topic: {
-                  name: schemaorgVocab[facet.topic].name,
-                  label: schemaorgVocab[facet.topic].label
-                },
-                facets: []
-              });
-            facetModelPosition = facetModel.length - 1;
-          }
-          facetModel[facetModelPosition].facets.push(facet);
-        }
-        $scope.facetModel = facetModel;
+        BreadcrumbService.add(CategorialFacetService.categorialFacets);
+        BreadcrumbService.add(NumeralFacetService.numeralFacets);
+
         $scope.$apply();
       });
     });

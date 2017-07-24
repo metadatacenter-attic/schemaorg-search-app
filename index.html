@@ -23,6 +23,7 @@
   <script type="text/javascript" src="app/components/search/search.filters.js"></script>
   <script type="text/javascript" src="app/components/search/cse.factory.js"></script>
   <script type="text/javascript" src="app/components/search/facet.factory.js"></script>
+  <script type="text/javascript" src="app/components/search/breadcrumb.factory.js"></script>
   <script type="text/javascript" src="app/components/search/vocab.constant.js"></script>
   <script type="text/javascript" src="app/components/settings/profiles.constant.js"></script>
 </head>
@@ -36,14 +37,14 @@
       <i class="material-icons" style="padding-top:18px;">close</i>
       <input type="submit" id="submit" value="Search" ng-click="doSearch()">
     </div>
-    <div class="row search-breadcrumb" ng-if="sc.facetModel.length!=0">
+    <div class="row search-breadcrumb" ng-if="breadcrumbs.length!=0">
       <div style="float:left;">TOPICS: </div>
-      <div class="topic-type" ng-repeat="model in facetModel">
+      <div class="topic-type" ng-repeat="breadcrumb in breadcrumbs">
         <a class="btn dropdown-button" href="#"
-            ng-attr-data-activates="dropdown-{{model.id}}" dropdown>
-            {{model.topic.label}}<i class="material-icons right">arrow_drop_down</i></a>
-        <ul id="dropdown-{{model.id}}" class="dropdown-content">
-          <li ng-repeat="facet in model.facets"><a href="#"
+            ng-attr-data-activates="dropdown-{{breadcrumb.topic.name}}" dropdown>
+            {{breadcrumb.topic.label}}<i class="material-icons right">arrow_drop_down</i></a>
+        <ul id="dropdown-{{breadcrumb.topic.name}}" class="dropdown-content">
+          <li ng-repeat="facet in breadcrumb.facets"><a href="#"
               ng-click="onOpen(facet)">{{facet.label}}</a></li>
         </ul>
       </div>
