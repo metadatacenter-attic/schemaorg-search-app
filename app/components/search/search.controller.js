@@ -17,11 +17,12 @@ angular.module('search')
   'CategoryFacetService',
   'RangeFacetService',
   'BreadcrumbService',
+  'FilterService',
   'userProfiles',
   'schemaorgVocab',
 
 function($scope, searchCall, CategoryFacetService, RangeFacetService,
-    BreadcrumbService, userProfiles, schemaorgVocab) {
+    BreadcrumbService, FilterService, userProfiles, schemaorgVocab) {
   var profile = userProfiles['schemaorg'];
   var sc = this;
   sc.searchResults = [];
@@ -33,6 +34,7 @@ function($scope, searchCall, CategoryFacetService, RangeFacetService,
     CategoryFacetService.clear();
     RangeFacetService.clear();
     BreadcrumbService.clear();
+    FilterService.clear();
 
     var propertyCategories = [];
 
@@ -84,18 +86,14 @@ function($scope, searchCall, CategoryFacetService, RangeFacetService,
     });
   }
 
-  sc.filterModel = [];
-
   $scope.onOpen = function(facet) {
     facet.visible = true;
   }
 
   $scope.onClose = function(facet) {
     facet.visible = false;
-    var filterPosition = findIndex(sc.filterModel, "id", facet.id);
-    if (filterPosition != -1) {
-      sc.filterModel.splice(filterPosition, 1);
-    }
+    // Remove the corresponding filter object
+    FilterService.remove(facet.id);
     // Reset the values
     if (facet.type === "category") {
       CategoryFacetService.reset(facet.id);
@@ -105,70 +103,21 @@ function($scope, searchCall, CategoryFacetService, RangeFacetService,
   }
 
   $scope.onCheckboxChanged = function(facet) {
-    var filterPosition = findIndex(sc.filterModel, "id", facet.id);
-    if (filterPosition == -1) {
-      sc.filterModel.push({
-        id: facet.id,
-        name: facet.name,
-        topic: facet.topic,
-        type: facet.type,
-        visible: facet.visible,
-        values: []
-      });
-      filterPosition = sc.filterModel.length - 1;
-    }
-    for (var i = 0; i < facet.choices.length; i++) {
-      var valuePosition = sc.filterModel[filterPosition].values.indexOf(facet.choices[i].value);
-      if (facet.choices[i].selected && valuePosition == -1) {
-        sc.filterModel[filterPosition].values.push(facet.choices[i].value);
-      } else if (!facet.choices[i].selected && valuePosition != -1) {
-        sc.filterModel[filterPosition].values.splice(valuePosition, 1);
-      }
-    }
+    FilterService.add(facet);
   }
 
   $scope.onSliderChanged = function(id) {
     var facet = RangeFacetService.get(id);
-    var filterPosition = findIndex(sc.filterModel, "id", facet.id);
-    if (filterPosition == -1) {
-      sc.filterModel.push({
-        id: facet.id,
-        name: facet.name,
-        type: facet.type,
-        topic: facet.topic,
-        visible: facet.visible,
-        values: []
-      });
-      filterPosition = sc.filterModel.length - 1;
-    }
-    sc.filterModel[filterPosition].values[0] = facet.minValue;
-    sc.filterModel[filterPosition].values[1] = facet.maxValue;
+    FilterService.add(facet);
   }
 
-  $scope.$watch('sc.filterModel', function(filterModel) {
+  $scope.$watch(function() {
+    return FilterService.filterModel;
+  }, function() {
     db.items.toArray(data => { // XXX: Rename to items
-      var filterSize = filterModel.length;
-      if (filterSize > 0) {
+      if (!FilterService.isEmpty()) {
         data = data.filter(item => {
-          var evalOnEachFilter = [];
-          for (var i = 0; i < filterSize; i++) {
-            var filter = filterModel[i];
-            evalOnEachFilter[i] = (item.types.length == 0) || item.types.includes(filter.topic);
-            for (var j = 0; j < item.properties.length; j++) {
-              var property = item.properties[j];
-              if (property.domain.name === filter.topic && property.name === filter.name) {
-                if (filter.type === "category") {
-                  evalOnEachFilter[i] = evalOnEachFilter[i] &&
-                      filter.values.includes(property.value);
-                } else if (filter.type === "range") {
-                  evalOnEachFilter[i] = evalOnEachFilter[i] &&
-                      property.value >= filter.values[0] &&
-                      property.value <= filter.values[1];
-                }
-              }
-            }
-          }
-          return evalOnEachFilter.reduce((a, b) => { return a && b; });
+          return FilterService.evaluate(item);
         });
       }
       sc.searchResults = data;
