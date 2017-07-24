@@ -97,9 +97,9 @@ function($scope, searchCall, CategoryFacetService, RangeFacetService,
       sc.filterModel.splice(filterPosition, 1);
     }
     // Reset the values
-    if (facet.type === "categorial") {
+    if (facet.type === "category") {
       CategoryFacetService.reset(facet.id);
-    } else if (facet.type === "ranged") {
+    } else if (facet.type === "range") {
       RangeFacetService.reset(facet.id);
     }
   }
@@ -157,10 +157,10 @@ function($scope, searchCall, CategoryFacetService, RangeFacetService,
             for (var j = 0; j < item.properties.length; j++) {
               var property = item.properties[j];
               if (property.domain.name === filter.topic && property.name === filter.name) {
-                if (filter.type === "categorial") {
+                if (filter.type === "category") {
                   evalOnEachFilter[i] = evalOnEachFilter[i] &&
                       filter.values.includes(property.value);
-                } else if (filter.type === "ranged") {
+                } else if (filter.type === "range") {
                   evalOnEachFilter[i] = evalOnEachFilter[i] &&
                       property.value >= filter.values[0] &&
                       property.value <= filter.values[1];

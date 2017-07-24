@@ -11,7 +11,7 @@ angular.module('search')
       name: property.name,
       label: property.label,
       topic: property.domain.name,
-      type: "ranged",
+      type: "range",
       visible: false,
       unit: property.unit,
       minValue: Number.MAX_SAFE_INTEGER,

@@ -11,7 +11,7 @@ angular.module('search')
       name: property.name,
       label: property.label,
       topic: property.domain.name,
-      type: "categorial",
+      type: "category",
       visible: false,
       choices: []
     };
