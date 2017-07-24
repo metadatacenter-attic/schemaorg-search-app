@@ -93,6 +93,7 @@ function($scope, searchCall, CategorialFacetService, NumeralFacetService, userPr
           facetModel[facetModelPosition].facets.push(facet);
         }
         $scope.facetModel = facetModel;
+        $scope.$apply();
       });
     });
   }
