@@ -2,11 +2,11 @@
 
 angular.module('search')
 
-.factory('CategorialFacetService', function() {
-  var categorialFacets = [];
+.factory('CategoryFacetService', function() {
+  var categoryFacets = [];
 
   function createNew(property) {
-    var categorialFacet = {
+    var categoryFacet = {
       id: property.id,
       name: property.name,
       label: property.label,
@@ -15,7 +15,7 @@ angular.module('search')
       visible: false,
       choices: []
     };
-    return categorialFacet;
+    return categoryFacet;
   }
 
   function addChoice(facet, value) {
@@ -30,7 +30,7 @@ angular.module('search')
     var facet = get(property.id);
     if (facet == null) {
       facet = createNew(property);
-      categorialFacets.push(facet);
+      categoryFacets.push(facet);
     }
     var choiceIndex = findIndex(facet.choices, "value", property.value);
     if (choiceIndex === -1) {
@@ -39,8 +39,8 @@ angular.module('search')
   }
 
   var get = function(id) {
-    var index = findIndex(categorialFacets, "id", id);
-    return categorialFacets[index];
+    var index = findIndex(categoryFacets, "id", id);
+    return categoryFacets[index];
   }
 
   var reset = function(id) {
@@ -51,11 +51,11 @@ angular.module('search')
   }
 
   var clear = function() {
-      categorialFacets.splice(0, categorialFacets.length);
+      categoryFacets.splice(0, categoryFacets.length);
   }
 
   return {
-    categorialFacets: categorialFacets,
+    categoryFacets: categoryFacets,
     add: add,
     get: get,
     reset: reset,
@@ -63,16 +63,16 @@ angular.module('search')
   }
 })
 
-.factory('NumeralFacetService', function() {
-  var numeralFacets = [];
+.factory('RangeFacetService', function() {
+  var rangeFacets = [];
 
   function createNew($scope, property) {
-    var numeralFacet = {
+    var rangeFacet = {
       id: property.id,
       name: property.name,
       label: property.label,
       topic: property.domain.name,
-      type: "numeral",
+      type: "ranged",
       visible: false,
       unit: property.unit,
       minValue: Number.MAX_SAFE_INTEGER,
@@ -86,14 +86,14 @@ angular.module('search')
         onChange: $scope.onSliderChanged
       }
     };
-    return numeralFacet;
+    return rangeFacet;
   }
 
   var add = function($scope, property) {
     var facet = get(property.id);
     if (facet == null) {
       facet = createNew($scope, property);
-      numeralFacets.push(facet);
+      rangeFacets.push(facet);
     }
     var value = property.value;
     if (value < facet.minValue) {
@@ -107,8 +107,8 @@ angular.module('search')
   }
 
   var get = function(id) {
-    var index = findIndex(numeralFacets, "id", id);
-    return numeralFacets[index];
+    var index = findIndex(rangeFacets, "id", id);
+    return rangeFacets[index];
   }
 
   var reset = function(id) {
@@ -118,11 +118,11 @@ angular.module('search')
   }
 
   var clear = function() {
-      numeralFacets.splice(0, numeralFacets.length);
+      rangeFacets.splice(0, rangeFacets.length);
   }
 
   return {
-    numeralFacets: numeralFacets,
+    rangeFacets: rangeFacets,
     add: add,
     get: get,
     reset: reset,

@@ -14,24 +14,24 @@ angular.module('search')
 .controller('searchController', [
   '$scope',
   'searchCall',
-  'CategorialFacetService',
-  'NumeralFacetService',
+  'CategoryFacetService',
+  'RangeFacetService',
   'BreadcrumbService',
   'userProfiles',
   'schemaorgVocab',
 
-function($scope, searchCall, CategorialFacetService, NumeralFacetService,
+function($scope, searchCall, CategoryFacetService, RangeFacetService,
     BreadcrumbService, userProfiles, schemaorgVocab) {
   var profile = userProfiles['schemaorg'];
   var sc = this;
   sc.searchResults = [];
-  $scope.categorialFacets = CategorialFacetService.categorialFacets;
-  $scope.numeralFacets = NumeralFacetService.numeralFacets;
+  $scope.categoryFacets = CategoryFacetService.categoryFacets;
+  $scope.rangeFacets = RangeFacetService.rangeFacets;
   $scope.breadcrumbs = BreadcrumbService.breadcrumbs;
 
   $scope.doSearch = function() {
-    CategorialFacetService.clear();
-    NumeralFacetService.clear();
+    CategoryFacetService.clear();
+    RangeFacetService.clear();
     BreadcrumbService.clear();
 
     var propertyCategories = [];
@@ -67,17 +67,17 @@ function($scope, searchCall, CategorialFacetService, NumeralFacetService,
           for (var j = 0; j < itemProperties.length; j++) {
             var propertyItem = itemProperties[j]; // XXX: Rename to itemProperty
             if (propertyItem.range === "text") {
-              CategorialFacetService.add($scope, propertyItem);
+              CategoryFacetService.add($scope, propertyItem);
             } else if (propertyItem.range === "numeric") {
-              NumeralFacetService.add($scope, propertyItem);
+              RangeFacetService.add($scope, propertyItem);
             } else if (propertyItem.range === "duration") {
-              NumeralFacetService.add($scope, propertyItem);
+              RangeFacetService.add($scope, propertyItem);
             }
           }
         }
 
-        BreadcrumbService.add(CategorialFacetService.categorialFacets);
-        BreadcrumbService.add(NumeralFacetService.numeralFacets);
+        BreadcrumbService.add(CategoryFacetService.categoryFacets);
+        BreadcrumbService.add(RangeFacetService.rangeFacets);
 
         $scope.$apply();
       });
@@ -98,9 +98,9 @@ function($scope, searchCall, CategorialFacetService, NumeralFacetService,
     }
     // Reset the values
     if (facet.type === "categorial") {
-      CategorialFacetService.reset(facet.id);
-    } else if (facet.type === "numeral") {
-      NumeralFacetService.reset(facet.id);
+      CategoryFacetService.reset(facet.id);
+    } else if (facet.type === "ranged") {
+      RangeFacetService.reset(facet.id);
     }
   }
 
@@ -128,7 +128,7 @@ function($scope, searchCall, CategorialFacetService, NumeralFacetService,
   }
 
   $scope.onSliderChanged = function(id) {
-    var facet = NumeralFacetService.get(id);
+    var facet = RangeFacetService.get(id);
     var filterPosition = findIndex(sc.filterModel, "id", facet.id);
     if (filterPosition == -1) {
       sc.filterModel.push({
@@ -160,7 +160,7 @@ function($scope, searchCall, CategorialFacetService, NumeralFacetService,
                 if (filter.type === "categorial") {
                   evalOnEachFilter[i] = evalOnEachFilter[i] &&
                       filter.values.includes(property.value);
-                } else if (filter.type === "numeral") {
+                } else if (filter.type === "ranged") {
                   evalOnEachFilter[i] = evalOnEachFilter[i] &&
                       property.value >= filter.values[0] &&
                       property.value <= filter.values[1];
