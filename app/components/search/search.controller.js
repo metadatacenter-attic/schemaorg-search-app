@@ -14,19 +14,21 @@ angular.module('search')
 .controller('searchController', [
   '$scope',
   'searchCall',
-  'facetFactory',
+  'CategorialFacetService',
   'userProfiles',
   'schemaorgVocab',
 
-function($scope, searchCall, facetFactory, userProfiles, schemaorgVocab) {
+function($scope, searchCall, CategorialFacetService, userProfiles, schemaorgVocab) {
   var profile = userProfiles['schemaorg'];
   var sc = this;
   sc.facetModel = [];
   sc.searchResults = [];
-  sc.categorialFacet = [];
+  $scope.categorialFacets = CategorialFacetService.categorialFacets;
   sc.numeralRangeFacet = [];
 
   $scope.doSearch = function() {
+    CategorialFacetService.clear();
+
     var propertyCategories = [];
 
     var userInput = $scope.keyword;
@@ -59,42 +61,29 @@ function($scope, searchCall, facetFactory, userProfiles, schemaorgVocab) {
           categorial: [],
           numeral: []
         }
-        const categorialFacet = searchFacet.categorial;
         const numeralRangeFacet = searchFacet.numeral;
         for (var i = 0; i < data.length; i++) {
           var itemProperties = data[i].properties;
           for (var j = 0; j < itemProperties.length; j++) {
             var propertyItem = itemProperties[j]; // XXX: Rename to itemProperty
             if (propertyItem.range === "text") {
-              // Construct the facet object
-              var facetPosition = findIndex(categorialFacet, "id", propertyItem.id);
-              if (facetPosition == -1) {
-                categorialFacet.push(facetFactory.getCategorialFacet(propertyItem));
-                facetPosition = categorialFacet.length - 1;
-              }
-              var choicePosition = findIndex(categorialFacet[facetPosition].choices, "value", propertyItem.value);
-              if (choicePosition == -1) {
-                categorialFacet[facetPosition].choices.push({
-                    value: propertyItem.value,
-                    selected: false
-                  });
-              }
+              CategorialFacetService.add(propertyItem);
             } else if (propertyItem.range === "numeric" || propertyItem.range === "duration") {
               // Construct the facet object
-              var facetPosition = findIndex(numeralRangeFacet, "id", propertyItem.id);
-              if (facetPosition == -1) {
-                numeralRangeFacet.push(facetFactory.getNumerialFacet($scope, propertyItem));
-                facetPosition = numeralRangeFacet.length - 1;
-              }
-              var value = propertyItem.value;
-              if (value < numeralRangeFacet[facetPosition].minValue) {
-                numeralRangeFacet[facetPosition].minValue = value;
-                numeralRangeFacet[facetPosition].options.floor = value;
-              }
-              if (value > numeralRangeFacet[facetPosition].maxValue) {
-                numeralRangeFacet[facetPosition].maxValue = value;
-                numeralRangeFacet[facetPosition].options.ceil = value;
-              }
+              // var facetPosition = findIndex(numeralRangeFacet, "id", propertyItem.id);
+              // if (facetPosition == -1) {
+              //   numeralRangeFacet.push(facetFactory.getNumerialFacet($scope, propertyItem));
+              //   facetPosition = numeralRangeFacet.length - 1;
+              // }
+              // var value = propertyItem.value;
+              // if (value < numeralRangeFacet[facetPosition].minValue) {
+              //   numeralRangeFacet[facetPosition].minValue = value;
+              //   numeralRangeFacet[facetPosition].options.floor = value;
+              // }
+              // if (value > numeralRangeFacet[facetPosition].maxValue) {
+              //   numeralRangeFacet[facetPosition].maxValue = value;
+              //   numeralRangeFacet[facetPosition].options.ceil = value;
+              // }
             }
           }
         }
@@ -120,7 +109,7 @@ function($scope, searchCall, facetFactory, userProfiles, schemaorgVocab) {
         }
 
         sc.facetModel = facetModel;
-        sc.categorialFacet = categorialFacet;
+        sc.categorialFacets = searchFacet.categorial;
         sc.numeralRangeFacet = numeralRangeFacet;
         $scope.$apply();
       });
@@ -141,8 +130,8 @@ function($scope, searchCall, facetFactory, userProfiles, schemaorgVocab) {
     }
     // Reset the values
     if (facet.type === "categorial") {
-      var facetPosition = findIndex(sc.categorialFacet, "id", facet.id);
-      var facet = sc.categorialFacet[facetPosition];
+      var facetPosition = findIndex(sc.categorialFacets, "id", facet.id);
+      var facet = sc.categorialFacets[facetPosition];
       for (var i = 0; i < facet.choices.length; i++) {
         facet.choices[i].selected = false;
       }
