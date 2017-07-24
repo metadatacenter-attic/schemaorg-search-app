@@ -112,16 +112,9 @@ function($scope, searchCall, CategorialFacetService, NumeralFacetService, userPr
     }
     // Reset the values
     if (facet.type === "categorial") {
-      var facetPosition = findIndex(sc.categorialFacets, "id", facet.id);
-      var facet = sc.categorialFacets[facetPosition];
-      for (var i = 0; i < facet.choices.length; i++) {
-        facet.choices[i].selected = false;
-      }
+      CategorialFacetService.reset(facet.id);
     } else if (facet.type === "numeral") {
-      var facetPosition = findIndex(sc.numeralRangeFacet, "id", facet.id);
-      var facet = sc.numeralRangeFacet[facetPosition];
-      facet.minValue = facet.options.floor;
-      facet.maxValue = facet.options.ceil;
+      NumeralFacetService.reset(facet.id);
     }
   }
 

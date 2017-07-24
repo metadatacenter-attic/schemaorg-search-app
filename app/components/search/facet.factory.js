@@ -43,6 +43,13 @@ angular.module('search')
     return categorialFacets[index];
   }
 
+  var reset = function(id) {
+    var facet = get(id);
+    for (var i = 0; i < facet.choices.length; i++) {
+      facet.choices[i].selected = false;
+    }
+  }
+
   var clear = function() {
       categorialFacets.splice(0, categorialFacets.length);
   }
@@ -51,6 +58,7 @@ angular.module('search')
     categorialFacets: categorialFacets,
     add: add,
     get: get,
+    reset: reset,
     clear: clear
   }
 })
@@ -103,6 +111,12 @@ angular.module('search')
     return numeralFacets[index];
   }
 
+  var reset = function(id) {
+    var facet = get(id);
+    facet.minValue = facet.options.floor;
+    facet.maxValue = facet.options.ceil;
+  }
+
   var clear = function() {
       numeralFacets.splice(0, numeralFacets.length);
   }
@@ -111,6 +125,7 @@ angular.module('search')
     numeralFacets: numeralFacets,
     add: add,
     get: get,
+    reset: reset,
     clear: clear
   }
 });
