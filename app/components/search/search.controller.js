@@ -149,8 +149,7 @@ function($scope, searchCall, CategorialFacetService, NumeralFacetService, userPr
   }
 
   $scope.onSliderChanged = function(id) {
-    var resultArr = sc.numeralRangeFacet.filter(obj => { return obj.id == id });
-    var facet = resultArr[0];
+    var facet = NumeralFacetService.get(id);
     var filterPosition = findIndex(sc.filterModel, "id", facet.id);
     if (filterPosition == -1) {
       sc.filterModel.push({
