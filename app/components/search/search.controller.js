@@ -11,8 +11,14 @@ db.open();
 
 angular.module('search')
 
-.controller('searchController', ['$scope', 'searchCall', 'userProfiles', 'schemaorgVocab',
-function($scope, searchCall, userProfiles, schemaorgVocab) {
+.controller('searchController', [
+  '$scope',
+  'searchCall',
+  'facetFactory',
+  'userProfiles',
+  'schemaorgVocab',
+
+function($scope, searchCall, facetFactory, userProfiles, schemaorgVocab) {
   var profile = userProfiles['schemaorg'];
   var sc = this;
   sc.facetModel = [];
@@ -63,15 +69,7 @@ function($scope, searchCall, userProfiles, schemaorgVocab) {
               // Construct the facet object
               var facetPosition = findIndex(categorialFacet, "id", propertyItem.id);
               if (facetPosition == -1) {
-                categorialFacet.push({
-                    id: propertyItem.id,
-                    name: propertyItem.name,
-                    label: propertyItem.label,
-                    topic: propertyItem.domain.name,
-                    type: "categorial",
-                    visible: false,
-                    choices: []
-                  });
+                categorialFacet.push(facetFactory.getCategorialFacet(propertyItem));
                 facetPosition = categorialFacet.length - 1;
               }
               var choicePosition = findIndex(categorialFacet[facetPosition].choices, "value", propertyItem.value);
@@ -85,25 +83,7 @@ function($scope, searchCall, userProfiles, schemaorgVocab) {
               // Construct the facet object
               var facetPosition = findIndex(numeralRangeFacet, "id", propertyItem.id);
               if (facetPosition == -1) {
-                numeralRangeFacet.push({
-                    id: propertyItem.id,
-                    name: propertyItem.name,
-                    label: propertyItem.label,
-                    topic: propertyItem.domain.name,
-                    type: "numeral",
-                    visible: false,
-                    unit: propertyItem.unit,
-                    minValue: Number.MAX_SAFE_INTEGER,
-                    maxValue: Number.MIN_SAFE_INTEGER,
-                    options: {
-                      id: propertyItem.id,
-                      floor: Number.MAX_SAFE_INTEGER,
-                      ceil: Number.MIN_SAFE_INTEGER,
-                      step: 1,
-                      hideLimitLabels: true,
-                      onChange: $scope.onSliderChanged
-                    }
-                  });
+                numeralRangeFacet.push(facetFactory.getNumerialFacet($scope, propertyItem));
                 facetPosition = numeralRangeFacet.length - 1;
               }
               var value = propertyItem.value;
