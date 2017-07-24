@@ -12,7 +12,7 @@ angular.module('search')
       label: property.label,
       topic: property.domain.name,
       type: "categorial",
-      visible: true,
+      visible: false,
       choices: []
     };
     return categorialFacet;
@@ -53,45 +53,66 @@ angular.module('search')
     get: get,
     clear: clear
   }
-// });
-//
-//
-//   var getCategorialFacet = function(property) {
-//     return {
-//       id: property.id,
-//       name: property.name,
-//       label: property.label,
-//       topic: property.domain.name,
-//       type: "categorial",
-//       visible: false,
-//       choices: []
-//     };
-//   };
-//   var getNumerialFacet = function($scope, property) {
-//     return {
-//       id: property.id,
-//       name: property.name,
-//       label: property.label,
-//       topic: property.domain.name,
-//       type: "numeral",
-//       visible: false,
-//       unit: property.unit,
-//       minValue: Number.MAX_SAFE_INTEGER,
-//       maxValue: Number.MIN_SAFE_INTEGER,
-//       options: {
-//         id: property.id,
-//         floor: Number.MAX_SAFE_INTEGER,
-//         ceil: Number.MIN_SAFE_INTEGER,
-//         step: 1,
-//         hideLimitLabels: true,
-//         onChange: $scope.onSliderChanged
-//       }
-//     };
-//   };
-//   return {
-//     getCategorialFacet: getCategorialFacet,
-//     getNumerialFacet: getNumerialFacet
-//   };
+})
+
+.factory('NumeralFacetService', function() {
+  var numeralFacets = [];
+
+  function createNew(property, onSliderChanged) {
+    var numeralFacet = {
+      id: property.id,
+      name: property.name,
+      label: property.label,
+      topic: property.domain.name,
+      type: "numeral",
+      visible: false,
+      unit: property.unit,
+      minValue: Number.MAX_SAFE_INTEGER,
+      maxValue: Number.MIN_SAFE_INTEGER,
+      options: {
+        id: property.id,
+        floor: Number.MAX_SAFE_INTEGER,
+        ceil: Number.MIN_SAFE_INTEGER,
+        step: 1,
+        hideLimitLabels: true,
+        onChange: onSliderChanged
+      }
+    };
+    return numeralFacet;
+  }
+
+  var add = function(property) {
+    var facet = get(property.id);
+    if (facet == null) {
+      facet = createNew(property);
+      numeralFacets.push(facet);
+    }
+    var value = property.value;
+    if (value < facet.minValue) {
+      facet.minValue = value;
+      facet.options.floor = value;
+    }
+    if (value > facet.maxValue) {
+      facet.maxValue = value;
+      facet.options.ceil = value;
+    }
+  }
+
+  var get = function(id) {
+    var index = findIndex(numeralFacets, "id", id);
+    return numeralFacets[index];
+  }
+
+  var clear = function() {
+      numeralFacets.splice(0, numeralFacets.length);
+  }
+
+  return {
+    numeralFacets: numeralFacets,
+    add: add,
+    get: get,
+    clear: clear
+  }
 });
 
 function findIndex(array, key, value) {

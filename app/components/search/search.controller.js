@@ -15,19 +15,21 @@ angular.module('search')
   '$scope',
   'searchCall',
   'CategorialFacetService',
+  'NumeralFacetService',
   'userProfiles',
   'schemaorgVocab',
 
-function($scope, searchCall, CategorialFacetService, userProfiles, schemaorgVocab) {
+function($scope, searchCall, CategorialFacetService, NumeralFacetService, userProfiles, schemaorgVocab) {
   var profile = userProfiles['schemaorg'];
   var sc = this;
   sc.facetModel = [];
   sc.searchResults = [];
   $scope.categorialFacets = CategorialFacetService.categorialFacets;
-  sc.numeralRangeFacet = [];
+  $scope.numeralFacets = NumeralFacetService.numeralFacets;
 
   $scope.doSearch = function() {
     CategorialFacetService.clear();
+    NumeralFacetService.clear();
 
     var propertyCategories = [];
 
@@ -57,60 +59,41 @@ function($scope, searchCall, CategorialFacetService, userProfiles, schemaorgVoca
         sc.searchResults = data;
         $scope.$apply();
 
-        const searchFacet = {
-          categorial: [],
-          numeral: []
-        }
-        const numeralRangeFacet = searchFacet.numeral;
         for (var i = 0; i < data.length; i++) {
           var itemProperties = data[i].properties;
           for (var j = 0; j < itemProperties.length; j++) {
             var propertyItem = itemProperties[j]; // XXX: Rename to itemProperty
             if (propertyItem.range === "text") {
               CategorialFacetService.add(propertyItem);
-            } else if (propertyItem.range === "numeric" || propertyItem.range === "duration") {
-              // Construct the facet object
-              // var facetPosition = findIndex(numeralRangeFacet, "id", propertyItem.id);
-              // if (facetPosition == -1) {
-              //   numeralRangeFacet.push(facetFactory.getNumerialFacet($scope, propertyItem));
-              //   facetPosition = numeralRangeFacet.length - 1;
-              // }
-              // var value = propertyItem.value;
-              // if (value < numeralRangeFacet[facetPosition].minValue) {
-              //   numeralRangeFacet[facetPosition].minValue = value;
-              //   numeralRangeFacet[facetPosition].options.floor = value;
-              // }
-              // if (value > numeralRangeFacet[facetPosition].maxValue) {
-              //   numeralRangeFacet[facetPosition].maxValue = value;
-              //   numeralRangeFacet[facetPosition].options.ceil = value;
-              // }
+            } else if (propertyItem.range === "numeric") {
+              NumeralFacetService.add(propertyItem);
+            } else if (propertyItem.range === "duration") {
+              NumeralFacetService.add(propertyItem);
             }
           }
         }
 
         // Construct the facet model
-        var facetModel = [];
-        var allFacets = [].concat.apply([], Object.values(searchFacet));
-        for (var i = 0; i < allFacets.length; i++) {
-          var facet = allFacets[i];
-          var facetModelPosition = findIndex(facetModel, "id", facet.topic);
-          if (facetModelPosition == -1) {
-            facetModel.push({
-                id: facet.topic,
-                topic: {
-                  name: schemaorgVocab[facet.topic].name,
-                  label: schemaorgVocab[facet.topic].label
-                },
-                facets: []
-              });
-            facetModelPosition = facetModel.length - 1;
-          }
-          facetModel[facetModelPosition].facets.push(facet);
-        }
-
-        sc.facetModel = facetModel;
-        sc.categorialFacets = searchFacet.categorial;
-        sc.numeralRangeFacet = numeralRangeFacet;
+        // var facetModel = [];
+        // var allFacets = [].concat.apply([], Object.values(searchFacet));
+        // for (var i = 0; i < allFacets.length; i++) {
+        //   var facet = allFacets[i];
+        //   var facetModelPosition = findIndex(facetModel, "id", facet.topic);
+        //   if (facetModelPosition == -1) {
+        //     facetModel.push({
+        //         id: facet.topic,
+        //         topic: {
+        //           name: schemaorgVocab[facet.topic].name,
+        //           label: schemaorgVocab[facet.topic].label
+        //         },
+        //         facets: []
+        //       });
+        //     facetModelPosition = facetModel.length - 1;
+        //   }
+        //   facetModel[facetModelPosition].facets.push(facet);
+        // }
+        //
+        // sc.facetModel = facetModel;
         $scope.$apply();
       });
     });
