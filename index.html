@@ -38,7 +38,7 @@
     </div>
     <div class="row search-breadcrumb" ng-if="sc.facetModel.length!=0">
       <div style="float:left;">TOPICS: </div>
-      <div class="topic-type" ng-repeat="model in sc.facetModel">
+      <div class="topic-type" ng-repeat="model in facetModel">
         <a class="btn dropdown-button" href="#"
             ng-attr-data-activates="dropdown-{{model.id}}" dropdown>
             {{model.topic.label}}<i class="material-icons right">arrow_drop_down</i></a>

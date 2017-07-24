@@ -22,7 +22,6 @@ angular.module('search')
 function($scope, searchCall, CategorialFacetService, NumeralFacetService, userProfiles, schemaorgVocab) {
   var profile = userProfiles['schemaorg'];
   var sc = this;
-  sc.facetModel = [];
   sc.searchResults = [];
   $scope.categorialFacets = CategorialFacetService.categorialFacets;
   $scope.numeralFacets = NumeralFacetService.numeralFacets;
@@ -74,27 +73,26 @@ function($scope, searchCall, CategorialFacetService, NumeralFacetService, userPr
         }
 
         // Construct the facet model
-        // var facetModel = [];
-        // var allFacets = [].concat.apply([], Object.values(searchFacet));
-        // for (var i = 0; i < allFacets.length; i++) {
-        //   var facet = allFacets[i];
-        //   var facetModelPosition = findIndex(facetModel, "id", facet.topic);
-        //   if (facetModelPosition == -1) {
-        //     facetModel.push({
-        //         id: facet.topic,
-        //         topic: {
-        //           name: schemaorgVocab[facet.topic].name,
-        //           label: schemaorgVocab[facet.topic].label
-        //         },
-        //         facets: []
-        //       });
-        //     facetModelPosition = facetModel.length - 1;
-        //   }
-        //   facetModel[facetModelPosition].facets.push(facet);
-        // }
-        //
-        // sc.facetModel = facetModel;
-        $scope.$apply();
+        var facetModel = [];
+        var allFacets = CategorialFacetService.categorialFacets
+            .concat(NumeralFacetService.numeralFacets);
+        for (var i = 0; i < allFacets.length; i++) {
+          var facet = allFacets[i];
+          var facetModelPosition = findIndex(facetModel, "id", facet.topic);
+          if (facetModelPosition == -1) {
+            facetModel.push({
+                id: facet.topic,
+                topic: {
+                  name: schemaorgVocab[facet.topic].name,
+                  label: schemaorgVocab[facet.topic].label
+                },
+                facets: []
+              });
+            facetModelPosition = facetModel.length - 1;
+          }
+          facetModel[facetModelPosition].facets.push(facet);
+        }
+        $scope.facetModel = facetModel;
       });
     });
   }
