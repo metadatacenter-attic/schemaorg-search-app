@@ -27,7 +27,7 @@ function(schemaorgVocab) {
     return -1;
   }
 
-  var add = function(facets) {
+  var use = function(facets) {
     if (!Array.isArray(facets)) {
       facets = [ facets ];
     }
@@ -42,9 +42,9 @@ function(schemaorgVocab) {
     }
   }
 
-  var batchAdd = function(arrayOfFacets) {
+  var batchUse = function(arrayOfFacets) {
     arrayOfFacets.forEach(facets => {
-      create(facets);
+      use(facets);
     });
   }
 
@@ -59,8 +59,8 @@ function(schemaorgVocab) {
 
   return {
     breadcrumbs: breadcrumbs,
-    add: add,
-    batchAdd: batchAdd,
+    use: use,
+    batchUse: batchUse,
     get: get,
     clear: clear
   }
