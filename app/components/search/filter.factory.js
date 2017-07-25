@@ -76,7 +76,7 @@ angular.module('search')
     var evalOnEachFilter = [];
     for (var i = 0; i < size(); i++) {
       var filter = filterModel[i];
-      evalOnEachFilter[i] = (item.types.length == 0) || item.types.includes(filter.topic);
+      evalOnEachFilter[i] = (item.topics.length == 0) || item.topics.includes(filter.topic);
       for (var j = 0; j < item.properties.length; j++) {
         var property = item.properties[j];
         if (property.domain.name === filter.topic && property.name === filter.name) {
