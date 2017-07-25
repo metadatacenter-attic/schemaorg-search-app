@@ -69,13 +69,13 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
         for (var i = 0; i < data.length; i++) {
           var itemProperties = data[i].properties;
           for (var j = 0; j < itemProperties.length; j++) {
-            var propertyItem = itemProperties[j]; // XXX: Rename to itemProperty
-            if (propertyItem.range === "text") {
-              CategoryFacetService.add($scope, propertyItem);
-            } else if (propertyItem.range === "numeric") {
-              RangeFacetService.add($scope, propertyItem);
-            } else if (propertyItem.range === "duration") {
-              RangeFacetService.add($scope, propertyItem);
+            var itemProperty = itemProperties[j];
+            if (itemProperty.range === "text") {
+              CategoryFacetService.add($scope, itemProperty);
+            } else if (itemProperty.range === "numeric") {
+              RangeFacetService.add($scope, itemProperty);
+            } else if (itemProperty.range === "duration") {
+              RangeFacetService.add($scope, itemProperty);
             }
           }
         }
