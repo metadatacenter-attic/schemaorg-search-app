@@ -55,8 +55,9 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
       // Store to the local data store once the raw data has been processed
       db.items.bulkAdd(CseDataService.dataModel)
         .then(() => {
-          $scope.searchResults = CseDataService.dataModel;
-          $scope.$apply();
+          $scope.$apply(() => {
+            $scope.searchResults = CseDataService.dataModel;
+          });
           console.log("INFO: Succesfully save data into the local data store: ",
               CseDataService.dataModel.length, "records");
         })
@@ -78,10 +79,11 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
             }
           }
         }
-        BreadcrumbService.batchAdd([
-            CategoryFacetService.categoryFacets,
-            RangeFacetService.rangeFacets]);
-        $scope.$apply();
+        $scope.$apply(() => {
+          BreadcrumbService.batchUse([
+              CategoryFacetService.categoryFacets,
+              RangeFacetService.rangeFacets]);
+        });
       });
     });
   }
