@@ -11,7 +11,7 @@ angular.module('search')
 
 .controller('searchController', [
   '$scope',
-  'searchCall',
+  'CseRequestService',
   'CseDataService',
   'CategoryFacetService',
   'RangeFacetService',
@@ -20,7 +20,7 @@ angular.module('search')
   'userProfiles',
   'schemaorgVocab',
 
-function($scope, searchCall, CseDataService, CategoryFacetService, RangeFacetService,
+function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeFacetService,
     BreadcrumbService, FilterService, userProfiles, schemaorgVocab) {
 
   $scope.searchResults = [];
@@ -41,7 +41,7 @@ function($scope, searchCall, CseDataService, CategoryFacetService, RangeFacetSer
     var userKeyword = input.keyword;
     var userTopics = input.topics;
 
-    var searchPromises = performSearchCall(searchCall, userKeyword, profile);
+    var searchPromises = performSearchCall(CseRequestService, userKeyword, profile);
     Promise.all(searchPromises.map(settle)).then(resolvedCalls => {
       db.items.clear(); // Clean the database
       resolvedCalls.filter(x => x.status === "resolved")
@@ -141,10 +141,10 @@ function($scope, searchCall, CseDataService, CategoryFacetService, RangeFacetSer
     }
   }
 
-  function performSearchCall(searchCall, userKeyword, profile) {
+  function performSearchCall(CseRequestService, userKeyword, profile) {
     var searchPromises = [];
     for (var page = 1; page <= profile.pageLimit; page++) {
-      var promise = searchCall.exec(
+      var promise = CseRequestService.get(
           profile.apiKey,
           profile.searchEngineId,
           userKeyword, page);

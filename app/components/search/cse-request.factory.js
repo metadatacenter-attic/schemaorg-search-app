@@ -2,8 +2,8 @@
 
 angular.module('search')
 
-.factory('searchCall', function($q, $http) {
-  var exec = function(apiKey, searchEngineId, keyword, page) {
+.factory('CseRequestService', function($q, $http) {
+  var get = function(apiKey, searchEngineId, keyword, page) {
     var defer = $q.defer();
     var offset = 10;
     var url = 'https://www.googleapis.com/customsearch/v1' +
@@ -33,6 +33,6 @@ angular.module('search')
     return defer.promise;
   };
   return {
-    exec: exec
+    get: get
   };
 });
