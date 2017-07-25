@@ -11,7 +11,6 @@ angular.module('search')
       name: facet.name,
       type: facet.type,
       topic: facet.topic,
-      visible: facet.visible,
       values: []
     };
     return filter;
