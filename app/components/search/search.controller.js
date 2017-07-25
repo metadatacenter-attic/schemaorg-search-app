@@ -1,12 +1,5 @@
 'use strict';
 
-var db = new Dexie("clippingDB");
-db.delete();
-db.version(1).stores({
-  items: 'url' // XXX: Rename to item
-});
-db.open();
-
 angular.module('search')
 
 .controller('searchController', [
@@ -43,7 +36,7 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
 
     var searchPromises = performSearchCall(CseRequestService, userKeyword, profile);
     Promise.all(searchPromises.map(settle)).then(resolvedCalls => {
-      db.items.clear(); // Clean the database
+      // Process and store the search results as the app data model
       resolvedCalls.filter(x => x.status === "resolved")
         .forEach(resolvedCall => {
           var rawDataCollection = resolvedCall.value;
@@ -51,42 +44,32 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
             var rawData = rawDataCollection[i];
             CseDataService.add(rawData, userTopics);
           }
-        });
-      // Store to the local data store once the raw data has been processed
-      db.items.bulkAdd(CseDataService.dataModel)
-        .then(() => {
           $scope.$apply(() => {
             $scope.searchResults = CseDataService.dataModel;
           });
-          console.log("INFO: Succesfully save data into the local data store: ",
-              CseDataService.dataModel.length, "records");
-        })
-        .catch(err => {
-          console.error(err.message);
         });
-      // Query the data to build the search facets
-      db.items.toArray(data => { // XXX: Rename to items
-        for (var i = 0; i < data.length; i++) {
-          var itemProperties = data[i].properties;
-          for (var j = 0; j < itemProperties.length; j++) {
-            var itemProperty = itemProperties[j];
-            if (itemProperty.range === "text") {
-              CategoryFacetService.add($scope, itemProperty);
-            } else if (itemProperty.range === "numeric") {
-              RangeFacetService.add($scope, itemProperty);
-            } else if (itemProperty.range === "duration") {
-              RangeFacetService.add($scope, itemProperty);
-            }
+      // Create search facets based on the app data model
+      CseDataService.dataModel.forEach(data => {
+        var itemProperties = data.properties;
+        for (var j = 0; j < itemProperties.length; j++) {
+          var itemProperty = itemProperties[j];
+          if (itemProperty.range === "text") {
+            CategoryFacetService.add($scope, itemProperty);
+          } else if (itemProperty.range === "numeric") {
+            RangeFacetService.add($scope, itemProperty);
+          } else if (itemProperty.range === "duration") {
+            RangeFacetService.add($scope, itemProperty);
           }
         }
-        $scope.$apply(() => {
-          BreadcrumbService.batchUse([
-              CategoryFacetService.categoryFacets,
-              RangeFacetService.rangeFacets]);
-        });
+      });
+      // Create the breadcrumbs based on the search facets
+      $scope.$apply(() => {
+        BreadcrumbService.batchUse([
+            CategoryFacetService.categoryFacets,
+            RangeFacetService.rangeFacets]);
       });
     });
-  }
+  };
 
   $scope.onOpen = function(facet) {
     facet.visible = true;
@@ -115,14 +98,12 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
 
   $scope.$watch(function() {
     return FilterService.filterModel;
-  }, function() {
-    db.items.toArray(data => { // XXX: Rename to items
-      data = data.filter(item => {
-        return FilterService.evaluate(item);
-      });
-      $scope.searchResults = data;
-      $scope.$apply();
+  },
+  function() {
+    var filteredData = CseDataService.dataModel.filter(item => {
+      return FilterService.evaluate(item);
     });
+    $scope.searchResults = filteredData;
   }, true);
 
   function resetServices() {
