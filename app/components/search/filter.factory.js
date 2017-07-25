@@ -40,7 +40,9 @@ angular.module('search')
       var value = properties[index].value;
       if (value != null) {
         if (filter.type === "category") {
-          answer = filter.values.includes(value);
+          if (filter.values.length > 0) {
+            answer = filter.values.includes(value);
+          }
         } else if (filter.type === "range") {
           answer = value >= filter.values[0] && value <= filter.values[1];
         }
