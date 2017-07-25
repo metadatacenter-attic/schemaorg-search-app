@@ -24,6 +24,37 @@ angular.module('search')
     return -1;
   }
 
+  function evaluateItemOnEachFilter(item, filter) {
+    var properties = getItemPropertiesMatchToFilterTopic(item, filter);
+    if (properties.length > 0) {
+      return openWorldAssumptionAnswering(properties, filter);
+    }
+    return false;
+  }
+
+  function openWorldAssumptionAnswering(properties, filter) {
+    // open-world assumption; evaluate only the known fact
+    var answer = true;
+    var index = findIndex(properties, "name", filter.name);
+    if (index != -1) {
+      var value = properties[index].value;
+      if (value != null) {
+        if (filter.type === "category") {
+          answer = filter.values.includes(value);
+        } else if (filter.type === "range") {
+          answer = value >= filter.values[0] && value <= filter.values[1];
+        }
+      }
+    }
+    return answer;
+  }
+
+  function getItemPropertiesMatchToFilterTopic(item, filter) {
+    return item.properties.filter(property => {
+      return property.domain.name === filter.topic;
+    });
+  }
+
   function updateChoices(filter, choices) {
     filter.values.splice(0, filter.values.length); // reset the filter values
     for (var i = 0; i < choices.length; i++) {
@@ -74,24 +105,14 @@ angular.module('search')
 
   var evaluate = function(item) {
     var evalOnEachFilter = [];
-    for (var i = 0; i < size(); i++) {
-      var filter = filterModel[i];
-      evalOnEachFilter[i] = (item.topics.length == 0) || item.topics.includes(filter.topic);
-      for (var j = 0; j < item.properties.length; j++) {
-        var property = item.properties[j];
-        if (property.domain.name === filter.topic && property.name === filter.name) {
-          if (filter.type === "category") {
-            evalOnEachFilter[i] = evalOnEachFilter[i]
-                && filter.values.includes(property.value);
-          } else if (filter.type === "range") {
-            evalOnEachFilter[i] = evalOnEachFilter[i]
-                && property.value >= filter.values[0]
-                && property.value <= filter.values[1];
-          }
-        }
+    if (item.hasStructuredData) {
+      for (var i = 0; i < filterModel.length; i++) {
+        var filter = filterModel[i];
+        evalOnEachFilter[i] = evaluateItemOnEachFilter(item, filter);
       }
     }
-    return evalOnEachFilter.reduce((a, b) => { return a && b; });
+    // Combine each filter evaluation with the AND operation
+    return evalOnEachFilter.reduce((a, b) => { return a && b; }, true);
   }
 
   var clear = function() {
