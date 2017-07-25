@@ -95,24 +95,20 @@ angular.module('search')
     return filterModel[index];
   }
 
-  var size = function() {
-    return filterModel.length;
-  }
-
-  var isEmpty = function() {
-    return size() == 0;
-  }
-
   var evaluate = function(item) {
-    var evalOnEachFilter = [];
-    if (item.hasStructuredData) {
-      for (var i = 0; i < filterModel.length; i++) {
-        var filter = filterModel[i];
-        evalOnEachFilter[i] = evaluateItemOnEachFilter(item, filter);
+    var answer = true;
+    if (filterModel.length > 0) {
+      var evalOnEachFilter = [];
+      if (item.hasStructuredData) {
+        for (var i = 0; i < filterModel.length; i++) {
+          var filter = filterModel[i];
+          evalOnEachFilter[i] = evaluateItemOnEachFilter(item, filter);
+        }
       }
+      // Combine each filter evaluation with the AND operation
+      answer = evalOnEachFilter.reduce((a, b) => { return a && b; }, true);
     }
-    // Combine each filter evaluation with the AND operation
-    return evalOnEachFilter.reduce((a, b) => { return a && b; }, true);
+    return answer;
   }
 
   var clear = function() {
@@ -124,8 +120,6 @@ angular.module('search')
     add: add,
     remove: remove,
     get: get,
-    size: size,
-    isEmpty: isEmpty,
     evaluate: evaluate,
     clear: clear
   }

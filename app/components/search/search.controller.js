@@ -114,11 +114,9 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
     return FilterService.filterModel;
   }, function() {
     db.items.toArray(data => { // XXX: Rename to items
-      if (!FilterService.isEmpty()) {
-        data = data.filter(item => {
-          return FilterService.evaluate(item);
-        });
-      }
+      data = data.filter(item => {
+        return FilterService.evaluate(item);
+      });
       $scope.searchResults = data;
       $scope.$apply();
     });
