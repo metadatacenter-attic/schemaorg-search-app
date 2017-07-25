@@ -78,8 +78,9 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
             }
           }
         }
-        BreadcrumbService.add(CategoryFacetService.categoryFacets);
-        BreadcrumbService.add(RangeFacetService.rangeFacets);
+        BreadcrumbService.batchAdd([
+            CategoryFacetService.categoryFacets,
+            RangeFacetService.rangeFacets]);
         $scope.$apply();
       });
     });

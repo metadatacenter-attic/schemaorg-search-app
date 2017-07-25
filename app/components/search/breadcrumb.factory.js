@@ -42,6 +42,12 @@ function(schemaorgVocab) {
     }
   }
 
+  var batchAdd = function(arrayOfFacets) {
+    arrayOfFacets.forEach(facets => {
+      create(facets);
+    });
+  }
+
   var get = function(id) {
     var index = findIndex(breadcrumbs, "id", id);
     return breadcrumbs[index];
@@ -54,6 +60,7 @@ function(schemaorgVocab) {
   return {
     breadcrumbs: breadcrumbs,
     add: add,
+    batchAdd: batchAdd,
     get: get,
     clear: clear
   }
