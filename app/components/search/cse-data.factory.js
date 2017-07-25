@@ -209,14 +209,6 @@ angular.module('search')
     dataModel.splice(index, 1);
   }
 
-  var size = function() {
-    return dataModel.length;
-  }
-
-  var isEmpty = function() {
-    return size() == 0;
-  }
-
   var clear = function() {
     dataModel.splice(0, dataModel.length);
   }
@@ -227,8 +219,6 @@ angular.module('search')
     add: add,
     get: get,
     remove: remove,
-    size: size,
-    isEmpty: isEmpty,
     clear: clear
   }
 }]);
