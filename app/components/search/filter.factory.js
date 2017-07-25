@@ -75,14 +75,9 @@ angular.module('search')
   var add = function(facet) {
     var filter = get(facet.id);
     if (filter == null) {
-      filter = createNew(facet);
-      filterModel.push(filter);
+      filterModel.push(createNew(facet));
     }
-    if (facet.type === "category") {
-      updateChoices(filter, facet.choices);
-    } else if (facet.type === "range") {
-      updateRanges(filter, facet.minValue, facet.maxValue);
-    }
+    update(facet);
   }
 
   var remove = function(id) {
@@ -95,6 +90,17 @@ angular.module('search')
   var get = function(id) {
     var index = findIndex(filterModel, "id", id);
     return filterModel[index];
+  }
+
+  var update = function(facet) {
+    var filter = get(facet.id);
+    if (filter != null) {
+      if (facet.type === "category") {
+        updateChoices(filter, facet.choices);
+      } else if (facet.type === "range") {
+        updateRanges(filter, facet.minValue, facet.maxValue);
+      }
+    }
   }
 
   var evaluate = function(item) {
@@ -122,6 +128,7 @@ angular.module('search')
     add: add,
     remove: remove,
     get: get,
+    update: update,
     evaluate: evaluate,
     clear: clear
   }

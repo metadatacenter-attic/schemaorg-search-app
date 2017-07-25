@@ -87,11 +87,11 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
 
   $scope.onOpen = function(facet) {
     facet.visible = true;
+    FilterService.add(facet);
   }
 
   $scope.onClose = function(facet) {
     facet.visible = false;
-    // Remove the corresponding filter object
     FilterService.remove(facet.id);
     // Reset the values
     if (facet.type === "category") {
@@ -102,12 +102,12 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
   }
 
   $scope.onCheckboxChanged = function(facet) {
-    FilterService.add(facet);
+    FilterService.update(facet);
   }
 
   $scope.onSliderChanged = function(id) {
     var facet = RangeFacetService.get(id);
-    FilterService.add(facet);
+    FilterService.update(facet);
   }
 
   $scope.$watch(function() {
