@@ -27,10 +27,6 @@ function(schemaorgVocab) {
     return -1;
   }
 
-  var run = function() {
-
-  }
-
   var add = function(facets) {
     if (!Array.isArray(facets)) {
       facets = [ facets ];
