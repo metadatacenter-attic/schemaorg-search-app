@@ -120,6 +120,7 @@ function($scope, searchCall, CseDataService, CategoryFacetService, RangeFacetSer
         });
       }
       $scope.searchResults = data;
+      $scope.$apply();
     });
   }, true);
 
