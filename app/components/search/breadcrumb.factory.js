@@ -3,7 +3,7 @@
 angular.module('search')
 
 .factory('BreadcrumbService', [
-  'schemaorgVocab',
+  'SchemaorgVocab',
 
 function(schemaorgVocab) {
   var breadcrumbs = [];

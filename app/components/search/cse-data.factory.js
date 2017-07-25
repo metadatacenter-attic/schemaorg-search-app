@@ -2,7 +2,7 @@
 
 angular.module('search')
 
-.factory('CseDataService', ['schemaorgVocab', function(schemaorgVocab) {
+.factory('CseDataService', ['SchemaorgVocab', function(schemaorgVocab) {
   var propertyIds = [];
   var dataModel = [];
 

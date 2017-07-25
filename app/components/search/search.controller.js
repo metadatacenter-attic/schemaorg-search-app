@@ -17,8 +17,8 @@ angular.module('search')
   'RangeFacetService',
   'BreadcrumbService',
   'FilterService',
-  'userProfiles',
-  'schemaorgVocab',
+  'UserProfiles',
+  'SchemaorgVocab',
 
 function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeFacetService,
     BreadcrumbService, FilterService, userProfiles, schemaorgVocab) {
