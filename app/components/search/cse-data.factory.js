@@ -31,7 +31,8 @@ function(schemaorgVocab) {
       value: refineValue(propertyValue,
           propertyAttributes.type,
           propertyAttributes.unit),
-      unit: propertyAttributes.unit
+      unit: propertyAttributes.unit,
+      discoverable: propertyAttributes.discoverable
     };
     return property;
   }

@@ -36,19 +36,21 @@ angular.module('search')
   }
 
   var add = function($scope, property) {
-    var facet = get(property.id);
-    if (facet == null) {
-      facet = createNew($scope, property);
-      rangeFacets.push(facet);
-    }
-    var value = property.value;
-    if (value < facet.minValue) {
-      facet.minValue = value;
-      facet.options.floor = value;
-    }
-    if (value > facet.maxValue) {
-      facet.maxValue = value;
-      facet.options.ceil = value;
+    if (property.discoverable) {
+      var facet = get(property.id);
+      if (facet == null) {
+        facet = createNew($scope, property);
+        rangeFacets.push(facet);
+      }
+      var value = property.value;
+      if (value < facet.minValue) {
+        facet.minValue = value;
+        facet.options.floor = value;
+      }
+      if (value > facet.maxValue) {
+        facet.maxValue = value;
+        facet.options.ceil = value;
+      }
     }
   }
 

@@ -34,14 +34,16 @@ angular.module('search')
   }
 
   var add = function($scope, property) {
-    var facet = get(property.id);
-    if (facet == null) {
-      facet = createNew(property);
-      categoryFacets.push(facet);
-    }
-    var choiceIndex = findIndex(facet.choices, "value", property.value);
-    if (choiceIndex === -1) {
-      addChoice(facet, property.value);
+    if (property.discoverable) {
+      var facet = get(property.id);
+      if (facet == null) {
+        facet = createNew(property);
+        categoryFacets.push(facet);
+      }
+      var choiceIndex = findIndex(facet.choices, "value", property.value);
+      if (choiceIndex === -1) {
+        addChoice(facet, property.value);
+      }
     }
   }
 
