@@ -8,6 +8,18 @@ angular.module('search')
       'label': 'Recipe',
       'canonicalUrl': 'http://schema.org/Recipe',
       'properties': [
+        { 'name': 'name',
+          'label': 'Name',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/name',
+          'discoverable': false
+        },
+        { 'name': 'description',
+          'label': 'Description',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/description',
+          'discoverable': false
+        },
         { 'name': 'preptime',
           'label': 'Prep Time',
           'type': 'duration',
@@ -46,6 +58,36 @@ angular.module('search')
           'type': 'numeric',
           'canonicalUrl': 'http://schema.org/aggregaterating',
           'discoverable': true
+        },
+        { 'name': 'recipeinstructions',
+          'label': 'Directions',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/recipeInstructions',
+          'discoverable': false
+        },
+        { 'name': 'ingredients',
+          'label': 'Ingredients',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/ingredients',
+          'discoverable': false
+        },
+        { 'name': 'author',
+          'label': 'Recipe by',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/auhor',
+          'discoverable': false
+        },
+        { 'name': 'image',
+          'label': 'Food Image',
+          'type': 'url-media',
+          'canonicalUrl': 'http://schema.org/image',
+          'discoverable': false
+        },
+        { 'name': 'recipecuisine',
+          'label': 'Recipe Cuisine',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/recipeCuisine',
+          'discoverable': true
         }
       ]
     },
@@ -54,6 +96,18 @@ angular.module('search')
       'label': 'Nutrition Info',
       'canonicalUrl': 'http://schema.org/NutritionInformation',
       'properties': [
+        { 'name': 'name',
+          'label': 'Name',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/name',
+          'discoverable': false
+        },
+        { 'name': 'description',
+          'label': 'Description',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/description',
+          'discoverable': false
+        },
         { 'name': 'calories',
           'label': 'Calories',
           'type': 'numeric',
@@ -138,11 +192,65 @@ angular.module('search')
       'label': 'News Article',
       'canonicalUrl': 'http://schema.org/NewsArticle',
       'properties': [
+        { 'name': 'name',
+          'label': 'Name',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/name',
+          'discoverable': false
+        },
+        { 'name': 'description',
+          'label': 'Description',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/description',
+          'discoverable': false
+        },
+        { 'name': 'image',
+          'label': 'Article Image',
+          'type': 'url-media',
+          'canonicalUrl': 'http://schema.org/image',
+          'discoverable': false
+        },
+        { 'name': 'headline',
+          'label': 'Article Headline',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/headline',
+          'discoverable': false
+        },
+        { 'name': 'author',
+          'label': 'Article by',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/auhor',
+          'discoverable': false
+        },
+        { 'name': 'genre',
+          'label': 'Article Genre',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/genre',
+          'discoverable': true
+        },
+        { 'name': 'articlesection',
+          'label': 'Article Section',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/articleSection',
+          'discoverable': true
+        },
         { 'name': 'datepublished',
           'label': 'Publication Date',
           'type': 'date',
           'canonicalUrl': 'http://schema.org/datePublished',
           'discoverable': true
+        },
+        { 'name': 'printedition',
+          'label': 'Printed by',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/printedEdition',
+          'discoverable': false
+        },
+        { 'name': 'copyrightyear',
+          'label': 'Published Year',
+          'type': 'date',
+          'canonicalUrl': 'http://schema.org/copyrightYear',
+          'discoverable': false
         }
       ]
     },
@@ -151,6 +259,18 @@ angular.module('search')
       'label': 'Video',
       'canonicalUrl': 'http://schema.org/VideoObject',
       'properties': [
+        { 'name': 'name',
+          'label': 'Name',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/name',
+          'discoverable': false
+        },
+        { 'name': 'description',
+          'label': 'Description',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/description',
+          'discoverable': false
+        },
         { 'name': 'datepublished',
           'label': 'Publication Date',
           'type': 'date',
@@ -175,6 +295,36 @@ angular.module('search')
           'type': 'text',
           'canonicalUrl': 'http://schema.org/genre',
           'discoverable': true
+        },
+        { 'name': 'image',
+          'label': 'Video Image',
+          'type': 'url-media',
+          'canonicalUrl': 'http://schema.org/image',
+          'discoverable': false
+        },
+        { 'name': 'embedurl',
+          'label': 'Video URL',
+          'type': 'url-media',
+          'canonicalUrl': 'http://schema.org/embedUrl',
+          'discoverable': false
+        },
+        { 'name': 'interactioncount',
+          'label': 'Total Viewer',
+          'type': 'numeric',
+          'canonicalUrl': 'http://schema.org/interactionCount',
+          'discoverable': false
+        },
+        { 'name': 'interactionstatistic',
+          'label': 'Total Viewer',
+          'type': 'numeric',
+          'canonicalUrl': 'http://schema.org/interactionStatistic',
+          'discoverable': false
+        },
+        { 'name': 'uploaddate',
+          'label': 'Upload Date',
+          'type': 'date',
+          'canonicalUrl': 'http://schema.org/uploadDate',
+          'discoverable': false
         }
       ]
     },
@@ -183,6 +333,18 @@ angular.module('search')
       'label': 'Book',
       'canonicalUrl': 'http://schema.org/Book',
       'properties': [
+        { 'name': 'name',
+          'label': 'Name',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/name',
+          'discoverable': false
+        },
+        { 'name': 'description',
+          'label': 'Description',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/description',
+          'discoverable': false
+        },
         { 'name': 'bookformat',
           'label': 'Book Format',
           'type': 'text',
@@ -208,6 +370,18 @@ angular.module('search')
       'label': 'Dataset',
       'canonicalUrl': 'http://schema.org/Dataset',
       'properties': [
+        { 'name': 'name',
+          'label': 'Name',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/name',
+          'discoverable': false
+        },
+        { 'name': 'description',
+          'label': 'Description',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/description',
+          'discoverable': false
+        },
         { 'name': 'license',
           'label': 'License',
           'type': 'text',
@@ -220,6 +394,31 @@ angular.module('search')
       'name': 'MedicalStudy',
       'label': 'Medical Study',
       'canonicalUrl': 'http://schema.org/MedicalStudy',
-      'properties': []
+      'properties': [
+        { 'name': 'name',
+          'label': 'Name',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/name',
+          'discoverable': false
+        },
+        { 'name': 'description',
+          'label': 'Description',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/description',
+          'discoverable': false
+        },
+        { 'name': 'population',
+          'label': 'Population',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/population',
+          'discoverable': false
+        },
+        { 'name': 'sameas',
+          'label': 'Source Article',
+          'type': 'url',
+          'canonicalUrl': 'http://schema.org/sameAs',
+          'discoverable': false
+        }
+      ]
     }
   });
