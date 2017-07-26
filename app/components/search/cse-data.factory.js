@@ -32,6 +32,7 @@ function(schemaorgVocab) {
           propertyAttributes.type,
           propertyAttributes.unit),
       unit: propertyAttributes.unit,
+      type: propertyAttributes.type,
       discoverable: propertyAttributes.discoverable
     };
     return property;
