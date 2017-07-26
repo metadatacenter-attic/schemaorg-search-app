@@ -30,7 +30,8 @@ function(schemaorgVocab) {
       label: propertyAttributes.label,
       value: refineValue(propertyValue,
           propertyAttributes.type,
-          propertyAttributes.unit)
+          propertyAttributes.unit),
+      unit: propertyAttributes.unit
     };
     return property;
   }
