@@ -124,6 +124,8 @@ function(schemaorgVocab) {
       return refineNumericData(value, unit);
     } else if (type === "duration") {
       return refineDurationData(value, unit);
+    } else if (type === "url" || type === "url-media") {
+      return refineUrlData(value);
     }
     return value;
   }
@@ -149,6 +151,16 @@ function(schemaorgVocab) {
     }
   }
 
+  function refineUrlData(url) {
+    var urlComponent = getUrlComponent(url);
+    var protocol = urlComponent.protocol;
+    if (protocol == null || protocol.length == 0
+        || (protocol !== "http" && protocol !== "https")) {
+      return "https://" + urlComponent.endpoint;
+    }
+    return urlComponent.url;
+  }
+
   function autoFixNumericData(value) {
     var numericValue = getIntegerAndFraction(value)
     console.log("INFO: Applying an auto-fix for [numeric] data by converting " +
@@ -167,6 +179,24 @@ function(schemaorgVocab) {
     var RegExp = /(\d+[\/\d. ]*|\d)/;
     var match = RegExp.exec(text);
     return evalNumber(match[1].trim());
+  }
+
+  function getUrlComponent(url) {
+    var RegExp = /^(.+):\/\/(.+)$/;
+    var match = RegExp.exec(url);
+    if (match != null) {
+      return {
+        url: match[0].trim(),
+        protocol: match[1].trim(),
+        endpoint: match[2].trim()
+      }
+    } else {
+      return {
+        url: url,
+        protocol: "",
+        endpoint: url.replace("//", "").trim()
+      }
+    }
   }
 
   function evalNumber(number) {
