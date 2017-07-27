@@ -16,14 +16,16 @@ angular.module('search')
       function(response) {
         var rawDataCollection = [];
         var responseItems = response.data.items;
-        for (var i = 0; i < responseItems.length; i++) {
-          rawDataCollection.push({
-            source: "Google Custom Search",
-            url: responseItems[i].link,
-            title: responseItems[i].title,
-            description: responseItems[i].snippet,
-            raw: responseItems[i]
-          })
+        if (responseItems != null) {
+          for (var i = 0; i < responseItems.length; i++) {
+            rawDataCollection.push({
+              source: "Google Custom Search",
+              url: responseItems[i].link,
+              title: responseItems[i].title,
+              description: responseItems[i].snippet,
+              raw: responseItems[i]
+            })
+          }
         }
         defer.resolve(rawDataCollection);
       },
