@@ -54,9 +54,14 @@ body {
   padding: 5px 10px 15px 20px;
 }
 
-.search-richlist {
+.search-snippet {
   line-height: 1.5;
   padding-top: 20px;
+}
+
+.search-chips {
+  line-height: 1.5;
+  text-align: right;
 }
 
 .search-result-list {
@@ -111,13 +116,18 @@ label.smaller {
   font-size: 10pt;
 }
 
+.chip.smaller {
+  height: 22px;
+  line-height: 22px;
+}
+
 .collapsible-body.narrower {
   padding: 10px;
 }
 
 .row.narrower {
   padding-top: 10px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .collection.with-header .collection-header {

@@ -67,11 +67,11 @@
             <li ng-repeat="item in searchResults" ng-if="item.hasStructuredData">
               <div class="collapsible-header">
                 <div class="row narrower">
-                  <div class="col s12 m12 l12 xl8 search-richlist">
+                  <div class="col s12 m12 l12 xl8 search-snippet">
                       <a href="{{item.url}}" target="_blank">{{item.title | removeSeparator}}</a>
                       &nbsp;-&nbsp;{{item.description}}
                   </div>
-                  <div class="col s12 m12 l12 xl4 right-align">
+                  <div class="col s12 m12 l12 xl4 search-chips">
                     <div class="chip smaller" ng-repeat="topic in item.topics">{{topic}}</div>
                   </div>
                 </div>
