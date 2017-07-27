@@ -316,7 +316,7 @@ angular.module('search')
         }
       ]
     },
-    'medicalstudy': {
+    'MedicalStudy': {
       'name': 'MedicalStudy',
       'label': 'Medical Study',
       'canonicalUrl': 'http://schema.org/MedicalStudy',
