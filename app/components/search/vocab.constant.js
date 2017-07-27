@@ -316,6 +316,55 @@ angular.module('search')
         }
       ]
     },
+    'medicalwebpage': {
+      'name': 'medicalwebpage',
+      'label': 'Medical Web Page',
+      'canonicalUrl': 'http://schema.org/MedicalWebPage',
+      'properties': [
+        { 'name': 'name',
+          'label': 'Name',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/name',
+          'discoverable': false
+        },
+        { 'name': 'description',
+          'label': 'Description',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/description',
+          'discoverable': false
+        },
+        { 'name': 'headline',
+          'label': 'Article Headline',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/headline',
+          'discoverable': false
+        },
+        { 'name': 'author',
+          'label': 'Article by',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/author',
+          'discoverable': false
+        },
+        { 'name': 'citation',
+          'label': 'Citation',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/citation',
+          'discoverable': false
+        },
+        { 'name': 'datepublished',
+          'label': 'Publication Date',
+          'type': 'date',
+          'canonicalUrl': 'http://schema.org/datePublished',
+          'discoverable': true
+        },
+        { 'name': 'sameas',
+          'label': 'Source',
+          'type': 'url',
+          'canonicalUrl': 'http://schema.org/sameAs',
+          'discoverable': false
+        }
+      ]
+    },
     'MedicalStudy': {
       'name': 'MedicalStudy',
       'label': 'Medical Study',
