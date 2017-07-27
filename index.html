@@ -113,13 +113,13 @@
           <div class="row search-facets">
             <div class="z-depth-1" ng-repeat="facet in categoryFacets" ng-if="facet.visible">
               <ul class="collection with-header">
-                <li class="collection-header">
-                  <div class="row narrower">
-                    <div class="col s10"><span class="bold smaller">{{facet.label}}</span></div>
+                <li class="collection-header narrower">
+                  <div class="row" style="margin:0px;">
+                    <div class="col s10">{{facet.label}}</div>
                     <div class="col s2"><span class="x" ng-click="onClose(facet)"></span></div>
                   </div>
                 </li>
-                <li class="collection-item narrow-padding-left" ng-repeat="choice in facet.choices">
+                <li class="collection-item narrower" ng-repeat="choice in facet.choices">
                   <input type="checkbox" id="checkbox-{{facet.name}}-{{$index}}"
                       ng-model="choice.selected" ng-change="onCheckboxChanged(facet)">
                     <label class="smaller" for="checkbox-{{facet.name}}-{{$index}}">{{choice.value}}</label>
@@ -128,13 +128,13 @@
             </div>
             <div class="z-depth-1" ng-repeat="facet in rangeFacets" ng-if="facet.visible">
               <ul class="collection with-header">
-                <li class="collection-header">
-                  <div class="row narrower">
+                <li class="collection-header narrower">
+                  <div class="row" style="margin:0px;">
                     <div class="col s10">{{facet.label}}<label ng-if="facet.unit">&nbsp;({{facet.unit}})</label></div>
                     <div class="col s2"><span class="x" ng-click="onClose(facet)"></span></div>
                   </div>
                 </li>
-                <li class="collection-item narrow-padding-left">
+                <li class="collection-item narrower">
                   <rzslider rz-slider-model="facet.minValue"
                       rz-slider-high="facet.maxValue"
                       rz-slider-options="facet.options"></rzslider>
