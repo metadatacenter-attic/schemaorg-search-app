@@ -5,10 +5,15 @@
   <meta charset="UTF8">
   <title>Search Explorer</title>
   <link type="text/css" rel="stylesheet" href="assets/css/materialize.min.css"
-    media="screen,projection">
-  <link type="text/css" rel="stylesheet" href="assets/css/material-icons.css">
-  <link type="text/css" rel="stylesheet" href="assets/css/rzslider.min.css">
-  <link type="text/css" rel="stylesheet" href="assets/css/refinr.css">
+      media="screen,projection">
+  <link type="text/css" rel="stylesheet" href="assets/css/material-icons.css"
+      media="screen,projection">
+  <link type="text/css" rel="stylesheet" href="assets/css/rzslider.min.css"
+      media="screen,projection">
+  <link type="text/css" rel="stylesheet" href="assets/css/refinr.css"
+      media="screen,projection">
+  <link type="text/css" rel="stylesheet" href="assets/css/halfgrid.css"
+      media="screen,projection">
   <script type="text/javascript" src="assets/libs/jquery-2.1.1.min.js"></script>
   <script type="text/javascript" src="assets/libs/materialize.min.js"></script>
   <script type="text/javascript" src="assets/libs/angular.min.js"></script>
@@ -28,6 +33,16 @@
   <script type="text/javascript" src="app/components/search/filter.factory.js"></script>
   <script type="text/javascript" src="app/components/search/vocab.constant.js"></script>
   <script type="text/javascript" src="app/components/settings/profiles.constant.js"></script>
+  <script>
+    $(function(){
+      $.w = $(window);
+      $.w.on('resize', res);
+      res();
+    });
+    function res() {
+      $('.search-facet-container').css('height',($.w.outerHeight()-22)+'px');
+    }
+  </script>
 </head>
 
 <body class="grey lighten-5" ng-app="schemaorg">
@@ -39,82 +54,95 @@
       <i class="material-icons" style="padding-top:18px;">close</i>
       <input type="submit" id="submit" value="Search" ng-click="doSearch()">
     </div>
-    <div class="row search-breadcrumb" ng-if="breadcrumbs.length!=0">
-      <div style="float:left;">TOPICS: </div>
-      <div class="topic-type" ng-repeat="breadcrumb in breadcrumbs">
-        <a class="btn dropdown-button" href="#"
-            ng-attr-data-activates="dropdown-{{breadcrumb.topic.name}}" dropdown>
-            {{breadcrumb.topic.label}}<i class="material-icons right">arrow_drop_down</i></a>
-        <ul id="dropdown-{{breadcrumb.topic.name}}" class="dropdown-content">
-          <li ng-repeat="facet in breadcrumb.facets"><a href="#"
-              ng-click="onOpen(facet)">{{facet.label}}</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="row container">
-      <div class="search-facet-container col s2">
-        <div ng-repeat="facet in categoryFacets" ng-if="facet.visible">
-          <ul class="collection with-header">
-            <li class="collection-header">
-              <div class="row narrower">
-                <div class="col s10">{{facet.label}}</div>
-                <div class="col s2"><span class="x" ng-click="onClose(facet)"></span></div>
+    <div class="row">
+      <div class="col s0 m1 l1 xl1"></div>
+      <div class="col s12 m7 l8 xl8_05">
+        <div class="row search-result-container" ng-if="searchResults.length!=0">
+          <ul class="collapsible" data-collapsible="accordion">
+            <li ng-repeat="item in searchResults" ng-if="item.hasStructuredData">
+              <div class="collapsible-header">
+                <div class="row narrower">
+                  <div class="col s12 m12 l12 xl8 search-structured-list ">
+                      <a href="{{item.url}}" target="_blank">{{item.title | removeSeparator}}</a>
+                      &nbsp;-&nbsp;{{item.description}}
+                  </div>
+                  <div class="col s12 m12 l12 xl4 right-align">
+                    <div class="chip smaller" ng-repeat="topic in item.topics">{{topic}}</div>
+                  </div>
+                </div>
               </div>
-            </li>
-            <li class="collection-item narrow-padding-left" ng-repeat="choice in facet.choices">
-              <input type="checkbox" id="checkbox-{{facet.name}}-{{$index}}"
-                  ng-model="choice.selected" ng-change="onCheckboxChanged(facet)">
-                <label class="smaller" for="checkbox-{{facet.name}}-{{$index}}">{{choice.value}}</label>
+              <div class="collapsible-body narrower">
+                <div class="row narrower">
+                  <div class="col s12 m12 l6 xl4" ng-repeat="(domain, object) in item.properties | groupBy: 'domain.name'">
+                    <ul class="collection with-header" style="border:1px solid #E0E0E0;">
+                      <li class="collection-header narrower">{{object[0].domain.label}}</li>
+                      <li class="collection-item narrower" ng-repeat="property in object" ng-if="property.type!='url-media'">
+                        <label>{{property.label}}:</label>&nbsp;{{property.value}}&nbsp;{{property.unit}}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </li>
           </ul>
         </div>
-        <div ng-repeat="facet in rangeFacets" ng-if="facet.visible">
-          <ul class="collection with-header">
-            <li class="collection-header">
-              <div class="row narrower">
-                <div class="col s10">{{facet.label}}<label ng-if="facet.unit">&nbsp;({{facet.unit}})</label></div>
-                <div class="col s2"><span class="x" ng-click="onClose(facet)"></span></div>
-              </div>
-            </li>
-            <li class="collection-item narrow-padding-left">
-              <rzslider rz-slider-model="facet.minValue"
-                  rz-slider-high="facet.maxValue"
-                  rz-slider-options="facet.options"></rzslider>
+        <div class="row search-result-list-container" ng-if="searchResults.length!=0">
+          <ul class="search-result-list">
+            <li class="search-result-item" ng-repeat="item in searchResults" ng-if="!item.hasStructuredData">
+              <span><a href="{{item.url}}" target="_blank">{{item.title}}</a><span><br>
+              <span class="green-text lighten-3">{{item.url}}</span><br>
+              <span>{{item.description}}</span>
             </li>
           </ul>
         </div>
       </div>
-      <div class="search-result-container col s10">
+      <div class="col s12 m4 l3 xl2_05 search-facet-container">
         <div class="row">
-          <div class="col s12 cards-container">
-            <div class="card small" ng-repeat="item in searchResults" ng-if="item.hasStructuredData">
-              <div class="card-content">
-                <span class="card-title activator grey-text text-darken-4 smaller">
-                  <a href="{{item.url}}" target="_blank">{{item.title | removeSeparator}}</a>
-                </span>
-                <p class="fadeout-overflow">{{item.description}}</p>
-              </div>
-              <div class="card-reveal">
-                <span class="card-title grey-text text-darken-4 smaller">Structured Data
-                  <i class="material-icons right">close</i></span>
-                <pre>{{item.properties | json}}</pre>
-              </div>
-              <div class="card-action white-text blue-grey darken-1 activator narrower">VIEW MARKUP
-                  <i class="material-icons right">more_vert</i>
-              </div>
+          <div class="row search-breadcrumb" ng-if="breadcrumbs.length!=0">
+            <div style="margin-bottom:5px;">TOPICS: </div>
+            <div class="topic-type" ng-repeat="breadcrumb in breadcrumbs">
+              <a class="btn dropdown-button" href="#"
+                  ng-attr-data-activates="dropdown-{{breadcrumb.topic.name}}" dropdown>
+                  {{breadcrumb.topic.label}}<i class="material-icons right">arrow_drop_down</i></a>
+              <ul id="dropdown-{{breadcrumb.topic.name}}" class="dropdown-content">
+                <li ng-repeat="facet in breadcrumb.facets"><a href="#"
+                    ng-click="onOpen(facet)">{{facet.label}}</a></li>
+              </ul>
             </div>
           </div>
-          <div class="col s12">
-            <div class="search-result-list-container">
-              <ul class="search-result-list">
-                <li class="search-result-item" ng-repeat="item in searchResults" ng-if="!item.hasStructuredData">
-                  <span><a href="{{item.url}}" target="_blank">{{item.title}}</a><span><br>
-                  <span class="green-text lighten-3">{{item.url}}</span><br>
-                  <span>{{item.description}}</span>
+          <div class="row search-facets">
+            <div class="z-depth-1" ng-repeat="facet in categoryFacets" ng-if="facet.visible">
+              <ul class="collection with-header">
+                <li class="collection-header">
+                  <div class="row narrower">
+                    <div class="col s10"><span class="bold smaller">{{facet.label}}</span></div>
+                    <div class="col s2"><span class="x" ng-click="onClose(facet)"></span></div>
+                  </div>
+                </li>
+                <li class="collection-item narrow-padding-left" ng-repeat="choice in facet.choices">
+                  <input type="checkbox" id="checkbox-{{facet.name}}-{{$index}}"
+                      ng-model="choice.selected" ng-change="onCheckboxChanged(facet)">
+                    <label class="smaller" for="checkbox-{{facet.name}}-{{$index}}">{{choice.value}}</label>
+                </li>
+              </ul>
+            </div>
+            <div class="z-depth-1" ng-repeat="facet in rangeFacets" ng-if="facet.visible">
+              <ul class="collection with-header">
+                <li class="collection-header">
+                  <div class="row narrower">
+                    <div class="col s10">{{facet.label}}<label ng-if="facet.unit">&nbsp;({{facet.unit}})</label></div>
+                    <div class="col s2"><span class="x" ng-click="onClose(facet)"></span></div>
+                  </div>
+                </li>
+                <li class="collection-item narrow-padding-left">
+                  <rzslider rz-slider-model="facet.minValue"
+                      rz-slider-high="facet.maxValue"
+                      rz-slider-options="facet.options"></rzslider>
                 </li>
               </ul>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
