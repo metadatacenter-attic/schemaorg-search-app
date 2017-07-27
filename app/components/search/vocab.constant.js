@@ -5,7 +5,7 @@ angular.module('search')
 .constant('SchemaorgVocab',
   { 'recipe': {
       'name': 'recipe',
-      'label': 'Recipe',
+      'label': 'Food Recipe',
       'canonicalUrl': 'http://schema.org/Recipe',
       'properties': [
         { 'name': 'name',
@@ -84,7 +84,7 @@ angular.module('search')
           'discoverable': false
         },
         { 'name': 'recipecuisine',
-          'label': 'Recipe Cuisine',
+          'label': 'Type of Cuisine',
           'type': 'enum',
           'canonicalUrl': 'http://schema.org/recipeCuisine',
           'discoverable': true
