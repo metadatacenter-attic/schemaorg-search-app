@@ -126,6 +126,8 @@ function(schemaorgVocab) {
       return refineDurationData(value, unit);
     } else if (type === "url" || type === "url-media") {
       return refineUrlData(value);
+    } else if (type === "enum") {
+      return refineEnumData(value);
     }
     return value;
   }
@@ -159,6 +161,10 @@ function(schemaorgVocab) {
       return "https://" + urlComponent.endpoint;
     }
     return urlComponent.url;
+  }
+
+  function refineEnumData(value) {
+    return toTitleCase(value);
   }
 
   function autoFixNumericData(value) {
@@ -197,6 +203,12 @@ function(schemaorgVocab) {
         endpoint: url.replace("//", "").trim()
       }
     }
+  }
+
+  function toTitleCase(str) {
+    return str.replace(/\w\S*/g, function(txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
   }
 
   function evalNumber(number) {

@@ -85,7 +85,7 @@ angular.module('search')
         },
         { 'name': 'recipecuisine',
           'label': 'Recipe Cuisine',
-          'type': 'text',
+          'type': 'enum',
           'canonicalUrl': 'http://schema.org/recipeCuisine',
           'discoverable': true
         }
@@ -224,13 +224,13 @@ angular.module('search')
         },
         { 'name': 'genre',
           'label': 'Article Genre',
-          'type': 'text',
+          'type': 'enum',
           'canonicalUrl': 'http://schema.org/genre',
           'discoverable': true
         },
         { 'name': 'articlesection',
           'label': 'Article Section',
-          'type': 'text',
+          'type': 'enum',
           'canonicalUrl': 'http://schema.org/articleSection',
           'discoverable': true
         },
@@ -273,7 +273,7 @@ angular.module('search')
         },
         { 'name': 'bookformat',
           'label': 'Book Format',
-          'type': 'text',
+          'type': 'enum',
           'canonicalUrl': 'http://schema.org/bookFormat',
           'discoverable': true
         },

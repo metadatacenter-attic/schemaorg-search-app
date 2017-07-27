@@ -53,7 +53,7 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
         var itemProperties = data.properties;
         for (var j = 0; j < itemProperties.length; j++) {
           var itemProperty = itemProperties[j];
-          if (itemProperty.range === "text") {
+          if (itemProperty.range === "enum") {
             CategoryFacetService.add($scope, itemProperty);
           } else if (itemProperty.range === "numeric") {
             RangeFacetService.add($scope, itemProperty);
