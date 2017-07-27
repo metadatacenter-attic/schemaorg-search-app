@@ -40,7 +40,12 @@
       res();
     });
     function res() {
-      $('.search-facet-container').css('height',($.w.outerHeight()-22)+'px');
+      var main_height = $('.search-result-container').height();
+      if (main_height <= $.w.outerHeight()) {
+        $('.search-facet-container').css('height',($.w.outerHeight()-22)+'px');
+      } else {
+        $('.search-facet-container').css('height',(main_height+30)+'px');
+      }
     }
   </script>
 </head>
@@ -56,13 +61,13 @@
     </div>
     <div class="row">
       <div class="col s0 m1 l1 xl1"></div>
-      <div class="col s12 m7 l8 xl8_05">
-        <div class="row search-result-container" ng-if="searchResults.length!=0">
+      <div class="col s12 m7 l8 xl8_05 search-result-container">
+        <div class="row search-result-richlist-container" ng-if="searchResults.length!=0">
           <ul class="collapsible" data-collapsible="accordion">
             <li ng-repeat="item in searchResults" ng-if="item.hasStructuredData">
               <div class="collapsible-header">
                 <div class="row narrower">
-                  <div class="col s12 m12 l12 xl8 search-structured-list ">
+                  <div class="col s12 m12 l12 xl8 search-richlist">
                       <a href="{{item.url}}" target="_blank">{{item.title | removeSeparator}}</a>
                       &nbsp;-&nbsp;{{item.description}}
                   </div>
