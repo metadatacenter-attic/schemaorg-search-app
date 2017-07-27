@@ -389,7 +389,7 @@ angular.module('search')
           'discoverable': false
         },
         { 'name': 'sameas',
-          'label': 'Source Article',
+          'label': 'Source',
           'type': 'url',
           'canonicalUrl': 'http://schema.org/sameAs',
           'discoverable': false
