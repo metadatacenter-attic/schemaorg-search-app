@@ -53,6 +53,7 @@
 <body class="grey lighten-5" ng-app="schemaorg">
   <form class="search-container" ng-controller="searchController">
     <div class="input-field" style="margin-top:0;">
+      <div class="app-version-info">v{{appVersion}}-{{profileName}}</div>
       <input class="valign center search-bar"
       style="font-size:200%;padding-top:10px;padding-bottom:10px;"
       placeholder="Type a concept here..." type="search" ng-model="keyword" required>
