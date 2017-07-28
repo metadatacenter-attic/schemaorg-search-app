@@ -16,7 +16,7 @@ angular.module('search')
 function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeFacetService,
     BreadcrumbService, FilterService, userProfiles, schemaorgVocab) {
 
-  $scope.appVersion = 0.1;
+  $scope.appVersion = 0.2;
   $scope.profileName = "restricted";
   $scope.searchResults = [];
   $scope.categoryFacets = CategoryFacetService.categoryFacets;
