@@ -14,6 +14,7 @@
       media="screen,projection">
   <link type="text/css" rel="stylesheet" href="assets/css/halfgrid.css"
       media="screen,projection">
+  <link type="text/css" rel="stylesheet" href="assets/css/balloon.css">
   <script type="text/javascript" src="assets/libs/jquery-2.1.1.min.js"></script>
   <script type="text/javascript" src="assets/libs/materialize.min.js"></script>
   <script type="text/javascript" src="assets/libs/angular.min.js"></script>
@@ -38,10 +39,14 @@
       $.w = $(window);
       $.w.on('resize', res);
       res();
+      $('.search-bar').focus(fading);
     });
     function res() {
       $('.side-bar').css('height',($.w.outerHeight()-25)+'px');
       $('.search-facet-container').css('width', $('.side-bar').width()-20+'px');
+    }
+    function fading() {
+      $('#welcome-screen').fadeOut('slow');
     }
   </script>
 </head>
@@ -62,7 +67,22 @@
     <div class="app-version-info">v{{appVersion}}-{{profileName}}</div>
     <!-- Main section -->
     <div class="row">
-      <!-- Empty space -->
+      <!-- Welcome overlay -->
+      <div id="welcome-screen" class="overlay">
+        <div class="overlay-content">
+          Welcome to<br><br>
+          <span style="font-size:34pt;">[ { refinry } ]</span>
+          <br><br><br>
+          Start using the app by entering your search keyword above.
+          <div style="margin-top:160px;">
+            <a href="https://github.com/metadatacenter/schemaorg-app" target="_blank">
+              Download source code at Github</a><br><br>
+            <img height="80" width="80" src="assets/img/github-icon.gif">
+          </div>
+          <div class="arrow"></div>
+        </div>
+      </div>
+''      <!-- Empty space -->
       <div class="col s0 m1 l1 xl1"></div>
 
       <!-- Content area -->
