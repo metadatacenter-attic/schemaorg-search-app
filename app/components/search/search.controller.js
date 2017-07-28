@@ -21,6 +21,7 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
   $scope.searchResults = [];
   $scope.categoryFacets = CategoryFacetService.categoryFacets;
   $scope.rangeFacets = RangeFacetService.rangeFacets;
+  $scope.filters = FilterService.filterModel;
   $scope.breadcrumbs = BreadcrumbService.breadcrumbs;
 
   $scope.doSearch = function() {

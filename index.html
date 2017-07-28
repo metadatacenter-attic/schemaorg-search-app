@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF8">
-  <title>Refinry.io - Sharpen Your Search</title>
+  <title>Refinry :: Sharpen your search</title>
   <link type="text/css" rel="stylesheet" href="assets/css/materialize.min.css"
       media="screen,projection">
   <link type="text/css" rel="stylesheet" href="assets/css/material-icons.css"
@@ -40,72 +40,85 @@
       res();
     });
     function res() {
-      var main_height = $('.search-result-container').height();
-      if (main_height <= $.w.outerHeight()) {
-        $('.search-facet-container').css('height',($.w.outerHeight()-22)+'px');
-      } else {
-        $('.search-facet-container').css('height',(main_height+30)+'px');
-      }
+      $('.side-bar').css('height',($.w.outerHeight()-25)+'px');
+      $('.search-facet-container').css('width', $('.side-bar').width()-20+'px');
     }
   </script>
 </head>
 
-<body class="grey lighten-5" ng-app="schemaorg">
+<body class="grey lighten-4" ng-app="schemaorg">
   <form class="search-container" ng-controller="searchController">
-    <div class="input-field" style="margin-top:0;">
-      <div class="app-version-info">v{{appVersion}}-{{profileName}}</div>
-      <input class="valign center search-bar"
-      style="font-size:200%;padding-top:10px;padding-bottom:10px;"
-      placeholder="Type a concept here..." type="search" ng-model="keyword" required>
-      <i class="material-icons" style="padding-top:18px;">close</i>
-      <input type="submit" id="submit" value="Search" ng-click="doSearch()">
+    <div class="app-name">[ { refinry } ]</div>
+    <!-- Search bar -->
+    <div class="input-field navbar-fixed" style="margin-top:0;">
+      <nav>
+        <input class="valign center search-bar"
+        style="font-size:200%;padding-top:10px;padding-bottom:10px;"
+        placeholder="Type a concept here..." type="search" ng-model="keyword" required>
+        <i class="material-icons" style="padding-top:5px;">close</i>
+        <input type="submit" id="submit" value="Search" ng-click="doSearch()">
+      </nav>
     </div>
+    <div class="app-version-info">v{{appVersion}}-{{profileName}}</div>
+    <!-- Main section -->
     <div class="row">
+      <!-- Empty space -->
       <div class="col s0 m1 l1 xl1"></div>
-      <div class="col s12 m7 l8 xl8_05 search-result-container">
-        <div class="row search-result-richlist-container" ng-if="searchResults.length!=0">
-          <ul class="collapsible" data-collapsible="accordion">
-            <li ng-repeat="item in searchResults" ng-if="item.hasStructuredData">
-              <div class="collapsible-header">
-                <div class="row narrower">
-                  <div class="col s12 m12 l12 xl8 search-snippet">
-                      <a href="{{item.url}}" target="_blank">{{item.title | removeSeparator}}</a>
-                      &nbsp;-&nbsp;{{item.description}}
-                  </div>
-                  <div class="col s12 m12 l12 xl4 search-chips">
-                    <div class="chip smaller" ng-repeat="topic in item.topics">{{topic}}</div>
-                  </div>
-                </div>
-              </div>
-              <div class="collapsible-body narrower">
-                <div class="row narrower">
-                  <div class="col s12 m12 l6 xl4" ng-repeat="(domain, object) in item.properties | groupBy: 'domain.name'">
-                    <ul class="collection with-header" style="border:1px solid #E0E0E0;">
-                      <li class="collection-header narrower">{{object[0].domain.label}}</li>
-                      <li class="collection-item narrower" ng-repeat="property in object" ng-if="property.type!='url-media'">
-                        <label>{{property.label}}:</label>&nbsp;{{property.value}}&nbsp;{{property.unit}}
-                      </li>
-                    </ul>
+
+      <!-- Content area -->
+      <div class="col s12 m7 l8 xl8_05 content-area">
+        <!-- Search result container -->
+        <div class="search-result-container" ng-if="searchResults.length!=0">
+          <!-- Structured result -->
+          <div class="row search-result-richlist-container">
+            <ul class="collapsible" data-collapsible="accordion">
+              <li ng-repeat="item in searchResults" ng-if="item.hasStructuredData">
+                <div class="collapsible-header">
+                  <div class="row narrower">
+                    <div class="col s12 m12 l12 xl8 search-snippet">
+                        <a href="{{item.url}}" target="_blank">{{item.title | removeSeparator}}</a>
+                        &nbsp;-&nbsp;{{item.description}}
+                    </div>
+                    <div class="col s12 m12 l12 xl4 search-chips">
+                      <div class="chip smaller" ng-repeat="topic in item.topics">{{topic}}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div class="row search-result-list-container" ng-if="searchResults.length!=0">
-          <ul class="search-result-list">
-            <li class="search-result-item" ng-repeat="item in searchResults" ng-if="!item.hasStructuredData">
-              <span><a href="{{item.url}}" target="_blank">{{item.title}}</a><span><br>
-              <span class="green-text lighten-3">{{item.url}}</span><br>
-              <span>{{item.description}}</span>
-            </li>
-          </ul>
+                <div class="collapsible-body narrower">
+                  <div class="row narrower">
+                    <div class="col s12 m12 l6 xl4" ng-repeat="(domain, object) in item.properties | groupBy: 'domain.name'">
+                      <ul class="collection with-header" style="border:1px solid #E0E0E0;">
+                        <li class="collection-header narrower">{{object[0].domain.label}}</li>
+                        <li class="collection-item narrower" ng-repeat="property in object" ng-if="property.type!='url-media'">
+                          <label>{{property.label}}:</label>&nbsp;{{property.value}}&nbsp;{{property.unit}}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <!-- Normal result -->
+          <div class="row search-result-list-container">
+            <ul class="search-result-list">
+              <li class="search-result-item" ng-repeat="item in searchResults" ng-if="!item.hasStructuredData">
+                <span><a href="{{item.url}}" target="_blank">{{item.title}}</a><span><br>
+                <span class="green-text lighten-3">{{item.url}}</span><br>
+                <span>{{item.description}}</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
+
+      <!-- Side-bar -->
       <div class="col s12 m4 l3 xl2_05 side-bar">
-        <div class="row search-facet-container">
-          <div class="row search-breadcrumb" ng-if="breadcrumbs.length!=0">
-            <div style="margin-bottom:5px;">TOPICS: </div>
+        <!-- Search facet container -->
+        <div class="row search-facet-container" ng-if="breadcrumbs.length!=0">
+          <!-- Search topics -->
+          <div class="row search-topics">
+            <div style="float:left;">TOPICS:&nbsp;&nbsp;</div>
             <div class="topic-type" ng-repeat="breadcrumb in breadcrumbs">
               <a class="btn dropdown-button" href="#"
                   ng-attr-data-activates="dropdown-{{breadcrumb.topic.name}}" dropdown>
@@ -116,7 +129,9 @@
               </ul>
             </div>
           </div>
-          <div class="row search-facets">
+          <!-- Search facets -->
+          <div class="row search-facets" ng-if="filters.length!=0">
+            <!-- Category facets -->
             <div class="z-depth-1" ng-repeat="facet in categoryFacets" ng-if="facet.visible">
               <ul class="collection with-header">
                 <li class="collection-header narrower">
@@ -132,6 +147,7 @@
                 </li>
               </ul>
             </div>
+            <!-- Range facets -->
             <div class="z-depth-1" ng-repeat="facet in rangeFacets" ng-if="facet.visible">
               <ul class="collection with-header">
                 <li class="collection-header narrower">

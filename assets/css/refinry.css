@@ -6,6 +6,20 @@ body {
   overflow-y: auto;
 }
 
+.app-name {
+  font-size: 16pt;
+  position: fixed;
+  vertical-align: baseline;
+  width: 8%;
+  min-width: 120px;
+  height: 64px;
+  line-height: 64px;
+  text-align: center;
+  color: #FFF;
+  background-color: #000;
+  z-index: 999;
+}
+
 .app-version-info {
   position: fixed;
   padding-left: 5px;
@@ -20,9 +34,9 @@ body {
   margin-left: 15px;
 }
 
-.search-breadcrumb {
+.search-topics {
   font-size: 15px;
-  margin: 15px;
+  margin: 22px 22px 16px 22px;
   line-height: 30px;
 }
 
@@ -39,14 +53,24 @@ body {
   line-height: 32px;
 }
 
-.side-bar {
-  margin-top:-20px;
+.content-area {
+  display: block;
+  padding-top: 25px !important;
   overflow:hidden;
-  background-color: #E6E6E6;
+}
+
+.side-bar {
+  display: block;
+  padding-top: 30px !important;
+  overflow:hidden;
 }
 
 .search-facet-container {
-
+  position: fixed;
+  margin-right: 30px;
+  margin-bottom:30px;
+  min-width: 19%;
+  background-color: #E6E6E6;
 }
 
 .search-facets {
@@ -59,12 +83,11 @@ body {
 }
 
 .search-result-richlist-container {
-  padding-right: 10px;
+  padding: 0px 15px 15px 0px;
 }
 
 .search-result-list-container {
-  margin: 0.5rem 0 1rem 0;
-  padding: 5px 10px 15px 20px;
+  padding: 0px 20px 15px 20px;
 }
 
 .search-snippet {
@@ -121,6 +144,28 @@ input[type="submit"] {
 }
 
 /* Materializecss Overrides */
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+  color:    #F0F0F0;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+  color:    #F0F0F0;
+  opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+  color:    #F0F0F0;
+  opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color:    #F0F0F0;
+}
+::-ms-input-placeholder { /* Microsoft Edge */
+  color:    #F0F0F0;
+}
+
+nav {
+  background-color: #3B3B3B;
+}
+
 h5.smaller {
   font-size: 14pt;
 }
