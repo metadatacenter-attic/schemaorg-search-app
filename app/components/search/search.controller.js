@@ -29,7 +29,7 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
 
     resetServices();
 
-    var profile = userProfiles['schemaorg'];
+    var profile = userProfiles['restricted'];
     var input = processUserInput(userInput);
     var userKeyword = input.keyword;
     var userTopics = input.topics;
