@@ -29,6 +29,14 @@ body {
   z-index: 2;
 }
 
+.view-code {
+  position: absolute;
+  width: 250px;
+  left: 65px;
+  bottom: 0px;
+  margin-bottom: 22px;
+}
+
 .container {
   width: 95%;
   margin-left: 15px;
