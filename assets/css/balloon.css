@@ -8,7 +8,6 @@
   width:100%;
   height: 100%;
   text-align:center;
-  top: 125px;
   overflow-x: hidden;
   z-index: 99;
 }
@@ -20,10 +19,10 @@
 
 .overlay-content {
   position: relative;
-  margin: 30px auto;
-  padding: 50px 30px;
-  height: 600px;
-  width: 400px;
+  margin: 60px auto;
+  padding: 30px 30px;
+  height: 70%;
+  width: 380px;
   color: white;
   border-radius: 20px;
   font-size: 12pt;
