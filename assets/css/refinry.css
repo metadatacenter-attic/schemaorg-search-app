@@ -99,10 +99,14 @@ body {
 }
 
 .thumbnail {
+  float: left;
+  margin-right:18px;
+}
+
+.thumbnail-img {
   object-fit: cover;
   width: 52px;
   height: 52px;
-  margin-right:18px;
 }
 
 .search-snippet {
@@ -114,6 +118,12 @@ body {
   padding-top: 8px !important;
   line-height: 1.5;
   text-align: right;
+}
+
+.topic-card {
+  padding: 0px !important;
+  margin: 6px 10px;
+  border: 1px solid #E0E0E0;
 }
 
 .search-result-list {
@@ -196,7 +206,7 @@ label.smaller {
 }
 
 .collapsible-body.narrower {
-  padding: 10px;
+  padding: 0px 14px;
 }
 
 .row.narrower {

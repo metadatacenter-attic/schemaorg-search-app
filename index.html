@@ -96,8 +96,8 @@
                 <div class="collapsible-header">
                   <div class="row narrower">
                     <div class="col s12 m12 l12 xl9 search-snippet valign-wrapper">
-                      <div style="float:left;">
-                        <img class="circle thumbnail" src="{{item.thumbnail}}" ng-if="item.thumbnail">
+                      <div class="thumbnail" ng-if="item.thumbnail">
+                        <img class="circle thumbnail-img" src="{{item.thumbnail}}">
                       </div>
                       <div>
                         <a href="{{item.url}}" target="_blank">{{item.title | removeSeparator}}</a>
@@ -111,8 +111,9 @@
                 </div>
                 <div class="collapsible-body narrower">
                   <div class="row narrower">
-                    <div class="col s12 m12 l6 xl4" ng-repeat="(domain, object) in item.properties | groupBy: 'domain.name'">
-                      <ul class="collection with-header" style="border:1px solid #E0E0E0;">
+                    <div class="col s12 m12 l6 xl4 topic-card"
+                        ng-repeat="(domain, object) in item.properties | groupBy: 'domain.name'">
+                      <ul class="collection with-header">
                         <li class="collection-header narrower">{{object[0].domain.label}}</li>
                         <li class="collection-item narrower" ng-repeat="property in object" ng-if="property.type!='url-media'">
                           <label>{{property.label}}:</label>&nbsp;{{property.value}}&nbsp;{{property.unit}}
