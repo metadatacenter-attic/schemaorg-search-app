@@ -79,7 +79,7 @@ angular.module('search')
         },
         { 'name': 'image',
           'label': 'Food Image',
-          'type': 'url-media',
+          'type': 'url+image',
           'canonicalUrl': 'http://schema.org/image',
           'discoverable': false
         },
@@ -206,7 +206,7 @@ angular.module('search')
         },
         { 'name': 'image',
           'label': 'Article Image',
-          'type': 'url-media',
+          'type': 'url+image',
           'canonicalUrl': 'http://schema.org/image',
           'discoverable': false
         },

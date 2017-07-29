@@ -126,6 +126,26 @@ body {
   border: 1px solid #E0E0E0;
 }
 
+.fullscreen-img {
+  display: block;
+  margin: 5px 0px;
+  cursor: -webkit-zoom-in;
+  cursor: zoom-in;
+  position: relative;
+  -webkit-transition: opacity .4s;
+  transition: opacity .4s;
+  -webkit-backface-visibility: hidden
+}
+
+.fullscreen-img:hover:not(.active) {
+  opacity:.8
+}
+
+.fullscreen-img.active {
+  cursor: -webkit-zoom-out;
+  cursor: zoom-out
+}
+
 .search-result-list {
   list-style: none;
   margin: 0;

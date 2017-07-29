@@ -115,8 +115,13 @@
                         ng-repeat="(domain, object) in item.properties | groupBy: 'domain.name'">
                       <ul class="collection with-header">
                         <li class="collection-header narrower">{{object[0].domain.label}}</li>
-                        <li class="collection-item narrower" ng-repeat="property in object" ng-if="property.type!='url-media'">
+                        <li class="collection-item narrower" ng-repeat="property in object" ng-if="property.type!='url+image'">
                           <label>{{property.label}}:</label>&nbsp;{{property.value}}&nbsp;{{property.unit}}
+                        </li>
+                        <li class="collection-item narrower" ng-repeat="property in object | filter:{ type:'url+image' }">
+                          <label>{{property.label}}:</label>&nbsp;
+                          <img materialboxed class="responsive-img fullscreen-img" data-caption="{{item.title}}"
+                              ng-src={{property.value}}>
                         </li>
                       </ul>
                     </div>
@@ -190,7 +195,6 @@
               </ul>
             </div>
           </div>
-        </div>
         </div>
       </div>
     </div>
