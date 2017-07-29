@@ -95,7 +95,7 @@
               <li ng-repeat="item in searchResults" ng-if="item.hasStructuredData">
                 <div class="collapsible-header">
                   <div class="row narrower">
-                    <div class="col s12 m12 l12 xl8 search-snippet valign-wrapper">
+                    <div class="col s12 m12 l12 xl9 search-snippet valign-wrapper">
                       <div style="float:left;">
                         <img class="circle thumbnail" src="{{item.thumbnail}}" ng-if="item.thumbnail">
                       </div>
@@ -104,7 +104,7 @@
                         &nbsp;-&nbsp;{{item.description}}
                       </div>
                     </div>
-                    <div class="col s12 m12 l12 xl4 search-chips">
+                    <div class="col s12 m12 l12 xl3 search-chips">
                       <div class="chip smaller" ng-repeat="topic in item.topics">{{topic}}</div>
                     </div>
                   </div>
