@@ -97,7 +97,7 @@
                   <div class="row narrower">
                     <div class="col s12 m12 l12 xl9 search-snippet valign-wrapper">
                       <div class="thumbnail" ng-if="item.thumbnail">
-                        <img class="circle thumbnail-img" src="{{item.thumbnail}}">
+                        <img class="circle thumbnail-img" ng-src="{{item.thumbnail}}">
                       </div>
                       <div>
                         <a href="{{item.url}}" target="_blank">{{item.title | removeSeparator}}</a>
