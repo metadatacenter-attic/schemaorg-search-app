@@ -24,7 +24,15 @@ angular.module('search')
               title: responseItems[i].title,
               description: responseItems[i].snippet,
               raw: responseItems[i]
-            })
+            });
+            var image = responseItems[i].pagemap.cse_image;
+            if (image != null) {
+              rawDataCollection[i]["image"] = image[0].src;
+            }
+            var thumbnail = responseItems[i].pagemap.cse_thumbnail;
+            if (thumbnail != null) {
+              rawDataCollection[i]["thumbnail"] = thumbnail[0].src;
+            }
           }
         }
         defer.resolve(rawDataCollection);

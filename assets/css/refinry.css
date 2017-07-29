@@ -98,6 +98,13 @@ body {
   padding: 0px 20px 15px 20px;
 }
 
+.thumbnail {
+  object-fit: cover;
+  width: 52px;
+  height: 52px;
+  margin-right:18px;
+}
+
 .search-snippet {
   line-height: 1.5;
   padding-top: 20px;

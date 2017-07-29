@@ -14,6 +14,8 @@ function(schemaorgVocab) {
       url: rawData.url,
       title: rawData.title,
       description: rawData.description,
+      image: rawData.image,
+      thumbnail: rawData.thumbnail,
       hasStructuredData: false,
       topics: [],
       properties: [],

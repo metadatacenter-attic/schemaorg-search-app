@@ -96,8 +96,13 @@
                 <div class="collapsible-header">
                   <div class="row narrower">
                     <div class="col s12 m12 l12 xl8 search-snippet">
+                      <div style="float:left;">
+                        <img class="circle thumbnail" src="{{item.thumbnail}}" ng-if="item.thumbnail">
+                      </div>
+                      <div>
                         <a href="{{item.url}}" target="_blank">{{item.title | removeSeparator}}</a>
                         &nbsp;-&nbsp;{{item.description}}
+                      </div>
                     </div>
                     <div class="col s12 m12 l12 xl4 search-chips">
                       <div class="chip smaller" ng-repeat="topic in item.topics">{{topic}}</div>
