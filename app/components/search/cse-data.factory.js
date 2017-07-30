@@ -60,24 +60,14 @@ function(schemaorgVocab) {
       var pagemap = rawData.pagemap;
       if (pagemap.hasOwnProperty(topicName)) {
         var topicDataArray = pagemap[topicName];
-        structuredData[topicName] = findBestData(topicDataArray);
+        structuredData[topicName] = getLastData(topicDataArray);
       }
     }
     return structuredData;
   }
 
-  function findBestData(topicDataArray) {
-    var bestData = {};
-    var bestInfoSize = -1;
-    for (var i = 0; i < topicDataArray.length; i++) {
-      var topicData = topicDataArray[i];
-      var infoSize = Object.keys(topicData).length;
-      if (infoSize > bestInfoSize) {
-        bestData = topicData;
-        bestInfoSize = infoSize;
-      }
-    }
-    return bestData;
+  function getLastData(topicDataArray) {
+    return topicDataArray[topicDataArray.length-1];
   }
 
   function storeTopics(data, structuredData) {
