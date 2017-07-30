@@ -291,6 +291,124 @@ angular.module('search')
         }
       ]
     },
+    'movie': {
+      'name': 'movie',
+      'label': 'Movie',
+      'canonicalUrl': 'http://schema.org/Movie',
+      'properties': [
+        { 'name': 'name',
+          'label': 'Name',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/name',
+          'discoverable': false
+        },
+        { 'name': 'description',
+          'label': 'Description',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/description',
+          'discoverable': false
+        },
+        { 'name': 'contentrating',
+          'label': 'Movie Rating',
+          'type': 'enum',
+          'canonicalUrl': 'http://schema.org/contentRating',
+          'discoverable': true
+        },
+        { 'name': 'duration',
+          'label': 'Movie Duration',
+          'type': 'duration',
+          'unit': 'minute',
+          'canonicalUrl': 'http://schema.org/duration',
+          'discoverable': true
+        },
+        { 'name': 'genre',
+          'label': 'Movie Genre',
+          'type': 'enum',
+          'canonicalUrl': 'http://schema.org/genre',
+          'discoverable': true
+        },
+        { 'name': 'datepublished',
+          'label': 'Release Date',
+          'type': 'date',
+          'canonicalUrl': 'http://schema.org/datePublished',
+          'discoverable': false
+        },
+        { 'name': 'trailer',
+          'label': 'Movie Trailer',
+          'type': 'url+video',
+          'canonicalUrl': 'http://schema.org/trailer',
+          'discoverable': false
+        }
+      ]
+    },
+    'videoobject': {
+      'name': 'videoobject',
+      'label': 'Video',
+      'canonicalUrl': 'http://schema.org/VideoObject',
+      'properties': [
+        { 'name': 'name',
+          'label': 'Name',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/name',
+          'discoverable': false
+        },
+        { 'name': 'description',
+          'label': 'Description',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/description',
+          'discoverable': false
+        },
+        { 'name': 'datepublished',
+          'label': 'Publication Date',
+          'type': 'date',
+          'canonicalUrl': 'http://schema.org/datePublished',
+          'discoverable': true
+        },
+        { 'name': 'duration',
+          'label': 'Duration',
+          'type': 'duration',
+          'unit': 'minute',
+          'canonicalUrl': 'http://schema.org/duration',
+          'discoverable': true
+        },
+        { 'name': 'isfamilyfriendly',
+          'label': 'Family Friendly?',
+          'type': 'boolean',
+          'canonicalUrl': 'http://schema.org/isFamilyFriendly',
+          'discoverable': true
+        },
+        { 'name': 'genre',
+          'label': 'Video Genre',
+          'type': 'enum',
+          'canonicalUrl': 'http://schema.org/genre',
+          'discoverable': true
+        },
+        { 'name': 'embedurl',
+          'label': 'Video URL',
+          'type': 'url+video',
+          'canonicalUrl': 'http://schema.org/embedUrl',
+          'discoverable': false
+        },
+        { 'name': 'interactioncount',
+          'label': 'Total Viewer',
+          'type': 'numeric',
+          'canonicalUrl': 'http://schema.org/interactionCount',
+          'discoverable': false
+        },
+        { 'name': 'interactionstatistic',
+          'label': 'Total Viewer',
+          'type': 'numeric',
+          'canonicalUrl': 'http://schema.org/interactionStatistic',
+          'discoverable': false
+        },
+        { 'name': 'uploaddate',
+          'label': 'Upload Date',
+          'type': 'date',
+          'canonicalUrl': 'http://schema.org/uploadDate',
+          'discoverable': false
+        }
+      ]
+    },
     'dataset': {
       'name': 'dataset',
       'label': 'Dataset',

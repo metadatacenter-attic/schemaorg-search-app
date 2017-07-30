@@ -126,6 +126,8 @@ function(schemaorgVocab) {
       return refineUrlData(value);
     } else if (type === "url+image") {
       return refineImageUrlData(value);
+    } else if (type === "url+video") {
+      return refineVideoUrlData(value);
     } else if (type === "enum") {
       return refineEnumData(value);
     }
@@ -162,12 +164,23 @@ function(schemaorgVocab) {
     return component.url;
   }
 
-  function refineImageUrlData(url, accepted=["jpg", "jpeg", "png", "gif", "bmp"]) {
+  function refineImageUrlData(url, supported=["jpg", "jpeg", "png", "gif", "bmp"]) {
     url = refineUrlData(url);
     var component = parseUrl(url);
     var ext = getFileExtension(component.pathname);
-    if (!include(accepted, ext)) {
-      throw new UnsupportedImageException(ext, accepted);
+    if (!include(supported, ext)) {
+      throw new UnsupportedImageException(ext, supported);
+    }
+    return component.protocol + "//" + component.host + component.pathname;
+  }
+
+  function refineVideoUrlData(url, supported=["www.youtube.com", "www.dailymotion.com",
+      "vimeo.com"]) {
+    url = refineUrlData(url);
+    var component = parseUrl(url);
+    var hostname = component.hostname;
+    if (!include(supported, hostname)) {
+      throw new UnsupportedVieoProviderException(hostname, supported);
     }
     return component.protocol + "//" + component.host + component.pathname;
   }
@@ -250,9 +263,14 @@ function(schemaorgVocab) {
     return (arr.indexOf(value) != -1);
   }
 
-  function UnsupportedImageException(ext, accepted) {
+  function UnsupportedImageException(ext, supported) {
     this.name = "UnsupportedImageException";
-    this.message = "Image extension '" + ext + "' is not supported, only [" + accepted + "]";
+    this.message = "Image extension '" + ext + "' is not supported, only [" + supported + "]";
+  }
+
+  function UnsupportedVieoProviderException(provider, supported) {
+    this.name = "UnsupportedVieoProviderException";
+    this.message = "Video provider '" + provider + "' is not supported, only [" + supported + "]";
   }
 
   var isServiceFor = function(rawData) {

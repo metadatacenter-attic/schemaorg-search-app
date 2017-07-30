@@ -20,6 +20,7 @@
   <script type="text/javascript" src="assets/libs/angular.min.js"></script>
   <script type="text/javascript" src="assets/libs/angular-filter.min.js"></script>
   <script type="text/javascript" src="assets/libs/angular-materialize.min.js"></script>
+  <script type="text/javascript" src="assets/libs/ng-videosharing-embed.min.js"></script>
   <script type="text/javascript" src="assets/libs/moment.min.js"></script>
   <script type="text/javascript" src="assets/libs/rzslider.min.js"></script>
   <script type="text/javascript" src="assets/libs/quantities.js"></script>
@@ -117,13 +118,19 @@
                         ng-repeat="(domain, object) in item.properties | groupBy: 'domain.name'">
                       <ul class="collection with-header">
                         <li class="collection-header narrower">{{object[0].domain.label}}</li>
-                        <li class="collection-item narrower" ng-repeat="property in object" ng-if="property.type!='url+image'">
+                        <li class="collection-item narrower" ng-repeat="property in object"
+                            ng-if="property.type!='url+image' && property.type!='url+video'">
                           <label>{{property.label}}:</label>&nbsp;{{property.value}}&nbsp;{{property.unit}}
                         </li>
                         <li class="collection-item narrower" ng-repeat="property in object | filter:{ type:'url+image' }">
                           <label>{{property.label}}:</label>&nbsp;
                           <img materialboxed class="responsive-img fullscreen-img" data-caption="{{item.title}}"
                               ng-src={{property.value}}>
+                        </li>
+                        <li class="collection-item narrower" ng-repeat="property in object | filter:{ type:'url+video' }">
+                          <label>{{property.label}}:</label>&nbsp;
+                          <embed-video iframe-id="video-{{$index}}" player_id="video-{{$index}}"
+                              ng-href="{{property.value}}"></embed-video>
                         </li>
                       </ul>
                     </div>

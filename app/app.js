@@ -6,6 +6,7 @@ angular.module('settings', []);
 angular.module('schemaorg', [
   'ui.materialize',
   'angular.filter',
+  'videosharing-embed',
   'rzModule',
   'search',
   'settings'],

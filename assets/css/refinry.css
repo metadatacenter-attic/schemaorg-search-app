@@ -189,6 +189,11 @@ input[type="submit"] {
   transform-origin: center;
 }
 
+iframe {
+  width: 100%;
+  margin-top: 5px;
+}
+
 /* Materializecss Overrides */
 ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
   color:    #F0F0F0;
