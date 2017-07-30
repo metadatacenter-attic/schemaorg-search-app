@@ -17,7 +17,7 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
     BreadcrumbService, FilterService, userProfiles, schemaorgVocab) {
 
   $scope.appVersion = 0.2;
-  $scope.profileName = "restricted";
+  $scope.profileName = "myprofile";
   $scope.searchResults = [];
   $scope.categoryFacets = CategoryFacetService.categoryFacets;
   $scope.rangeFacets = RangeFacetService.rangeFacets;
