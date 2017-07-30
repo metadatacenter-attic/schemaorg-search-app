@@ -116,7 +116,7 @@ function(schemaorgVocab) {
       return refineNumericData(value, unit);
     } else if (type === "duration") {
       return refineDurationData(value, unit);
-    } else if (type === "url" || type === "url-media") {
+    } else if (type === "url") {
       return refineUrlData(value);
     } else if (type === "enum") {
       return refineEnumData(value);
