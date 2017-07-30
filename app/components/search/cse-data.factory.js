@@ -135,29 +135,33 @@ function(schemaorgVocab) {
   }
 
   function refineNumericData(value, unit) {
+    var number = -1;
     if (unit != null) {
       try {
-        return Qty(value).to(unit).scalar;
+        number = Qty(value).to(unit).scalar;
       } catch (err) {
-        return autoFixNumericData(value);
+        number = autoFixNumericData(value);
       }
     } else {
-      return autoFixNumericData(value);
+      number = autoFixNumericData(value);
     }
+    return round(number, 1);
   }
 
   function refineDurationData(value, unit) {
+    var number = -1;
     var duration = moment.duration(value);
     if (duration._milliseconds != 0) {
-      return duration.as(unit);
+      number = duration.as(unit);
     } else { // invalid ISO8601 value
       if (value.charAt(0) !== "P") {
         var newValue = "P" + value;
         return refineDurationData(newValue, unit);
       } else { // give up
-        return autoFixDurationData(value);
+        number = autoFixDurationData(value);
       }
     }
+    return round(number, 0);
   }
 
   function refineUrlData(url) {
@@ -255,6 +259,21 @@ function(schemaorgVocab) {
       }
     }
     return +value;
+  }
+
+  function round(number, digits) {
+    if (!isInt(number)) {
+      if (digits == 0) {
+        number = number.toFixed();
+      } else {
+        number = number.toFixed(digits);
+      }
+    }
+    return +number;
+  }
+
+  function isInt(number) {
+    return parseInt(number) === number;
   }
 
   function findIndex(arr, key, value) {
