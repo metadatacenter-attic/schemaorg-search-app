@@ -88,13 +88,19 @@ function(schemaorgVocab) {
         }
         var propertyAttributesArray = topic.properties;
         for (var i = 0; i < propertyAttributesArray.length; i++) {
-          var propertyAttributes = propertyAttributesArray[i];
-          var propertyValue = structuredData[topicAttributes.name][propertyAttributes.name];
-          if (propertyValue != null) {
-            var property = createProperty(topicAttributes,
-              propertyAttributes,
-              propertyValue);
-            data.properties.push(property);
+          try {
+            var propertyAttributes = propertyAttributesArray[i];
+            var propertyValue = structuredData[topicAttributes.name][propertyAttributes.name];
+            if (propertyValue != null) {
+              var property = createProperty(topicAttributes,
+                propertyAttributes,
+                propertyValue);
+              data.properties.push(property);
+            }
+          } catch (e) {
+            console.warn("WARN: Unable to store property "
+                + topicAttributes.name + "." + propertyAttributes.name
+                + " (Reason: " + e.message + ")");
           }
         }
       }
@@ -118,6 +124,8 @@ function(schemaorgVocab) {
       return refineDurationData(value, unit);
     } else if (type === "url") {
       return refineUrlData(value);
+    } else if (type === "url+image") {
+      return refineImageUrlData(value);
     } else if (type === "enum") {
       return refineEnumData(value);
     }
@@ -152,6 +160,16 @@ function(schemaorgVocab) {
       return "https://" + component.endpoint;
     }
     return component.url;
+  }
+
+  function refineImageUrlData(url, accepted=["jpg", "jpeg", "png", "gif", "bmp"]) {
+    url = refineUrlData(url);
+    var component = parseUrl(url);
+    var ext = getFileExtension(component.pathname);
+    if (!include(accepted, ext)) {
+      throw new UnsupportedImageException(ext, accepted);
+    }
+    return component.protocol + "//" + component.host + component.pathname;
   }
 
   function refineEnumData(value) {
@@ -196,6 +214,10 @@ function(schemaorgVocab) {
     }
   }
 
+  function getFileExtension(pathname) {
+    return pathname.split('.').pop();
+  }
+
   function toTitleCase(str) {
     return str.replace(/\w\S*/g, function(txt) {
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -222,6 +244,15 @@ function(schemaorgVocab) {
       if (arr[i][key] === value) return i;
     }
     return -1;
+  }
+
+  function include(arr, value) {
+    return (arr.indexOf(value) != -1);
+  }
+
+  function UnsupportedImageException(ext, accepted) {
+    this.name = "UnsupportedImageException";
+    this.message = "Image extension '" + ext + "' is not supported, only [" + accepted + "]";
   }
 
   var isServiceFor = function(rawData) {
