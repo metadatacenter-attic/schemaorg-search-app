@@ -150,8 +150,13 @@ function(schemaorgVocab) {
     var duration = moment.duration(value);
     if (duration._milliseconds != 0) {
       return duration.as(unit);
-    } else {
-      return autoFixDurationData(value);
+    } else { // invalid ISO8601 value
+      if (value.charAt(0) !== "P") {
+        var newValue = "P" + value;
+        return refineDurationData(newValue, unit);
+      } else { // give up
+        return autoFixDurationData(value);
+      }
     }
   }
 
