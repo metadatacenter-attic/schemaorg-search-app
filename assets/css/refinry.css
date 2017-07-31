@@ -43,6 +43,10 @@ body {
   padding-bottom: 10px !important;
 }
 
+.preloader {
+  margin: 0px;
+}
+
 .container {
   width: 95%;
   margin-left: 15px;
