@@ -14,6 +14,16 @@ angular.module('search')
       '&num=10';
     $http.get(url).then(
       function(response) {
+        // Collect search metadata
+        var searchMetadata = {
+          searchKeyword: response.data.queries.request[0].searchTerms,
+          searchTime: response.data.searchInformation.searchTime,
+          totalResults: response.data.searchInformation.totalResults,
+        };
+        if (response.data.spelling) {
+          searchMetadata['spellingCorrection'] = response.data.spelling.correctedQuery;
+        }
+        // Collect search result items
         var rawDataCollection = [];
         var responseItems = response.data.items;
         if (responseItems != null) {
@@ -35,7 +45,10 @@ angular.module('search')
             }
           }
         }
-        defer.resolve(rawDataCollection);
+        defer.resolve({
+          searchMetadata: searchMetadata,
+          searchItems: rawDataCollection
+        });
       },
       function(err) {
         defer.reject(err);

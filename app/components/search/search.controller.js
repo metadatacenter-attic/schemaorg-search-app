@@ -45,9 +45,9 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
       // Process and store the search results as the app data model
       resolvedCalls.filter(x => x.status === "resolved")
         .forEach(resolvedCall => {
-          var rawDataCollection = resolvedCall.value;
-          for (var i = 0; i < rawDataCollection.length; i++) {
-            var rawData = rawDataCollection[i];
+          var searchItems = resolvedCall.value.searchItems;
+          for (var i = 0; i < searchItems.length; i++) {
+            var rawData = searchItems[i];
             CseDataService.add(rawData, userTopics);
           }
           $scope.$apply(() => {
