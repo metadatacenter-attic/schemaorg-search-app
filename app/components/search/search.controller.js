@@ -37,6 +37,9 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
     var userKeyword = input.keyword;
     var userTopics = input.topics;
 
+    $scope.searchInProgress = true;
+    $scope.dataLoaded = false;
+
     var searchPromises = performSearchCall(CseRequestService, userKeyword, profile);
     Promise.all(searchPromises.map(settle)).then(resolvedCalls => {
       // Process and store the search results as the app data model
@@ -49,6 +52,8 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
           }
           $scope.$apply(() => {
             $scope.searchResults = CseDataService.dataModel;
+            $scope.searchInProgress = false;
+            $scope.dataLoaded = true;
           });
         });
       // Create search facets based on the app data model

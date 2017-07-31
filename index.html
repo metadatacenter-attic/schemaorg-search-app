@@ -65,6 +65,10 @@
         <input type="submit" id="submit" value="Search" ng-click="doSearch()">
       </nav>
     </div>
+    <!-- Preloader -->
+    <div class="preloader progress" ng-show="searchInProgress" style="margin:0;">
+      <div class="indeterminate"></div>
+    </div>
     <div class="app-version-info">v{{appVersion}}-{{profileName}}</div>
     <!-- Main section -->
     <div class="row">
@@ -89,9 +93,9 @@
       <div class="col s0 m1 l1 xl1"></div>
 
       <!-- Content area -->
-      <div class="col s12 m7 l8 xl8_05 content-area">
+      <div class="col s12 m7 l8 xl8_05 content-area" ng-cloak>
         <!-- Search result container -->
-        <div class="search-result-container" ng-if="searchResults.length!=0">
+        <div class="search-result-container" ng-if="dataLoaded">
           <!-- Structured result -->
           <div class="row search-result-richlist-container">
             <ul class="collapsible" data-collapsible="accordion">
@@ -153,7 +157,7 @@
       </div>
 
       <!-- Side-bar -->
-      <div class="col s12 m4 l3 xl2_05 side-bar">
+      <div class="col s12 m4 l3 xl2_05 side-bar" ng-cloak>
         <!-- Search facet container -->
         <div class="row search-facet-container" ng-if="breadcrumbs.length!=0">
           <!-- Search topics -->
