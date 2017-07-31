@@ -37,6 +37,12 @@ body {
   margin-bottom: 22px;
 }
 
+.search-bar {
+  font-size: 200% !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
 .container {
   width: 95%;
   margin-left: 15px;
