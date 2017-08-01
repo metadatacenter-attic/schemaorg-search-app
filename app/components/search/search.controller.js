@@ -24,8 +24,7 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
   $scope.filters = FilterService.filterModel;
   $scope.breadcrumbs = BreadcrumbService.breadcrumbs;
 
-  $scope.doSearch = function() {
-    var userInput = $scope.keyword;
+  $scope.doSearch = function(userInput) {
     if (userInput == null) {
       return;
     }
@@ -45,12 +44,14 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
       // Process and store the search results as the app data model
       resolvedCalls.filter(x => x.status === "resolved")
         .forEach(resolvedCall => {
-          var searchItems = resolvedCall.value.searchItems;
+          var response = resolvedCall.value;
+          var searchItems = response.searchItems;
           for (var i = 0; i < searchItems.length; i++) {
             var rawData = searchItems[i];
             CseDataService.add(rawData, userTopics);
           }
           $scope.$apply(() => {
+            $scope.spellingCorrection = response.searchMetadata.spellingCorrection;
             $scope.searchResults = CseDataService.dataModel;
             $scope.searchInProgress = false;
             $scope.dataLoaded = true;

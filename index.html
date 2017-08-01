@@ -27,6 +27,7 @@
   <script type="text/javascript" src="app/app.js"></script>
   <script type="text/javascript" src="app/components/search/search.controller.js"></script>
   <script type="text/javascript" src="app/components/search/search.filters.js"></script>
+  <script type="text/javascript" src="app/components/search/search.directives.js"></script>
   <script type="text/javascript" src="app/components/search/cse-request.factory.js"></script>
   <script type="text/javascript" src="app/components/search/cse-data.factory.js"></script>
   <script type="text/javascript" src="app/components/search/facet-category.factory.js"></script>
@@ -58,10 +59,10 @@
     <!-- Search bar -->
     <div class="input-field navbar-fixed" style="margin-top:0;">
       <nav>
-        <input class="valign center search-bar" type="search"
+        <input id="search-bar" class="valign center search-bar" type="search"
         placeholder="Type a concept here..." ng-model="keyword" required>
         <i class="material-icons" style="padding-top:5px;">close</i>
-        <input type="submit" id="submit" value="Search" ng-click="doSearch()">
+        <input type="submit" id="submit" value="Search" ng-click="doSearch(keyword)">
       </nav>
     </div>
     <!-- Preloader -->
@@ -95,6 +96,14 @@
       <div class="col s12 m7 l8 xl8_05 content-area" ng-cloak>
         <!-- Search result container -->
         <div class="search-result-container" ng-if="dataLoaded">
+          <!-- Spelling correction -->
+          <div class="row spelling-correction" ng-if="spellingCorrection">
+            <p>Did you mean:&nbsp;&nbsp;
+              <a href="javascript:void(0)" ng-value="spellingCorrection"
+                spelling-correction search-input-id="search-bar">
+                {{spellingCorrection}}</a>
+            </p>
+          </div>
           <!-- Structured result -->
           <div class="row search-result-richlist-container">
             <ul class="collapsible" data-collapsible="accordion">
