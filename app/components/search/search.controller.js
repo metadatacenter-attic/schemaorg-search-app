@@ -124,7 +124,7 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
   }
 
   function processUserInput(input) {
-    var bagOfKeywords = input.split('#');
+    var bagOfKeywords = input.split('#').map(str => { return str.trim(); });
     var keyword = bagOfKeywords[0];
     return {
       keyword: keyword,
