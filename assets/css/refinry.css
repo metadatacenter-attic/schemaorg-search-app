@@ -199,6 +199,14 @@ iframe {
   margin-top: 5px;
 }
 
+/* JQuery UI Overrides */
+.ui-autocomplete {
+  font-size: 120%;
+  width: 300px !important;
+  top: 52px !important;
+  z-index: 1000;
+}
+
 /* Materializecss Overrides */
 ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
   color:    #F0F0F0;
