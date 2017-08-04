@@ -52,15 +52,14 @@ function(schemaorgVocab) {
 
   function parse(rawData, topicNames) {
     var structuredData = {};
-    for (var i = 0; i < topicNames.length; i++) {
-      var topicName = topicNames[i];
-      if (!rawData.hasOwnProperty('pagemap')) {
-        break;
-      }
+    if (rawData.hasOwnProperty('pagemap')) {
       var pagemap = rawData.pagemap;
-      if (pagemap.hasOwnProperty(topicName)) {
-        var topicDataArray = pagemap[topicName];
-        structuredData[topicName] = getLastData(topicDataArray);
+      for (var i = 0; i < topicNames.length; i++) {
+        var topicName = topicNames[i];
+        if (pagemap.hasOwnProperty(topicName)) {
+          var topicDataArray = pagemap[topicName];
+          structuredData[topicName] = getLastData(topicDataArray);
+        }
       }
     }
     return structuredData;
