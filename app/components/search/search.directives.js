@@ -2,7 +2,7 @@
 
 angular.module('search')
 
-.directive("spellingCorrection",
+.directive("clickableSearch",
 function() {
   /*
    * An example of search query with topic selections:
@@ -24,11 +24,11 @@ function() {
     restrict: 'A',
     link: function(scope , element, attrs) {
       element.bind("click", function() {
-        var searchInputId = attrs.searchInputId;
+        var searchInputId = attrs.targetTextInputId;
         var searchBar = document.getElementById(searchInputId);
 
-        var correctSpelling = attrs.value;
-        var newUserInput = correctSpelling;
+        var searchValue = attrs.value;
+        var newUserInput = searchValue;
         var topicQuery = getTopicQuery(searchBar.value);
         if (topicQuery.length > 0) {
           newUserInput = correctSpelling + " " + topicQuery;
