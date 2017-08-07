@@ -10,11 +10,12 @@ angular.module('search')
   'RangeFacetService',
   'BreadcrumbService',
   'FilterService',
+  'NerService',
   'UserProfiles',
   'SchemaorgVocab',
 
 function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeFacetService,
-    BreadcrumbService, FilterService, userProfiles, schemaorgVocab) {
+    BreadcrumbService, FilterService, NerService, userProfiles, schemaorgVocab) {
 
   $scope.appVersion = 0.4;
   $scope.profileName = "myprofile";
@@ -36,6 +37,7 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
     var userKeyword = input.keyword;
     var userTopics = input.topics;
 
+    $scope.userKeyword = userKeyword;
     $scope.searchInProgress = true;
     $scope.dataLoaded = false;
 
@@ -53,6 +55,8 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
           $scope.$apply(() => {
             $scope.spellingCorrection = response.searchMetadata.spellingCorrection;
             $scope.searchResults = CseDataService.dataModel;
+            $scope.relatedConcepts = NerService.findConcepts(CseDataService.dataModel,
+                [$scope.userKeyword]);
             $scope.searchInProgress = false;
             $scope.dataLoaded = true;
           });
@@ -113,6 +117,8 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
       return FilterService.evaluate(item);
     });
     $scope.searchResults = filteredData;
+    $scope.relatedConcepts = NerService.findConcepts(filteredData,
+        [$scope.userKeyword]);
   }, true);
 
   function resetServices() {

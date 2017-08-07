@@ -47,6 +47,16 @@ body {
   margin: 0px;
 }
 
+.related-concepts {
+  font-size: 110%;
+  margin-top: 5px;
+  padding: 15px;
+}
+
+.word-span {
+  margin: 0px 8px;
+}
+
 .search-topics {
   font-size: 15px;
   margin: 22px 22px 16px 22px;
