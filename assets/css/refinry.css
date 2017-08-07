@@ -47,6 +47,12 @@ body {
   margin: 0px;
 }
 
+.spelling-correction {
+  font-size: 110%;
+  margin-top: 5px;
+  padding: 15px;
+}
+
 .related-concepts {
   font-size: 110%;
   margin-top: 5px;

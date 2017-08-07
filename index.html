@@ -108,12 +108,14 @@
         <!-- Search result container -->
         <div class="search-result-container" ng-if="dataLoaded">
           <!-- Spelling correction -->
-          <div class="row spelling-correction" ng-if="spellingCorrection">
-            <p>Did you mean:&nbsp;&nbsp;
-              <a href="javascript:void(0)" ng-value="spellingCorrection"
-                spelling-correction search-input-id="search-bar">
+          <div class="row white z-depth-1 spelling-correction" ng-if="spellingCorrection">
+            <span>Did you mean:
+              <span class="word-span">
+                <a href="javascript:void(0)" ng-value="spellingCorrection"
+                clickable-search target-text-input-id="search-bar">
                 {{spellingCorrection}}</a>
-            </p>
+              </span>
+            </span>
           </div>
           <!-- Related concepts -->
           <div class="row white z-depth-1 related-concepts" ng-if="relatedConcepts.length > 0">
