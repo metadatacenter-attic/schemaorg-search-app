@@ -53,7 +53,9 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
             CseDataService.add(rawData, userTopics);
           }
           $scope.$apply(() => {
-            $scope.spellingCorrection = response.searchMetadata.spellingCorrection;
+            if (response.searchMetadata.spellingCorrection) {
+              $scope.spellingCorrection = response.searchMetadata.spellingCorrection;
+            }
             $scope.searchResults = CseDataService.dataModel;
             $scope.relatedConcepts = NerService.findConcepts(CseDataService.dataModel,
                 [$scope.userKeyword]);
