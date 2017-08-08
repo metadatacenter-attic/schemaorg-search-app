@@ -2,11 +2,12 @@
 
 angular.module("settings")
 
-.constant('UserProfiles',
-  { "myprofile": {
-      "name": "myprofile",
-      "apiKey": "",
-      "searchEngineId": "",
-      "pageLimit": 10
+.constant("UserProfiles",
+  { default: {
+      name: "default",
+      label: "Default Profile",
+      apiKey: "",
+      searchEngineId: "",
+      pageLimit: 10
     }
   });

@@ -18,7 +18,8 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
     BreadcrumbService, FilterService, NerService, userProfiles, schemaorgVocab) {
 
   $scope.appVersion = 0.4;
-  $scope.profileName = "myprofile";
+  $scope.profileName = "default";
+  $scope.profiles = userProfiles;
   $scope.searchResults = [];
   $scope.categoryFacets = CategoryFacetService.categoryFacets;
   $scope.rangeFacets = RangeFacetService.rangeFacets;
@@ -33,6 +34,8 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
     resetServices();
 
     var profile = userProfiles[$scope.profileName];
+    console.log($scope.profileName);
+
     var input = processUserInput(userInput);
     var userKeyword = input.keyword;
     var userTopics = input.topics;
