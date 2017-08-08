@@ -67,18 +67,23 @@
           data-menuwidth="200" data-closeonclick="true">
           <div class="logo">[ { refinry } ]</div>
       </a>
-      <ul id="slide-out" class="side-nav">
-        <li><div class="logo">[ { refinry } ]</div></li>
-        <li><span style="font-size:12pt;font-weight:bold">Settings</span></li>
-        <li>
-          <div class="profile-settings"><label>Change profile:</label>
-            <select ng-model="profileName" material-select>
-              <option ng-repeat="profile in profiles"
-                  value="{{profile.name}}">{{profile.label}}</option>
-            </select>
-          </div>
-        </li>
-      </ul>
+      <div id="slide-out" class="side-nav">
+        <div class="logo">[ { refinry } ]</div>
+        <div class="app-version-info">v{{appVersion}}-{{profileName}}</div>
+        <div class="settings">
+          <span style="font-size:12pt;font-weight:bold;">Settings</span>
+          <ul>
+            <li>
+              <div class="profile-settings"><label>Change profile:</label>
+                <select ng-model="profileName" material-select>
+                  <option ng-repeat="profile in profiles"
+                      value="{{profile.name}}">{{profile.label}}</option>
+                </select>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
     <!-- Search bar -->
     <div class="input-field navbar-fixed" style="margin-top:0;">
@@ -94,7 +99,7 @@
     <div class="preloader progress" ng-show="searchInProgress" ng-cloak>
       <div class="indeterminate"></div>
     </div>
-    <div class="app-version-info">v{{appVersion}}-{{profileName}}</div>
+
     <!-- Main section -->
     <div class="row">
       <!-- Welcome overlay -->
