@@ -130,4 +130,20 @@ function(SchemaorgVocab) {
       });
     }
   }
-}]);
+}])
+
+.directive('urlBreadcrumb',
+function() {
+  return {
+    restrict: 'A',
+    link: function(scope, element, attrs) {
+      let a = document.createElement("a");
+      a.href = attrs.href;
+      let hostname = a.hostname;
+      let pathname = a.pathname.replace(/\/$/, ""); // Cleanup a bit
+      let endpath = pathname.substring(pathname.lastIndexOf("/")+1);
+      let displayUrl = hostname + " > " + endpath;
+      element[0].text = displayUrl;
+    }
+  }
+});

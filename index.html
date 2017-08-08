@@ -134,13 +134,13 @@
               <li ng-repeat="item in searchResults" ng-if="item.hasStructuredData">
                 <div class="collapsible-header">
                   <div class="row narrower">
-                    <div class="col s12 m12 l12 xl9 search-snippet valign-wrapper">
+                    <div class="col s12 m12 l12 xl9 search-snippet">
                       <div class="thumbnail" ng-if="item.thumbnail">
                         <img class="circle thumbnail-img" ng-src="{{item.thumbnail}}">
                       </div>
                       <div>
-                        <a href="{{item.url}}" target="_blank">{{item.title | removeSeparator}}</a>
-                        &nbsp;-&nbsp;{{item.description}}
+                        <a class="truncate" href="{{item.url}}" target="_blank" url-breadcrumb></a>
+                        <br><b>{{item.title | removeSeparator}}</b>&nbsp;-&nbsp;{{item.description}}
                       </div>
                     </div>
                     <div class="col s12 m12 l12 xl3 search-chips">

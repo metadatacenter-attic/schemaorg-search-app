@@ -254,6 +254,11 @@ label.smaller {
   font-size: 10pt;
 }
 
+.truncate {
+  display: block;
+  margin-bottom: -18px !important;
+}
+
 .chip.smaller {
   height: 22px;
   line-height: 22px;
