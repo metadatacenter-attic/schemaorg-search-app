@@ -219,7 +219,7 @@
                 <li class="collection-item narrower" ng-repeat="choice in facet.choices">
                   <input type="checkbox" id="checkbox-{{facet.name}}-{{$index}}"
                       ng-model="choice.selected" ng-change="onCheckboxChanged(facet)">
-                    <label class="smaller" for="checkbox-{{facet.name}}-{{$index}}">{{choice.value}}</label>
+                    <label for="checkbox-{{facet.name}}-{{$index}}">{{choice.value}}</label>
                 </li>
               </ul>
             </div>

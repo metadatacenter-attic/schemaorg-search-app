@@ -250,10 +250,6 @@ h5.smaller {
   font-size: 14pt;
 }
 
-label.smaller {
-  font-size: 10pt;
-}
-
 .truncate {
   display: block;
   margin-bottom: -18px !important;
