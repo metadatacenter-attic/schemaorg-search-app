@@ -34,7 +34,7 @@ angular.module('search')
   }
 
   var add = function($scope, property) {
-    if (property.discoverable) {
+    if (property.filterable) {
       var facet = get(property.id);
       if (facet == null) {
         facet = createNew(property);
