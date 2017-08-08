@@ -250,6 +250,10 @@ h5.smaller {
   font-size: 14pt;
 }
 
+.material-icons, .icon-text {
+  vertical-align: middle;
+}
+
 .truncate {
   display: block;
   margin-bottom: -18px !important;

@@ -24,20 +24,22 @@ function(schemaorgVocab) {
   }
 
   function createProperty(topicAttributes, propertyAttributes, propertyValue) {
-    var property = {
+    let refinedValue = refineValue(propertyValue,
+        propertyAttributes.type,
+        propertyAttributes.unit);
+    return {
       id: getId(topicAttributes.name, propertyAttributes.name),
       domain: topicAttributes,
       range: propertyAttributes.type,
       name: propertyAttributes.name,
       label: propertyAttributes.label,
-      value: refineValue(propertyValue,
-          propertyAttributes.type,
-          propertyAttributes.unit),
+      value: refinedValue.value,
       unit: propertyAttributes.unit,
       type: propertyAttributes.type,
+      hasWarning: refinedValue.hasWarning,
+      originalValue: refinedValue.originalValue,
       filterable: propertyAttributes.filterable
     };
-    return property;
   }
 
   function enrich(data, rawData, topicNames) {
@@ -129,72 +131,110 @@ function(schemaorgVocab) {
       return refineVideoUrlData(value);
     } else if (type === "enum") {
       return refineEnumData(value);
+    } else {
+      return {
+        value: value,
+        originalValue: value,
+        hasWarning: false
+      };
     }
-    return value;
   }
 
   function refineNumericData(value, unit) {
-    var number = -1;
+    let hasWarning = false;
+    let number = -1;
     if (unit != null) {
       try {
         number = Qty(value).to(unit).scalar;
       } catch (err) {
         number = autoFixNumericData(value);
+        hasWarning = true;
       }
     } else {
       number = autoFixNumericData(value);
+      hasWarning = (number != value);
     }
-    return round(number, 1);
+    return {
+      value: round(number, 1),
+      originalValue: value,
+      hasWarning: hasWarning
+    };
   }
 
   function refineDurationData(value, unit) {
-    var number = -1;
-    var duration = moment.duration(value);
+    let hasWarning = false;
+    let number = -1;
+    let duration = moment.duration(value);
     if (duration._milliseconds != 0) {
       number = duration.as(unit);
     } else { // invalid ISO8601 value
       if (value.charAt(0) !== "P") {
-        var newValue = "P" + value;
+        let newValue = "P" + value;
         return refineDurationData(newValue, unit);
       } else { // give up
         number = autoFixDurationData(value);
+        hasWarning = true;
       }
     }
-    return round(number, 0);
+    return {
+      value: round(number, 0),
+      originalValue: value,
+      hasWarning: hasWarning
+    };
   }
 
   function refineUrlData(url) {
-    var component = parseUrl(url);
-    var protocol = component.protocol;
+    let hasWarning = false;
+    let component = parseUrl(url);
+    let protocol = component.protocol;
     if (protocol !== "http:" && protocol !== "https:") {
+      hasWarning = true;
       return "https://" + component.endpoint;
     }
-    return component.url;
+    return {
+      value: component.url,
+      originalValue: url,
+      hasWarning: hasWarning
+    };
   }
 
   function refineImageUrlData(url, supported=["jpg", "jpeg", "png", "gif", "bmp"]) {
-    url = refineUrlData(url);
-    var component = parseUrl(url);
-    var ext = getFileExtension(component.pathname);
+    let urlData = refineUrlData(url);
+    let hasWarning = urlData.hasWarning;
+    let component = parseUrl(urlData.value);
+    let ext = getFileExtension(component.pathname);
     if (!include(supported, ext)) {
       throw new UnsupportedImageException(ext, supported);
     }
-    return component.protocol + "//" + component.host + component.pathname;
+    return {
+      value: component.protocol + "//" + component.host + component.pathname,
+      originalValue: url,
+      hasWarning: hasWarning
+    };
   }
 
   function refineVideoUrlData(url, supported=["www.youtube.com", "www.dailymotion.com",
       "vimeo.com"]) {
-    url = refineUrlData(url);
-    var component = parseUrl(url);
-    var hostname = component.hostname;
+    let urlData = refineUrlData(url);
+    let hasWarning = urlData.hasWarning;
+    let component = parseUrl(urlData.value);
+    let hostname = component.hostname;
     if (!include(supported, hostname)) {
       throw new UnsupportedVieoProviderException(hostname, supported);
     }
-    return component.protocol + "//" + component.host + component.pathname;
+    return {
+      value: component.protocol + "//" + component.host + component.pathname,
+      originalValue: url,
+      hasWarning: hasWarning
+    };
   }
 
   function refineEnumData(value) {
-    return toTitleCase(value);
+    return {
+      value: toTitleCase(value),
+      originalValue: value,
+      hasWarning: false
+    };
   }
 
   function autoFixNumericData(value) {

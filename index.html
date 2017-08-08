@@ -156,7 +156,12 @@
                         <li class="collection-header narrower">{{object[0].domain.label}}</li>
                         <li class="collection-item narrower" ng-repeat="property in object"
                             ng-if="property.type!='url+image' && property.type!='url+video'">
-                          <label>{{property.label}}:</label>&nbsp;{{property.value}}&nbsp;{{property.unit}}
+                          <label>{{property.label}}:</label>
+                              &nbsp;{{property.value}}
+                              <span ng-if="property.unit">&nbsp;{{property.unit}}</span>
+                              <a tooltipped style="cursor:pointer;" data-position="right" data-delay="50"
+                              data-tooltip="{{property.originalValue}}" ng-if="property.hasWarning">
+                              <i class="material-icons tiny yellow-text text-darken-2">&nbsp;warning</i></a>
                         </li>
                         <li class="collection-item narrower" ng-repeat="property in object | filter:{ type:'url+image' }">
                           <label>{{property.label}}:</label>&nbsp;
