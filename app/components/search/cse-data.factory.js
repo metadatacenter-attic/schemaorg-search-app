@@ -231,7 +231,7 @@ function(schemaorgVocab) {
 
   function refineEnumData(value) {
     return {
-      value: toTitleCase(value),
+      value: String.toTitleCase(value),
       originalValue: value,
       hasWarning: false
     };
@@ -277,12 +277,6 @@ function(schemaorgVocab) {
 
   function getFileExtension(pathname) {
     return pathname.split('.').pop();
-  }
-
-  function toTitleCase(str) {
-    return str.replace(/\w\S*/g, function(txt) {
-      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    });
   }
 
   function evalNumber(number) {
