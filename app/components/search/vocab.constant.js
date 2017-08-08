@@ -513,5 +513,114 @@ angular.module('search')
           'discoverable': false
         }
       ]
+    },
+    'Drug': {
+      'name': 'Drug',
+      'label': 'Drug',
+      'canonicalUrl': 'http://schema.org/Drug',
+      'properties': [
+        { 'name': 'name',
+          'label': 'Name',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/name',
+          'discoverable': false
+        },
+        { 'name': 'description',
+          'label': 'Description',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/description',
+          'discoverable': false
+        },
+        { 'name': 'activeIngredient',
+          'label': 'Active Ingredient',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/activeIngredient',
+          'discoverable': false
+        },
+        { 'name': 'administrationRoute',
+          'label': 'Administration Route',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/administrationRoute',
+          'discoverable': false
+        },
+        { 'name': 'availableStrength',
+          'label': 'Available Strength',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/availableStrength',
+          'discoverable': false
+        },
+        { 'name': 'cost',
+          'label': 'Drug Price',
+          'type': 'numeric',
+          'canonicalUrl': 'http://schema.org/cost',
+          'discoverable': true
+        },
+        { 'name': 'dosageForm',
+          'label': 'Dosage Form',
+          'type': 'enum',
+          'canonicalUrl': 'http://schema.org/dosageForm',
+          'discoverable': true
+        },
+        { 'name': 'dosageSchedule',
+          'label': 'Dosage Schedule',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/dosageSchedule',
+          'discoverable': false
+        },
+        { 'name': 'dosageUnit',
+          'label': 'Dosage Unit',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/dosageUnit',
+          'discoverable': false
+        },
+        { 'name': 'foodWarning',
+          'label': 'Food Warning',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/foodWarning',
+          'discoverable': false
+        },
+        { 'name': 'interactingDrug',
+          'label': 'Interacting Drug',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/interactingDrug',
+          'discoverable': false
+        },
+        { 'name': 'legalStatus',
+          'label': 'Legal Status',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/legalStatus',
+          'discoverable': false
+        },
+        { 'name': 'manufacturer',
+          'label': 'Manufacturer',
+          'type': 'enum',
+          'canonicalUrl': 'http://schema.org/manufacturer',
+          'discoverable': true
+        },
+        { 'name': 'mechanismOfAction',
+          'label': 'Mechanism of Action',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/mechanismOfAction',
+          'discoverable': false
+        },
+        { 'name': 'nonProprietaryName',
+          'label': 'Generic Name',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/nonProprietaryName',
+          'discoverable': false
+        },
+        { 'name': 'proprietaryName',
+          'label': 'Brand Name',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/activeIngredient',
+          'discoverable': false
+        },
+        { 'name': 'alternateName',
+          'label': 'Synonym',
+          'type': 'text',
+          'canonicalUrl': 'http://schema.org/alternateName',
+          'discoverable': false
+        }
+      ]
     }
   });
