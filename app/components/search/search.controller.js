@@ -16,7 +16,7 @@ angular.module('search')
 function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeFacetService,
     BreadcrumbService, FilterService, NerService, UserProfiles) {
 
-  $scope.appVersion = 0.4;
+  $scope.appVersion = 0.5;
   $scope.profileName = "default";
   $scope.profiles = UserProfiles;
   $scope.structuredSearchResults = [];
