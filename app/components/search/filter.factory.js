@@ -24,19 +24,19 @@ angular.module('search')
   }
 
   function evaluateDataOnEachFilter(data, filter) {
-    var properties = getPropertiesMatchToFilterTopic(data, filter);
-    if (properties.length > 0) {
-      return openWorldAssumptionAnswering(properties, filter);
+    let answer = false;
+    if (data.topics.includes(filter.topic)) {
+      answer = openWorldAssumptionAnswering(data, filter);
     }
-    return false;
+    return answer;
   }
 
-  function openWorldAssumptionAnswering(properties, filter) {
+  function openWorldAssumptionAnswering(data, filter) {
     // open-world assumption; evaluate only the known fact
-    var answer = true;
-    var index = findIndex(properties, "name", filter.name);
+    let answer = true;
+    let index = findIndex(data.properties, "id", filter.id);
     if (index != -1) {
-      var value = properties[index].value;
+      let value = data.properties[index].value;
       if (value != null) {
         if (filter.type === "category") {
           if (filter.values.length > 0) {
@@ -48,12 +48,6 @@ angular.module('search')
       }
     }
     return answer;
-  }
-
-  function getPropertiesMatchToFilterTopic(data, filter) {
-    return data.properties.filter(property => {
-      return property.domain.name === filter.topic;
-    });
   }
 
   function updateChoices(filter, choices) {

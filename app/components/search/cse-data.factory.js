@@ -6,7 +6,6 @@ angular.module('search')
   'SchemaorgVocab',
 
 function(schemaOrgVocab) {
-  var propertyIds = [];
   var structuredData = [];
   var nonStructuredData = [];
 
@@ -24,7 +23,7 @@ function(schemaOrgVocab) {
 
   function createProperty(topicSchema, propertySchema, refinedValue) {
     return {
-      id: getId(topicSchema.name, propertySchema.name),
+      id: topicSchema.name + "." + propertySchema.name,
       domain: {
         name: topicSchema.name,
         label: topicSchema.label
@@ -90,16 +89,6 @@ function(schemaOrgVocab) {
             + " (Reason: " + e.message + ")");
       }
     });
-  }
-
-  function getId(topicName, propertyName) {
-    const compoundName = topicName + propertyName;
-    var id = propertyIds.indexOf(compoundName);
-    if (id == -1) {
-      propertyIds.push(compoundName);
-      id = propertyIds.length - 1;
-    }
-    return id;
   }
 
   function getTopicSchemas(topicNames) {
