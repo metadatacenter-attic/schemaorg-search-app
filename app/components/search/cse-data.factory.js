@@ -5,105 +5,89 @@ angular.module('search')
 .factory('CseDataService', [
   'SchemaorgVocab',
 
-function(schemaorgVocab) {
+function(schemaOrgVocab) {
   var propertyIds = [];
-  var dataModel = [];
+  var structuredData = [];
+  var nonStructuredData = [];
 
-  function createNew(rawData) {
-    var data = {
-      url: rawData.url,
-      title: rawData.title,
-      description: rawData.description,
-      image: rawData.image,
-      thumbnail: rawData.thumbnail,
-      hasStructuredData: false,
+  function prepare(searchResult) {
+    return {
+      url: searchResult.url,
+      title: searchResult.title,
+      description: searchResult.description,
+      image: searchResult.image,
+      thumbnail: searchResult.thumbnail,
       topics: [],
-      properties: [],
+      properties: []
     };
-    return data;
   }
 
-  function createProperty(topicAttributes, propertyAttributes, propertyValue) {
-    let refinedValue = refineValue(propertyValue,
-        propertyAttributes.type,
-        propertyAttributes.unit);
+  function createProperty(topicSchema, propertySchema, refinedValue) {
     return {
-      id: getId(topicAttributes.name, propertyAttributes.name),
-      domain: topicAttributes,
-      range: propertyAttributes.type,
-      name: propertyAttributes.name,
-      label: propertyAttributes.label,
+      id: getId(topicSchema.name, propertySchema.name),
+      domain: {
+        name: topicSchema.name,
+        label: topicSchema.label
+      },
+      range: propertySchema.type,
+      name: propertySchema.name,
+      label: propertySchema.label,
       value: refinedValue.value,
-      unit: propertyAttributes.unit,
-      type: propertyAttributes.type,
+      unit: propertySchema.unit,
+      type: propertySchema.type,
       hasWarning: refinedValue.hasWarning,
       originalValue: refinedValue.originalValue,
-      filterable: propertyAttributes.filterable
+      filterable: propertySchema.filterable
     };
   }
 
-  function enrich(data, rawData, topicNames) {
-    var structuredData = parse(rawData, topicNames);
-    if (!angular.equals(structuredData, {})) {
-      storeTopics(data, structuredData);
-      storeProperties(data, structuredData);
-      data.hasStructuredData = true;
-    }
-    return data;
-  }
-
-  function parse(rawData, topicNames) {
-    var structuredData = {};
-    if (rawData.hasOwnProperty('pagemap')) {
-      var pagemap = rawData.pagemap;
-      for (var i = 0; i < topicNames.length; i++) {
-        var topicName = topicNames[i];
+  function parse(searchResult, topicSchemas) {
+    let data = prepare(searchResult);
+    let hasMarkup = false;
+    if (searchResult.responseData.hasOwnProperty('pagemap')) {
+      let pagemap = searchResult.responseData.pagemap;
+      Object.keys(topicSchemas).forEach(topicName => {
+        let topicSchema = topicSchemas[topicName];
         if (pagemap.hasOwnProperty(topicName)) {
-          var topicDataArray = pagemap[topicName];
-          structuredData[topicName] = getLastData(topicDataArray);
+          let topicDataArray = pagemap[topicName];
+          let topicData = getLastData(topicDataArray);
+          storeTopic(data, topicSchema);
+          storeProperties(data, topicSchema, topicData);
+          hasMarkup = true;
         }
-      }
+      });
     }
-    return structuredData;
+    return {
+      hasMarkup: hasMarkup,
+      data: data
+    };
   }
 
   function getLastData(topicDataArray) {
     return topicDataArray[topicDataArray.length-1];
   }
 
-  function storeTopics(data, structuredData) {
-    var topicNames = Object.keys(structuredData);
-    topicNames.forEach(topicName => {
-      data.topics.push(topicName);
-    });
+  function storeTopic(data, topicSchema) {
+    data.topics.push(topicSchema.name);
   }
 
-  function storeProperties(data, structuredData) {
-    var topicNames = Object.keys(structuredData);
-    topicNames.forEach(topicName => {
-      var topic = schemaorgVocab[topicName];
-      if (topic != null) { // If the topic metadata is found
-        var topicAttributes = {
-          name: topic.name,
-          label: topic.label
+  function storeProperties(data, topicSchema, topicData) {
+    topicSchema.properties.forEach(propertySchema => {
+      let topicName = topicSchema.name;
+      let propertyName = propertySchema.name;
+      try {
+        let propertyValue = topicData[propertyName];
+        if (propertyValue != null) {
+          let refinedValue = refineValue(propertyValue,
+              propertySchema.type,
+              propertySchema.unit);
+          let property = createProperty(topicSchema, propertySchema, refinedValue);
+          data.properties.push(property);
         }
-        var propertyAttributesArray = topic.properties;
-        for (var i = 0; i < propertyAttributesArray.length; i++) {
-          try {
-            var propertyAttributes = propertyAttributesArray[i];
-            var propertyValue = structuredData[topicAttributes.name][propertyAttributes.name];
-            if (propertyValue != null) {
-              var property = createProperty(topicAttributes,
-                propertyAttributes,
-                propertyValue);
-              data.properties.push(property);
-            }
-          } catch (e) {
-            console.warn("WARN: Unable to store property "
-                + topicAttributes.name + "." + propertyAttributes.name
-                + " (Reason: " + e.message + ")");
-          }
-        }
+      } catch (e) {
+        console.warn("WARN: Unable to store property "
+            + topicName + "." + propertyName
+            + " (Reason: " + e.message + ")");
       }
     });
   }
@@ -116,6 +100,20 @@ function(schemaorgVocab) {
       id = propertyIds.length - 1;
     }
     return id;
+  }
+
+  function getTopicSchemas(topicNames) {
+    let topicSchemas = {};
+    if (topicNames.length != 0) {
+      topicNames.forEach(topicName => {
+        if (schemaOrgVocab[topicName] != null) {
+          topicSchemas[topicName] = schemaOrgVocab[topicName];
+        }
+      });
+    } else {
+      topicSchemas = schemaOrgVocab;
+    }
+    return topicSchemas;
   }
 
   function refineValue(value, type, unit) {
@@ -330,36 +328,52 @@ function(schemaorgVocab) {
     this.message = "Video provider '" + provider + "' is not supported, only [" + supported + "]";
   }
 
-  var isServiceFor = function(rawData) {
-    return rawData.source === "Google Custom Search";
+  var isServiceFor = function(searchResult) {
+    return searchResult.source === "Google Custom Search";
   }
 
-  var add = function(rawData, userTopics=[]) {
-    var topicNames = Object.keys(schemaorgVocab);
-    if (userTopics.length != 0) {
-      topicNames = userTopics;
+  var add = function(searchResult, topicNames=[]) {
+    let topicSchemas = getTopicSchemas(topicNames);
+    let parsedData = parse(searchResult, topicSchemas);
+    if (parsedData.hasMarkup) {
+      structuredData.push(parsedData.data);
+    } else {
+      nonStructuredData.push(parsedData.data);
     }
-    var data = createNew(rawData);
-    data = enrich(data, rawData.raw, topicNames);
-    dataModel.push(data);
   }
 
   var get = function(url) {
-    var index = findIndex(dataModel, "url", url);
-    return dataModel[index];
+    let data = [];
+    let index = findIndex(structuredData, "url", url);
+    if (index != -1) {
+      data.push(structuredData[index]);
+    }
+    index = findIndex(nonStructuredData, "url", url);
+    if (index != -1) {
+      data.push(nonStructuredData[index]);
+    }
+    return data;
   }
 
   var remove = function(url) {
-    var index = findIndex(dataModel, "url", url);
-    dataModel.splice(index, 1);
+    let index = findIndex(structuredData, "url", url);
+    if (index != -1) {
+      structuredData.splice(index, 1);
+    }
+    index = findIndex(nonStructuredData, "url", url);
+    if (index != -1) {
+      nonStructuredData.splice(index, 1);
+    }
   }
 
   var clear = function() {
-    dataModel.splice(0, dataModel.length);
+    structuredData.splice(0, structuredData.length);
+    nonStructuredData.splice(0, nonStructuredData.length);
   }
 
   return {
-    dataModel: dataModel,
+    structuredData: structuredData,
+    nonStructuredData: nonStructuredData,
     isServiceFor: isServiceFor,
     add: add,
     get: get,

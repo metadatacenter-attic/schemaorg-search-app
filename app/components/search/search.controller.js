@@ -12,15 +12,15 @@ angular.module('search')
   'FilterService',
   'NerService',
   'UserProfiles',
-  'SchemaorgVocab',
 
 function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeFacetService,
-    BreadcrumbService, FilterService, NerService, userProfiles, schemaorgVocab) {
+    BreadcrumbService, FilterService, NerService, userProfiles) {
 
   $scope.appVersion = 0.4;
   $scope.profileName = "default";
   $scope.profiles = userProfiles;
-  $scope.searchResults = [];
+  $scope.structuredSearchResults = [];
+  $scope.nonStructuredSearchResults = [];
   $scope.categoryFacets = CategoryFacetService.categoryFacets;
   $scope.rangeFacets = RangeFacetService.rangeFacets;
   $scope.filters = FilterService.filterModel;
@@ -34,8 +34,6 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
     resetServices();
 
     var profile = userProfiles[$scope.profileName];
-    console.log($scope.profileName);
-
     var input = processUserInput(userInput);
     var userKeyword = input.keyword;
     var userTopics = input.topics;
@@ -59,24 +57,25 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
             if (response.searchMetadata.spellingCorrection) {
               $scope.spellingCorrection = response.searchMetadata.spellingCorrection;
             }
-            $scope.searchResults = CseDataService.dataModel;
-            $scope.relatedConcepts = NerService.findConcepts(CseDataService.dataModel,
+            $scope.structuredSearchResults = CseDataService.structuredData;
+            $scope.nonStructuredSearchResults = CseDataService.nonStructuredData;
+            $scope.relatedConcepts = NerService.findConcepts(CseDataService.structuredData,
                 [$scope.userKeyword]);
             $scope.searchInProgress = false;
             $scope.dataLoaded = true;
           });
         });
       // Create search facets based on the app data model
-      CseDataService.dataModel.forEach(data => {
-        var itemProperties = data.properties;
-        for (var j = 0; j < itemProperties.length; j++) {
-          var itemProperty = itemProperties[j];
-          if (itemProperty.range === "enum") {
-            CategoryFacetService.add($scope, itemProperty);
-          } else if (itemProperty.range === "numeric") {
-            RangeFacetService.add($scope, itemProperty);
-          } else if (itemProperty.range === "duration") {
-            RangeFacetService.add($scope, itemProperty);
+      CseDataService.structuredData.forEach(data => {
+        var properties = data.properties;
+        for (var j = 0; j < properties.length; j++) {
+          var property = properties[j];
+          if (property.range === "enum") {
+            CategoryFacetService.add($scope, property);
+          } else if (property.range === "numeric") {
+            RangeFacetService.add($scope, property);
+          } else if (property.range === "duration") {
+            RangeFacetService.add($scope, property);
           }
         }
       });
@@ -118,10 +117,10 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
     return FilterService.filterModel;
   },
   function() {
-    var filteredData = CseDataService.dataModel.filter(item => {
-      return FilterService.evaluate(item);
+    var filteredData = CseDataService.structuredData.filter(data => {
+      return FilterService.evaluate(data);
     });
-    $scope.searchResults = filteredData;
+    $scope.structuredSearchResults = filteredData;
     $scope.relatedConcepts = NerService.findConcepts(filteredData,
         [$scope.userKeyword]);
   }, true);

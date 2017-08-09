@@ -23,8 +23,8 @@ angular.module('search')
     return -1;
   }
 
-  function evaluateItemOnEachFilter(item, filter) {
-    var properties = getItemPropertiesMatchToFilterTopic(item, filter);
+  function evaluateDataOnEachFilter(data, filter) {
+    var properties = getPropertiesMatchToFilterTopic(data, filter);
     if (properties.length > 0) {
       return openWorldAssumptionAnswering(properties, filter);
     }
@@ -50,8 +50,8 @@ angular.module('search')
     return answer;
   }
 
-  function getItemPropertiesMatchToFilterTopic(item, filter) {
-    return item.properties.filter(property => {
+  function getPropertiesMatchToFilterTopic(data, filter) {
+    return data.properties.filter(property => {
       return property.domain.name === filter.topic;
     });
   }
@@ -102,15 +102,13 @@ angular.module('search')
     }
   }
 
-  var evaluate = function(item) {
+  var evaluate = function(data) {
     var answer = true;
     if (filterModel.length > 0) {
       var evalOnEachFilter = [];
-      if (item.hasStructuredData) {
-        for (var i = 0; i < filterModel.length; i++) {
-          var filter = filterModel[i];
-          evalOnEachFilter[i] = evaluateItemOnEachFilter(item, filter);
-        }
+      for (var i = 0; i < filterModel.length; i++) {
+        var filter = filterModel[i];
+        evalOnEachFilter[i] = evaluateDataOnEachFilter(data, filter);
       }
       // Combine each filter evaluation with the AND operation
       answer = evalOnEachFilter.reduce((a, b) => { return a && b; }, true);

@@ -33,7 +33,7 @@ angular.module('search')
               url: responseItems[i].link,
               title: responseItems[i].title,
               description: responseItems[i].snippet,
-              raw: responseItems[i]
+              responseData: responseItems[i]
             });
             var image = responseItems[i].pagemap.cse_image;
             if (image != null) {

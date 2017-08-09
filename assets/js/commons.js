@@ -5,6 +5,10 @@ Object.filter = (obj, predicate) =>
     [key]: obj[key]
   }), {});
 
+Object.size = (obj) => {
+  return Object.keys(obj).length;
+};
+
 /*
  * Credit to David Gouch: http://individed.com/code/to-title-case/
  */
@@ -22,4 +26,8 @@ String.toTitleCase = (str) => {
     }
     return match.charAt(0).toUpperCase() + match.substr(1);
   });
+};
+
+String.replaceAll = (str, regex, replacement) => {
+  return str.replace(new RegExp(regex, 'g'), replacement);
 };

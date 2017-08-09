@@ -152,9 +152,9 @@
             </span>
           </div>
           <!-- Structured result -->
-          <div class="row search-result-richlist-container">
+          <div class="row search-result-richlist-container" ng-if="structuredSearchResults.length > 0">
             <ul class="collapsible" data-collapsible="accordion">
-              <li ng-repeat="item in searchResults" ng-if="item.hasStructuredData">
+              <li ng-repeat="item in structuredSearchResults">
                 <div class="collapsible-header">
                   <div class="row narrower">
                     <div class="col s12 m12 l12 xl9 search-snippet">
@@ -204,9 +204,9 @@
             </ul>
           </div>
           <!-- Normal result -->
-          <div class="row search-result-list-container">
+          <div class="row search-result-list-container" ng-if="nonStructuredSearchResults.length > 0">
             <ul class="search-result-list">
-              <li class="search-result-item" ng-repeat="item in searchResults" ng-if="!item.hasStructuredData">
+              <li class="search-result-item" ng-repeat="item in nonStructuredSearchResults">
                 <span><a href="{{item.url}}" target="_blank">{{item.title}}</a><span><br>
                 <span class="green-text lighten-3">{{item.url}}</span><br>
                 <span>{{item.description}}</span>
