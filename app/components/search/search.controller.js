@@ -39,6 +39,7 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
     var userTopics = input.topics;
 
     $scope.userKeyword = userKeyword;
+    $scope.spellingCorrection = "";
     $scope.searchInProgress = true;
     $scope.dataLoaded = false;
 
