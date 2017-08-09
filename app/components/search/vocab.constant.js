@@ -2,7 +2,7 @@
 
 angular.module('search')
 
-.constant('SchemaorgVocab',
+.constant('SchemaOrgVocab',
   { 'recipe': {
       'name': 'recipe',
       'label': 'Food Recipe',

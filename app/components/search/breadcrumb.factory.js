@@ -3,17 +3,17 @@
 angular.module('search')
 
 .factory('BreadcrumbService', [
-  'SchemaorgVocab',
+  'SchemaOrgVocab',
 
-function(schemaorgVocab) {
+function(SchemaOrgVocab) {
   var breadcrumbs = [];
 
   function createNew(facet) {
     var breadcrumb = {
       id: facet.topic,
       topic: {
-        name: schemaorgVocab[facet.topic].name,
-        label: schemaorgVocab[facet.topic].label
+        name: SchemaOrgVocab[facet.topic].name,
+        label: SchemaOrgVocab[facet.topic].label
       },
       facets: []
     };

@@ -3,9 +3,9 @@
 angular.module('search')
 
 .factory('CseDataService', [
-  'SchemaorgVocab',
+  'SchemaOrgVocab',
 
-function(schemaOrgVocab) {
+function(SchemaOrgVocab) {
   var structuredData = [];
   var nonStructuredData = [];
 
@@ -95,12 +95,12 @@ function(schemaOrgVocab) {
     let topicSchemas = {};
     if (topicNames.length != 0) {
       topicNames.forEach(topicName => {
-        if (schemaOrgVocab[topicName] != null) {
-          topicSchemas[topicName] = schemaOrgVocab[topicName];
+        if (SchemaOrgVocab[topicName] != null) {
+          topicSchemas[topicName] = SchemaOrgVocab[topicName];
         }
       });
     } else {
-      topicSchemas = schemaOrgVocab;
+      topicSchemas = SchemaOrgVocab;
     }
     return topicSchemas;
   }

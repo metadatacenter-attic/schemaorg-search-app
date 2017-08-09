@@ -40,8 +40,8 @@ function() {
   }
 })
 
-.directive('topicAutocomplete', ['SchemaorgVocab',
-function(SchemaorgVocab) {
+.directive('topicAutocomplete', ['SchemaOrgVocab',
+function(SchemaOrgVocab) {
   function split(value) {
     return value.split(/ \s*/);
   }
@@ -66,7 +66,7 @@ function(SchemaorgVocab) {
             // Regexp for filtering those inputs that start with '#'
             var matcher = new RegExp("^" + $.ui.autocomplete.escapeRegex(lastword), "i");
             // Get all topic terms
-            var terms = Object.keys(SchemaorgVocab).map(function(item) {
+            var terms = Object.keys(SchemaOrgVocab).map(function(item) {
               return "#" + item;
             });
             var results = $.grep(terms, function(item) {
