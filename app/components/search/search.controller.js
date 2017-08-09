@@ -14,11 +14,11 @@ angular.module('search')
   'UserProfiles',
 
 function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeFacetService,
-    BreadcrumbService, FilterService, NerService, userProfiles) {
+    BreadcrumbService, FilterService, NerService, UserProfiles) {
 
   $scope.appVersion = 0.4;
   $scope.profileName = "default";
-  $scope.profiles = userProfiles;
+  $scope.profiles = UserProfiles;
   $scope.structuredSearchResults = [];
   $scope.nonStructuredSearchResults = [];
   $scope.categoryFacets = CategoryFacetService.categoryFacets;
@@ -33,7 +33,7 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
 
     resetServices();
 
-    var profile = userProfiles[$scope.profileName];
+    var profile = UserProfiles[$scope.profileName];
     var input = processUserInput(userInput);
     var userKeyword = input.keyword;
     var userTopics = input.topics;
