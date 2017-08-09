@@ -82,6 +82,19 @@
                 </select>
               </div>
             </li>
+            <li>
+              <div class="setting-item">
+                <label>Include non schema.org results:</label>
+                <div class="switch" style="margin-top:-10px;text-align:center;">
+                  <label>
+                   No
+                   <input type="checkbox" ng-model="includeNonSchemaOrg">
+                   <span class="lever"></span>
+                   Yes
+                  </label>
+                </div>
+              </div>
+            </li>
           </ul>
         </div>
       </div>
@@ -205,7 +218,8 @@
             </ul>
           </div>
           <!-- Normal result -->
-          <div class="row search-result-list-container" ng-if="nonStructuredSearchResults.length > 0">
+          <div class="row search-result-list-container"
+              ng-if="nonStructuredSearchResults.length > 0 && includeNonSchemaOrg">
             <ul class="search-result-list">
               <li class="search-result-item" ng-repeat="item in nonStructuredSearchResults">
                 <span><a href="{{item.url}}" target="_blank">{{item.title}}</a><span><br>
