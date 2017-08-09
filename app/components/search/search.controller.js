@@ -63,7 +63,7 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
             $scope.dataLoaded = true;
           });
         });
-      // Create search facets based on the app data model
+      // Create search facets based on the structured data found in the search results
       CseDataService.structuredData.forEach(data => {
         var properties = data.properties;
         for (var j = 0; j < properties.length; j++) {
