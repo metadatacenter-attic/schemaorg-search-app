@@ -45,10 +45,12 @@ angular.module('search')
       function(response) {
         let searchResultMetadata = createSearchResultMetadata(response.data);
         let searchResultItems = [];
-        response.data.items.forEach(responseDataItem => {
-          let searchResultItem = createSearchResultItem(responseDataItem);
-          searchResultItems.push(searchResultItem);
-        });
+        if (response.data.items) {
+          response.data.items.forEach(responseDataItem => {
+            let searchResultItem = createSearchResultItem(responseDataItem);
+            searchResultItems.push(searchResultItem);
+          });
+        }
         defer.resolve({
           searchResultMetadata: searchResultMetadata,
           searchResultItems: searchResultItems
