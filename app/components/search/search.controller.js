@@ -47,16 +47,15 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
       // Process and store the search results as the app data model
       resolvedCalls.filter(x => x.status === "resolved")
         .forEach(resolvedCall => {
-          var response = resolvedCall.value;
-          var searchItems = response.searchItems;
-          for (var i = 0; i < searchItems.length; i++) {
-            var rawData = searchItems[i];
-            CseDataService.add(rawData, userTopics);
+          let searchResultMetadata = resolvedCall.value.searchResultMetadata;
+          if (searchResultMetadata.spellingCorrection) {
+            $scope.spellingCorrection = searchResultMetadata.spellingCorrection;
           }
+          let searchResultItems = resolvedCall.value.searchResultItems;
+          searchResultItems.forEach(searchResultItem => {
+            CseDataService.add(searchResultItem, userTopics);
+          });
           $scope.$apply(() => {
-            if (response.searchMetadata.spellingCorrection) {
-              $scope.spellingCorrection = response.searchMetadata.spellingCorrection;
-            }
             $scope.structuredSearchResults = CseDataService.structuredData;
             $scope.nonStructuredSearchResults = CseDataService.nonStructuredData;
             $scope.searchInProgress = false;
