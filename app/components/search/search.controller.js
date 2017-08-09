@@ -59,8 +59,6 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
             }
             $scope.structuredSearchResults = CseDataService.structuredData;
             $scope.nonStructuredSearchResults = CseDataService.nonStructuredData;
-            $scope.relatedConcepts = NerService.findConcepts(CseDataService.structuredData,
-                [$scope.userKeyword]);
             $scope.searchInProgress = false;
             $scope.dataLoaded = true;
           });
@@ -79,6 +77,10 @@ function($scope, CseRequestService, CseDataService, CategoryFacetService, RangeF
           }
         }
       });
+      // Find the related concepts based on the search results text
+      $scope.relatedConcepts = NerService.findConcepts(
+          CseDataService.structuredData,
+          [$scope.userKeyword]); // the exclusion list
       // Create the breadcrumbs based on the search facets
       $scope.$apply(() => {
         BreadcrumbService.batchUse([
