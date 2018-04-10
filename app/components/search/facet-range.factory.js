@@ -8,9 +8,8 @@ angular.module('search')
   function createNew($scope, property) {
     var rangeFacet = {
       id: property.id,
-      name: property.name,
       label: property.label,
-      topic: property.domain.name,
+      topic: property.topic.id,
       type: "range",
       visible: false,
       unit: property.unit,

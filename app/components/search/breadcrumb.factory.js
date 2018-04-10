@@ -12,7 +12,7 @@ function(SchemaOrgVocab) {
     var breadcrumb = {
       id: facet.topic,
       topic: {
-        name: SchemaOrgVocab[facet.topic].name,
+        id: SchemaOrgVocab[facet.topic].id,
         label: SchemaOrgVocab[facet.topic].label
       },
       facets: []

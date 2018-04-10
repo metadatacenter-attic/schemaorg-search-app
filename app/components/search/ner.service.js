@@ -11,7 +11,11 @@ angular.module('search')
       for (var i = 0; i < item.properties.length; i++) {
         let property = item.properties[i];
         if (property.type === "text") {
-          textData.push(property.value);
+          if (typeof(property.value) === 'object') {
+            textData.push(property.value.join());
+          } else {
+            textData.push(property.value);
+          }
         }
       }
     });

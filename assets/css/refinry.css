@@ -6,6 +6,13 @@ body {
   overflow-y: auto;
 }
 
+ol.browser-default {
+  padding-left: 22px;
+}
+ol.browser-default li {
+  list-style-type: inherit;
+}
+
 .logo {
   display: block;
   height: 64px;

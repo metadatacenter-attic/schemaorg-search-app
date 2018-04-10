@@ -9,6 +9,24 @@ Object.size = (obj) => {
   return Object.keys(obj).length;
 };
 
+Object.hasOwnPropertyIgnoreCase = (obj, prop) => {
+  return Object.keys(obj)
+    .filter(v => {
+      return v.toLowerCase() === prop.toLowerCase();
+    }).length > 0;
+};
+
+Object.getIgnoreCase = (obj, prop) => {
+  let result = null;
+  for (key in obj) {
+    if (key.toLowerCase() === prop.toLowerCase()) {
+      result = obj[key];
+      break;
+    }
+  }
+  return result;
+}
+
 /*
  * Credit to David Gouch: http://individed.com/code/to-title-case/
  */

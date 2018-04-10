@@ -8,9 +8,8 @@ angular.module('search')
   function createNew(property) {
     var categoryFacet = {
       id: property.id,
-      name: property.name,
       label: property.label,
-      topic: property.domain.name,
+      topic: property.topic.id,
       type: "category",
       visible: false,
       choices: []

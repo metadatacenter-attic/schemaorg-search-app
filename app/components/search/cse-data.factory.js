@@ -22,15 +22,14 @@ function(DataCleaningService, SchemaOrgVocab) {
     };
   }
 
-  function createProperty(topicSchema, propertySchema, refinedValue) {
+  function createProperty(topicSchema, propertySchema, refinedValue, instanceIndex) {
     return {
-      id: topicSchema.name + "." + propertySchema.name,
-      domain: {
-        name: topicSchema.name,
-        label: topicSchema.label
+      id: topicSchema.id + "." + propertySchema.id,
+      topic: {
+        id: topicSchema.id,
+        label: topicSchema.label,
+        instance: topicSchema.id + ":" + instanceIndex
       },
-      range: propertySchema.type,
-      name: propertySchema.name,
       label: propertySchema.label,
       value: refinedValue.value,
       unit: propertySchema.unit,
@@ -46,13 +45,12 @@ function(DataCleaningService, SchemaOrgVocab) {
     let hasMarkup = false;
     if (searchResult.responseData.hasOwnProperty('pagemap')) {
       let pagemap = searchResult.responseData.pagemap;
-      Object.keys(topicSchemas).forEach(topicName => {
-        let topicSchema = topicSchemas[topicName];
-        if (pagemap.hasOwnProperty(topicName)) {
-          let topicDataArray = pagemap[topicName];
-          let topicData = getLastData(topicDataArray);
+      Object.keys(topicSchemas).forEach(topicId => {
+        let topicDataArray = Object.getIgnoreCase(pagemap, topicId);
+        if (topicDataArray != null) {
+          let topicSchema = topicSchemas[topicId];
           storeTopic(data, topicSchema);
-          storeProperties(data, topicSchema, topicData);
+          storeProperties(data, topicSchema, topicDataArray);
           hasMarkup = true;
         }
       });
@@ -63,41 +61,39 @@ function(DataCleaningService, SchemaOrgVocab) {
     };
   }
 
-  function getLastData(topicDataArray) {
-    return topicDataArray[topicDataArray.length-1];
-  }
-
   function storeTopic(data, topicSchema) {
-    data.topics.push(topicSchema.name);
+    data.topics.push(topicSchema.id);
   }
 
-  function storeProperties(data, topicSchema, topicData) {
-    topicSchema.properties.forEach(propertySchema => {
-      let topicName = topicSchema.name;
-      let propertyName = propertySchema.name;
-      try {
-        let propertyValue = topicData[propertyName];
-        if (propertyValue != null) {
-          let refinedValue = DataCleaningService.refine(propertyValue,
-              propertySchema.type,
-              propertySchema.unit);
-          let property = createProperty(topicSchema, propertySchema, refinedValue);
-          data.properties.push(property);
+  function storeProperties(data, topicSchema, topicDataArray) {
+    topicDataArray.forEach((topicData, index) => {
+      topicSchema.properties.forEach(propertySchema => {
+        let topicId = topicSchema.id;
+        let propertyId = propertySchema.id;
+        try {
+          let propertyValue = Object.getIgnoreCase(topicData, propertyId);
+          if (propertyValue != null) {
+            let refinedValue = DataCleaningService.refine(propertyValue,
+                propertySchema.type,
+                propertySchema.unit);
+            let property = createProperty(topicSchema, propertySchema, refinedValue, index);
+            data.properties.push(property);
+          }
+        } catch (e) {
+          console.warn("WARN: Unable to store property "
+              + topicId + "." + propertyId
+              + " (Reason: " + e.message + ")");
         }
-      } catch (e) {
-        console.warn("WARN: Unable to store property "
-            + topicName + "." + propertyName
-            + " (Reason: " + e.message + ")");
-      }
+      });
     });
   }
 
-  function getTopicSchemas(topicNames) {
+  function getTopicSchemas(topicIds) {
     let topicSchemas = {};
-    if (topicNames.length != 0) {
-      topicNames.forEach(topicName => {
-        if (SchemaOrgVocab[topicName] != null) {
-          topicSchemas[topicName] = SchemaOrgVocab[topicName];
+    if (topicIds.length != 0) {
+      topicIds.forEach(topicId => {
+        if (SchemaOrgVocab[topicId] != null) {
+          topicSchemas[topicId] = SchemaOrgVocab[topicId];
         }
       });
     } else {
@@ -113,12 +109,8 @@ function(DataCleaningService, SchemaOrgVocab) {
     return -1;
   }
 
-  var isServiceFor = function(searchResult) {
-    return searchResult.source === "Google Custom Search";
-  }
-
-  var add = function(searchResult, topicNames=[]) {
-    let topicSchemas = getTopicSchemas(topicNames);
+  var add = function(searchResult, topicIds=[]) {
+    let topicSchemas = getTopicSchemas(topicIds);
     let parsedData = parse(searchResult, topicSchemas);
     if (parsedData.hasMarkup) {
       structuredData.push(parsedData.data);
@@ -159,7 +151,6 @@ function(DataCleaningService, SchemaOrgVocab) {
   return {
     structuredData: structuredData,
     nonStructuredData: nonStructuredData,
-    isServiceFor: isServiceFor,
     add: add,
     get: get,
     remove: remove,

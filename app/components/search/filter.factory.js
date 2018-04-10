@@ -8,7 +8,6 @@ angular.module('search')
   function createNew(facet) {
     var filter = {
       id: facet.id,
-      name: facet.name,
       type: facet.type,
       topic: facet.topic,
       values: []
@@ -17,34 +16,40 @@ angular.module('search')
   }
 
   function findIndex(arr, key, value) {
+    const idx = [];
     for(var i = 0; i < arr.length; i++) {
-      if (arr[i][key] === value) return i;
+      if (arr[i][key] === value) {
+        idx.push(i);
+      }
     }
-    return -1;
+    return idx;
   }
 
   function evaluateDataOnEachFilter(data, filter) {
     let answer = false;
     if (data.topics.includes(filter.topic)) {
-      answer = openWorldAssumptionAnswering(data, filter);
+      answer = evaluateQuery(data, filter);
     }
     return answer;
   }
 
-  function openWorldAssumptionAnswering(data, filter) {
-    // open-world assumption; evaluate only the known fact
-    let answer = true;
-    let index = findIndex(data.properties, "id", filter.id);
-    if (index != -1) {
-      let value = data.properties[index].value;
-      if (value != null) {
-        if (filter.type === "category") {
-          if (filter.values.length > 0) {
-            answer = filter.values.includes(value);
+  function evaluateQuery(data, filter) {
+    let answer = false;
+    let hits = findIndex(data.properties, "id", filter.id);
+    if (hits.length > 0) {
+      if (filter.values.length == 0) {
+        answer = true;
+      } else {
+        hits.forEach(function(index) {
+          let value = data.properties[index].value;
+          if (value) {
+            if (filter.type === "category") {
+              answer = answer || filter.values.includes(value);
+            } else if (filter.type === "range") {
+              answer = answer || (value >= filter.values[0] && value <= filter.values[1]);
+            }
           }
-        } else if (filter.type === "range") {
-          answer = value >= filter.values[0] && value <= filter.values[1];
-        }
+        });
       }
     }
     return answer;
@@ -102,6 +107,7 @@ angular.module('search')
       var evalOnEachFilter = [];
       for (var i = 0; i < filterModel.length; i++) {
         var filter = filterModel[i];
+        console.log("Filtering items that have '" + filter.id + "' with value [" + filter.values + "]");
         evalOnEachFilter[i] = evaluateDataOnEachFilter(data, filter);
       }
       // Combine each filter evaluation with the AND operation

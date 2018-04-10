@@ -8,6 +8,7 @@ angular.module('schemaorg', [
   'angular.filter',
   'videosharing-embed',
   'rzModule',
+  'elif',
   'search',
   'settings'],
   function($provide) {

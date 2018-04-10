@@ -28,6 +28,7 @@
   <script type="text/javascript" src="assets/libs/compromise.min.js"></script>
   <script type="text/javascript" src="assets/libs/rzslider.min.js"></script>
   <script type="text/javascript" src="assets/libs/quantities.js"></script>
+  <script type="text/javascript" src="assets/libs/elif.js"></script>
   <script type="text/javascript" src="assets/js/commons.js"></script>
   <script type="text/javascript" src="app/app.js"></script>
   <script type="text/javascript" src="app/components/search/search.controller.js"></script>
@@ -188,18 +189,34 @@
                 <div class="collapsible-body narrower">
                   <div class="row narrower">
                     <div class="col s12 m12 l6 xl4 topic-card"
-                        ng-repeat="(domain, object) in item.properties | groupBy: 'domain.name'">
+                        ng-repeat="(topic, object) in item.properties | groupBy: 'topic.instance'">
                       <ul class="collection with-header">
-                        <li class="collection-header narrower">{{object[0].domain.label}}</li>
+                        <li class="collection-header narrower">{{object[0].topic.label}}</li>
                         <li class="collection-item narrower" ng-repeat="property in object"
                             ng-if="property.type!='url+image' && property.type!='url+video'">
-                          <label>{{property.label}}:</label>
-                              <span ng-if="property.type!='numeric'">&nbsp;{{property.value}}</span>
-                              <span ng-if="property.type=='numeric'">&nbsp;{{property.value | number}}</span>
-                              <span ng-if="property.unit">&nbsp;{{property.unit}}</span>
-                              <a tooltipped style="cursor:pointer;" data-position="right" data-delay="50"
-                              data-tooltip="{{property.originalValue}}" ng-if="property.hasWarning">
-                              <i class="material-icons tiny yellow-text text-darken-2">&nbsp;warning</i></a>
+                          <label ng-init="limitText=300">{{property.label}}:</label>&nbsp;
+                          <span ng-if="property.type=='numeric'">{{property.value | number}}</span>
+                          <span ng-else-if="property.type=='url'">
+                            <a href="{{property.value}}">{{property.value}}</a>
+                          </span>
+                          <span ng-else>
+                            <span ng-show="{{property.value|isArray}}">
+                              <ol class="browser-default">
+                                <li ng-repeat="item in property.value track by $index">{{item}}</li>
+                              </ol>
+                            </span>
+                            <span ng-show="{{property.value|isString}}">
+                              {{property.value | limitTo:limitText}}{{(property.value).length > limitText ? '...' : ''}}
+                              <a href="javascript:void(0)"
+                                  ng-hide="(property.value).length < limitText"
+                                  ng-click="limitText = (property.value).length + 1" ><i>show more</i>
+                              </a>
+                            </span>
+                          </span>
+                          <span ng-if="property.unit">&nbsp;{{property.unit}}</span>
+                          <a tooltipped style="cursor:pointer;" data-position="right" data-delay="50"
+                          data-tooltip="{{property.originalValue}}" ng-if="property.hasWarning">
+                          <i class="material-icons tiny yellow-text text-darken-2">&nbsp;warning</i></a>
                         </li>
                         <li class="collection-item narrower" ng-repeat="property in object | filter:{ type:'url+image' }">
                           <label>{{property.label}}:</label>&nbsp;
@@ -241,9 +258,9 @@
             <div style="float:left;">TOPICS:&nbsp;&nbsp;</div>
             <div class="topic-type" ng-repeat="breadcrumb in breadcrumbs">
               <a class="btn dropdown-button" href="#"
-                  ng-attr-data-activates="dropdown-{{breadcrumb.topic.name}}" dropdown>
+                  ng-attr-data-activates="dropdown-{{breadcrumb.topic.id}}" dropdown>
                   {{breadcrumb.topic.label}}<i class="material-icons right">arrow_drop_down</i></a>
-              <ul id="dropdown-{{breadcrumb.topic.name}}" class="dropdown-content">
+              <ul id="dropdown-{{breadcrumb.topic.id}}" class="dropdown-content">
                 <li ng-repeat="facet in breadcrumb.facets"><a href="#"
                     ng-click="onOpen(facet)">{{facet.label}}</a></li>
               </ul>
@@ -261,9 +278,9 @@
                   </div>
                 </li>
                 <li class="collection-item narrower" ng-repeat="choice in facet.choices">
-                  <input type="checkbox" id="checkbox-{{facet.name}}-{{$index}}"
+                  <input type="checkbox" id="checkbox-{{facet.id}}-{{$index}}"
                       ng-model="choice.selected" ng-change="onCheckboxChanged(facet)">
-                    <label for="checkbox-{{facet.name}}-{{$index}}">{{choice.value}}</label>
+                    <label for="checkbox-{{facet.id}}-{{$index}}">{{choice.value}}</label>
                 </li>
               </ul>
             </div>
