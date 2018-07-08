@@ -23,11 +23,14 @@ angular.module('search')
       description: responseDataItem.snippet,
       responseData: responseDataItem
     };
-    if (responseDataItem.pagemap.cse_image) {
-      searchResultItem["image"] = responseDataItem.pagemap.cse_image[0].src;
-    }
-    if (responseDataItem.pagemap.cse_thumbnail) {
-      searchResultItem["thumbnail"] = responseDataItem.pagemap.cse_thumbnail[0].src;
+    if (responseDataItem.pagemap) {
+      let pagemap = responseDataItem.pagemap;
+      if (pagemap.cse_image) {
+        searchResultItem["image"] = pagemap.cse_image[0].src;
+      }
+      if (pagemap.cse_thumbnail) {
+        searchResultItem["thumbnail"] = pagemap.cse_thumbnail[0].src;
+      }
     }
     return searchResultItem;
   }
